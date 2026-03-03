@@ -1,0 +1,13 @@
+{
+  "version": 2,
+  "builds": [
+    { "src": "next.config.js", "use": "@vercel/next" }
+  ],
+  "routes": [
+    { "src": "/docs", "dest": "/docs" },
+    { "src": "/openapi.json", "dest": "/openapi.json" },
+    { "src": "/health", "dest": "/health" },
+    { "src": "/api/(.*)", "dest": "/api/$1" },
+    { "src": "/ml/(.*)", "dest": "/ml/$1" }
+  ]
+}

@@ -1,0 +1,6 @@
+{
+  "version": 3,
+  "sources": [],
+  "sections": [
+    {"offset": {"line": 4, "column": 0}, "map": {"version":3,"sources":["file:///D:/Git%20Projects/multi_tier_crop_system/components/ui/splite.tsx"],"sourcesContent":["'use client'\r\n\r\nimport { Suspense, lazy } from 'react'\r\nconst Spline = lazy(() => import('@splinetool/react-spline'))\r\n\r\ninterface SplineSceneProps {\r\n  scene: string\r\n  className?: string\r\n}\r\n\r\nexport function SplineScene({ scene, className }: SplineSceneProps) {\r\n  return (\r\n    <Suspense\r\n      fallback={\r\n        <div className=\"w-full h-full flex items-center justify-center\">\r\n          <div className=\"w-16 h-16 rounded-full border-4 border-green-500/30 border-t-green-500 animate-spin\" />\r\n        </div>\r\n      }\r\n    >\r\n      <Spline scene={scene} className={className} />\r\n    </Suspense>\r\n  )\r\n}\r\n"],"names":[],"mappings":";;;;;AAEA;AAFA;;;AAGA,MAAM,uBAAS,IAAA,qKAAI,EAAC;KAAd;AAOC,SAAS,YAAY,EAAE,KAAK,EAAE,SAAS,EAAoB;IAChE,qBACE,6LAAC,yKAAQ;QACP,wBACE,6LAAC;YAAI,WAAU;sBACb,cAAA,6LAAC;gBAAI,WAAU;;;;;;;;;;;kBAInB,cAAA,6LAAC;YAAO,OAAO;YAAO,WAAW;;;;;;;;;;;AAGvC;MAZgB"}}]
+}

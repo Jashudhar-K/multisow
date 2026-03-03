@@ -1,0 +1,7 @@
+{
+  "version": 3,
+  "sources": [],
+  "sections": [
+    {"offset": {"line": 14, "column": 0}, "map": {"version":3,"sources":["file:///D:/Git%20Projects/multi_tier_crop_system/components/layout/PageLayout.tsx"],"sourcesContent":["import React from 'react';\r\n\r\ninterface PageLayoutProps {\r\n  children: React.ReactNode;\r\n  title?: string;\r\n}\r\n\r\nconst PageLayout: React.FC<PageLayoutProps> = ({ children, title }) => {\r\n  return (\r\n    <div className=\"p-8 min-h-screen\">\r\n      {title && <h1 className=\"text-3xl font-bold text-white mb-6\">{title}</h1>}\r\n      {children}\r\n    </div>\r\n  );\r\n};\r\n\r\nexport default PageLayout;\r\n"],"names":[],"mappings":";;;;;;AAOA,MAAM,aAAwC,CAAC,EAAE,QAAQ,EAAE,KAAK,EAAE;IAChE,qBACE,8OAAC;QAAI,WAAU;;YACZ,uBAAS,8OAAC;gBAAG,WAAU;0BAAsC;;;;;;YAC7D;;;;;;;AAGP;uCAEe"}},
+    {"offset": {"line": 45, "column": 0}, "map": {"version":3,"sources":["file:///D:/Git%20Projects/multi_tier_crop_system/app/presets/page.tsx"],"sourcesContent":["import PageLayout from '@/components/layout/PageLayout';\r\n\r\nexport default function PresetsPage() {\r\n  return (\r\n    <PageLayout title=\"Regional Presets\">\r\n      <div className=\"glass p-8 text-white text-lg text-center\">Presets content coming soon.</div>\r\n    </PageLayout>\r\n  );\r\n}\r\n"],"names":[],"mappings":";;;;;AAAA;;;AAEe,SAAS;IACtB,qBACE,8OAAC,8IAAU;QAAC,OAAM;kBAChB,cAAA,8OAAC;YAAI,WAAU;sBAA2C;;;;;;;;;;;AAGhE"}}]
+}

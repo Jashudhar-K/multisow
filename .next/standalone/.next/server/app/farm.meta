@@ -1,0 +1,15 @@
+{
+  "headers": {
+    "x-nextjs-stale-time": "300",
+    "x-nextjs-prerender": "1",
+    "x-next-cache-tags": "_N_T_/layout,_N_T_/farm/layout,_N_T_/farm/page,_N_T_/farm"
+  },
+  "segmentPaths": [
+    "/_tree",
+    "/_full",
+    "/farm/__PAGE__",
+    "/farm",
+    "/_index",
+    "/_head"
+  ]
+}

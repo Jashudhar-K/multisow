@@ -1,0 +1,16 @@
+{
+  "[project]/components/ml/ResourceCalculator.tsx [app-client] (ecmascript, next/dynamic entry)": {
+    "id": "[project]/components/ml/ResourceCalculator.tsx [app-client] (ecmascript, next/dynamic entry)",
+    "files": [
+      "static/chunks/_8e5776a7._.js",
+      "static/chunks/components_ml_ResourceCalculator_tsx_776d671f._.js"
+    ]
+  },
+  "[project]/components/ml/DataHealthWidget.tsx [app-client] (ecmascript, next/dynamic entry)": {
+    "id": "[project]/components/ml/DataHealthWidget.tsx [app-client] (ecmascript, next/dynamic entry)",
+    "files": [
+      "static/chunks/_f5058000._.js",
+      "static/chunks/components_ml_DataHealthWidget_tsx_776d671f._.js"
+    ]
+  }
+}

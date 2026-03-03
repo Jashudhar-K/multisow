@@ -1,0 +1,89 @@
+version: '3.8'
+
+services:
+  # ---------------------------------------------------------------
+  # Main web app (FastAPI + FOHEM ML routers)
+  # ---------------------------------------------------------------
+  web:
+    build:
+      context: .
+      dockerfile: Dockerfile.ml
+    ports:
+      - "8000:8000"
+    volumes:
+      - ./backend:/app/backend
+      - ./frontend:/app/frontend
+      - ./multisow:/app/multisow
+      - app-data:/app/data
+    environment:
+      - PYTHONUNBUFFERED=1
+      - MULTISOW_DATABASE_URL=sqlite:///./sql_app.db
+      - MULTISOW_INFLUXDB_URL=http://influxdb:8086
+      - MULTISOW_INFLUXDB_TOKEN=${INFLUXDB_TOKEN:-multisow-dev-token}
+      - MULTISOW_INFLUXDB_ORG=multisow
+      - MULTISOW_INFLUXDB_BUCKET=sensor_data
+      - MULTISOW_REDIS_URL=redis://redis:6379/0
+      - MULTISOW_MLFLOW_TRACKING_URI=http://mlflow:5000
+      - MULTISOW_ENVIRONMENT=production
+      - MULTISOW_FOHEM_BOOTSTRAP_ON_STARTUP=true
+    depends_on:
+      - influxdb
+      - redis
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "python", "-c", "import urllib.request; urllib.request.urlopen('http://localhost:8000/health')"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+
+  # ---------------------------------------------------------------
+  # InfluxDB 2.x (IoT sensor time-series)
+  # ---------------------------------------------------------------
+  influxdb:
+    image: influxdb:2.7
+    ports:
+      - "8086:8086"
+    volumes:
+      - influxdb-data:/var/lib/influxdb2
+    environment:
+      - DOCKER_INFLUXDB_INIT_MODE=setup
+      - DOCKER_INFLUXDB_INIT_USERNAME=admin
+      - DOCKER_INFLUXDB_INIT_PASSWORD=multisow-password
+      - DOCKER_INFLUXDB_INIT_ORG=multisow
+      - DOCKER_INFLUXDB_INIT_BUCKET=sensor_data
+      - DOCKER_INFLUXDB_INIT_ADMIN_TOKEN=${INFLUXDB_TOKEN:-multisow-dev-token}
+    restart: unless-stopped
+
+  # ---------------------------------------------------------------
+  # Redis (Celery broker + result backend)
+  # ---------------------------------------------------------------
+  redis:
+    image: redis:7-alpine
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis-data:/data
+    restart: unless-stopped
+
+  # ---------------------------------------------------------------
+  # MLflow tracking server (optional — remove to save resources)
+  # ---------------------------------------------------------------
+  mlflow:
+    image: ghcr.io/mlflow/mlflow:v2.10.0
+    ports:
+      - "5000:5000"
+    volumes:
+      - mlflow-data:/mlflow
+    command: >
+      mlflow server
+        --backend-store-uri sqlite:///mlflow/mlflow.db
+        --default-artifact-root /mlflow/artifacts
+        --host 0.0.0.0
+        --port 5000
+    restart: unless-stopped
+
+volumes:
+  app-data:
+  influxdb-data:
+  redis-data:
+  mlflow-data:
