@@ -2,7 +2,8 @@ import { test, expect } from '@playwright/test';
 
 test('crop database shows > 10 crops', async ({ page }) => {
   await page.goto('/crops');
-  await expect(page.locator('.crop-card')).toHaveCountGreaterThan(10);
+  const count = await page.locator('.crop-card').count();
+  expect(count).toBeGreaterThan(10);
 });
 
 test('search input filters crops in real time', async ({ page }) => {
@@ -13,5 +14,6 @@ test('search input filters crops in real time', async ({ page }) => {
 
 test('crops are grouped by stratum layer', async ({ page }) => {
   await page.goto('/crops');
-  await expect(page.locator('.stratum-group')).toHaveCountGreaterThan(1);
+  const groupCount = await page.locator('.stratum-group').count();
+  expect(groupCount).toBeGreaterThan(1);
 });

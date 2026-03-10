@@ -132,7 +132,17 @@ class AIStratificationAdvisor:
         }
 
     def _preset_candidates(self) -> List[Dict[str, Any]]:
-        # Mirrors frontend preset models (kept minimal + stable)
+        """Return intercropping preset candidates.
+
+        Attempts to load dataset-derived presets first; falls back to the
+        hardcoded regional models if the crop library is unavailable.
+        """
+        try:
+            from backend.data.preset_generator import generate_presets
+            return generate_presets()
+        except Exception:
+            pass
+        # --- hardcoded fallback ---
         return [
             {
                 "id": "wayanad-classic",

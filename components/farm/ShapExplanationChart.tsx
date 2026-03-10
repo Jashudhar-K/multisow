@@ -2,7 +2,7 @@
 
 import { useRef, useMemo } from 'react'
 import { motion, useInView } from 'framer-motion'
-import { Info, TrendingUp, TrendingDown, HelpCircle } from 'lucide-react'
+import { Icon } from '@/components/ui/Icon'
 import type { ShapExplanation } from '@/types/farm'
 
 // ============================================================================
@@ -176,7 +176,7 @@ function SummaryStats({ explanations }: SummaryStatsProps) {
     <div className="grid grid-cols-3 gap-3 mb-6">
       <div className="p-3 rounded-lg bg-green-500/10 border border-green-500/20">
         <div className="flex items-center gap-2 mb-1">
-          <TrendingUp size={14} className="text-green-400" />
+          <Icon name="trending_up" size={14} className="text-green-400" />
           <span className="text-xs text-neutral-400">Positive Impact</span>
         </div>
         <div className="text-lg font-bold text-green-400">
@@ -189,7 +189,7 @@ function SummaryStats({ explanations }: SummaryStatsProps) {
 
       <div className="p-3 rounded-lg bg-red-500/10 border border-red-500/20">
         <div className="flex items-center gap-2 mb-1">
-          <TrendingDown size={14} className="text-red-400" />
+          <Icon name="trending_down" size={14} className="text-red-400" />
           <span className="text-xs text-neutral-400">Negative Impact</span>
         </div>
         <div className="text-lg font-bold text-red-400">
@@ -208,7 +208,7 @@ function SummaryStats({ explanations }: SummaryStatsProps) {
         }`}
       >
         <div className="flex items-center gap-2 mb-1">
-          <Info size={14} className={stats.netEffect >= 0 ? 'text-emerald-400' : 'text-amber-400'} />
+          <Icon name="info" size={14} className={stats.netEffect >= 0 ? 'text-emerald-400' : 'text-amber-400'} />
           <span className="text-xs text-neutral-400">Net Effect</span>
         </div>
         <div className={`text-lg font-bold ${stats.netEffect >= 0 ? 'text-emerald-400' : 'text-amber-400'}`}>
@@ -227,7 +227,7 @@ function SummaryStats({ explanations }: SummaryStatsProps) {
 function ShapHelpTooltip() {
   return (
     <div className="group relative inline-block">
-      <HelpCircle size={14} className="text-neutral-500 cursor-help" />
+      <Icon name="help" size={14} className="text-neutral-500 cursor-help" />
       <div className="absolute left-1/2 -translate-x-1/2 bottom-full mb-2 w-64 p-3 rounded-lg bg-black/95 border border-white/10 opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none z-10">
         <h4 className="text-sm font-medium text-white mb-2">What is SHAP?</h4>
         <p className="text-xs text-neutral-400 leading-relaxed">

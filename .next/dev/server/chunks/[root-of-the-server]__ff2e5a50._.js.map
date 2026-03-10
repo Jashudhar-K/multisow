@@ -1,6 +1,0 @@
-{
-  "version": 3,
-  "sources": [],
-  "sections": [
-    {"offset": {"line": 46, "column": 0}, "map": {"version":3,"sources":["file:///D:/Git%20Projects/multi_tier_crop_system/app/api/ai/plan/route.ts"],"sourcesContent":["import { NextRequest, NextResponse } from \"next/server\";\r\n\r\nexport async function POST(req: NextRequest) {\r\n  const body = await req.json();\r\n  const res = await fetch(process.env.BACKEND_URL + \"/ai/plan\", {\r\n    method: \"POST\",\r\n    headers: { \"Content-Type\": \"application/json\" },\r\n    body: JSON.stringify(body),\r\n  });\r\n  const data = await res.json();\r\n  return NextResponse.json(data);\r\n}\r\n"],"names":[],"mappings":";;;;AAAA;;AAEO,eAAe,KAAK,GAAgB;IACzC,MAAM,OAAO,MAAM,IAAI,IAAI;IAC3B,MAAM,MAAM,MAAM,MAAM,QAAQ,GAAG,CAAC,WAAW,GAAG,YAAY;QAC5D,QAAQ;QACR,SAAS;YAAE,gBAAgB;QAAmB;QAC9C,MAAM,KAAK,SAAS,CAAC;IACvB;IACA,MAAM,OAAO,MAAM,IAAI,IAAI;IAC3B,OAAO,gJAAY,CAAC,IAAI,CAAC;AAC3B"}}]
-}

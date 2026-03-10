@@ -8,9 +8,7 @@
 export { default as FarmScene } from './FarmScene'
 export type { FarmSceneProps } from './FarmScene'
 
-// 2D Mapping
-export { default as FarmMap } from './FarmMap'
-export type { FarmMapProps } from './FarmMap'
+
 
 // Row Layout Tools
 export { default as RowLayoutTools } from './RowLayoutTools'
@@ -29,4 +27,4 @@ export { PresetsPanel } from './PresetsPanel'
 export { SeasonTimeline } from './SeasonTimeline'
 export { MeasurementOverlays, SunlightHeatmap, RootCompetitionOverlay } from './MeasurementOverlays'
 export { CompatibilityWarnings, WarningTooltip, CompatibilitySummary } from './CompatibilityWarnings'
-export { UndoRedoButtons } from './UndoRedoButtons'
+

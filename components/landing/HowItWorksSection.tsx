@@ -25,7 +25,7 @@
 
 import { useRef } from 'react'
 import { motion, useInView } from 'framer-motion'
-import { Layers, Cpu, BarChart3 } from 'lucide-react'
+import { Icon } from '@/components/ui/Icon'
 import dynamic from 'next/dynamic'
 import type { ProcessStep } from '@/types/landing'
 
@@ -57,10 +57,10 @@ const steps: ProcessStep[] = [
   },
 ]
 
-const iconMap = {
-  layers: Layers,
-  cpu: Cpu,
-  barchart: BarChart3,
+const materialIconMap: Record<string, string> = {
+  layers: 'layers',
+  cpu: 'memory',
+  barchart: 'bar_chart',
 }
 
 export default function HowItWorksSection() {
@@ -104,7 +104,7 @@ export default function HowItWorksSection() {
 
             <div className="space-y-12">
               {steps.map((step, index) => {
-                const IconComponent = iconMap[step.icon as keyof typeof iconMap]
+                const iconName = materialIconMap[step.icon as keyof typeof materialIconMap]
                 return (
                   <motion.div
                     key={step.number}
@@ -119,7 +119,7 @@ export default function HowItWorksSection() {
                   >
                     {/* Step number circle */}
                     <div className="relative z-10 w-12 h-12 shrink-0 rounded-full bg-green-500/20 border-2 border-green-500 flex items-center justify-center">
-                      <IconComponent size={20} className="text-green-400" />
+                      <Icon name={iconName ?? 'help'} size={20} className="text-green-400" />
                     </div>
 
                     {/* Content */}

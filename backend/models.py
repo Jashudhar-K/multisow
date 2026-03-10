@@ -32,6 +32,10 @@ class Crop(Base):
     name = Column(String, unique=True, index=True)
     stratum_id = Column(Integer, ForeignKey("strata.id"))
     light_requirement = Column(String)  # e.g., "High", "Medium", "Low"
+    soil_type_compatibility = Column(JSON, nullable=True)   # e.g. ["laterite", "loamy"]
+    intercrop_layer = Column(String, nullable=True)         # canopy / midstory / understory / groundcover
+    spacing_m = Column(Float, nullable=True)                # recommended row/plant spacing in metres
+    yield_t_ha = Column(Float, nullable=True)               # typical yield in tonnes per hectare
     created_at = Column(DateTime, default=datetime.utcnow)
 
     stratum = relationship("Stratum", back_populates="crops")

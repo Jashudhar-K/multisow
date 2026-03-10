@@ -38,13 +38,13 @@ if errorlevel 1 (
     echo.
     echo [2/3] Starting backend server...
     echo.
-    echo   Application: http://localhost:8000/docs
-    echo   API Docs:    http://localhost:8000/docs
+    echo   Application: http://localhost:8001/docs
+    echo   API Docs:    http://localhost:8001/docs
     echo.
     echo   Press CTRL+C to stop the server
     echo ============================================================
     echo.
-    py -m uvicorn backend.main:app --host 0.0.0.0 --port 8000 --reload
+    py -m uvicorn backend.main:app --host 0.0.0.0 --port 8001 --reload
     pause
     exit /b 0
 )
@@ -61,9 +61,9 @@ if not exist node_modules (
 
 echo [3/5] Starting backend and landing page...
 echo.
-echo   Landing Page: http://localhost:3000
-echo   App Pages:    http://localhost:3000/designer
-echo   API Docs:    http://localhost:8000/docs
+echo   Landing Page: http://localhost:3001
+echo   App Pages:    http://localhost:3001/designer
+echo   API Docs:    http://localhost:8001/docs
 echo.
 echo   Browser will open automatically when ready.
 echo   Press CTRL+C to stop the server.
@@ -71,24 +71,24 @@ echo ============================================================
 echo.
 
 REM Start backend and landing page servers
-start /b py -m uvicorn backend.main:app --host 0.0.0.0 --port 8000 --reload
+start /b py -m uvicorn backend.main:app --host 0.0.0.0 --port 8001 --reload
 start /b npm run dev
 
 REM Wait for backend and landing page to be ready, then open browser
 echo [4/5] Waiting for backend API...
 :waitloop
 timeout /t 1 /nobreak >nul
-py -c "import urllib.request; urllib.request.urlopen('http://localhost:8000/health')" >nul 2>&1
+py -c "import urllib.request; urllib.request.urlopen('http://localhost:8001/health')" >nul 2>&1
 if errorlevel 1 goto waitloop
 
 echo [5/5] Waiting for landing page...
 :waitlanding
 timeout /t 1 /nobreak >nul
-py -c "import urllib.request; urllib.request.urlopen('http://localhost:3000')" >nul 2>&1
+py -c "import urllib.request; urllib.request.urlopen('http://localhost:3001')" >nul 2>&1
 if errorlevel 1 goto waitlanding
 
 echo Services ready! Opening landing page...
-start http://localhost:3000
+start http://localhost:3001
 
 REM Keep window open to show server logs
 echo.

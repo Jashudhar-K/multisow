@@ -14,8 +14,8 @@ import {
   useContext,
 } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { ChevronRight, CheckCircle } from 'lucide-react';
-import { cn } from '@/lib/utils';
+import { Icon } from '@/components/ui/Icon';
+import { cn } from '@/lib/index';
 
 // ============================================================================
 // Context
@@ -164,7 +164,7 @@ export const ListItem = forwardRef<HTMLLIElement, ListItemProps>(
         {(trailing || showChevron) && (
           <div className="flex-shrink-0 flex items-center gap-2 text-text-muted">
             {trailing}
-            {showChevron && <ChevronRight size={16} />}
+            {showChevron && <Icon name="chevron_right" size={16} />}
           </div>
         )}
       </>
@@ -284,7 +284,7 @@ export function SelectList<T>({
             onClick={() => handleSelect(item)}
             trailing={
               itemSelected ? (
-                <CheckCircle size={18} className="text-success" />
+                <Icon name="check_circle" size={18} className="text-success" />
               ) : null
             }
           >

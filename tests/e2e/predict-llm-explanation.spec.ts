@@ -6,7 +6,7 @@ test('YieldPredictionTool shows LLM explanation after prediction', async ({ page
   await page.goto('/predict');
   // Fill in farm ID and run prediction with default layers
   await page.fill('input[title="Farm ID"]', 'test-farm-llm');
-  await page.click('button', { hasText: 'Run Prediction' });
+  await page.getByRole('button', { name: 'Run Prediction' }).click();
   // Wait for results
   await expect(page.locator('.glass')).toContainText(['System LER']);
   // Check for AI Summary (LLM explanation)

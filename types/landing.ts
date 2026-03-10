@@ -25,6 +25,7 @@ export interface FohemCard {
 }
 
 export interface RegionalPreset {
+  id?: string
   emoji: string
   name: string
   state: string

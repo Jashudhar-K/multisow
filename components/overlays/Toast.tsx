@@ -15,8 +15,8 @@ import {
   ReactNode,
 } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { X, CheckCircle, AlertCircle, Info, AlertTriangle } from 'lucide-react';
-import { cn } from '@/lib/utils';
+import { Icon } from '@/components/ui/Icon';
+import { cn } from '@/lib/index';
 import { createPortal } from 'react-dom';
 
 // ============================================================================
@@ -243,22 +243,22 @@ interface ToastItemProps {
 const typeStyles = {
   success: {
     bg: 'bg-success/15 border-success/30',
-    icon: CheckCircle,
+    icon: 'check_circle',
     iconColor: 'text-success',
   },
   error: {
     bg: 'bg-error/15 border-error/30',
-    icon: AlertCircle,
+    icon: 'error',
     iconColor: 'text-error',
   },
   warning: {
     bg: 'bg-warning/15 border-warning/30',
-    icon: AlertTriangle,
+    icon: 'warning',
     iconColor: 'text-warning',
   },
   info: {
     bg: 'bg-primary-500/15 border-primary-500/30',
-    icon: Info,
+    icon: 'info',
     iconColor: 'text-primary-400',
   },
 };
@@ -266,7 +266,6 @@ const typeStyles = {
 function ToastItem({ toast, position, onRemove }: ToastItemProps) {
   const { type, title, description, duration, action } = toast;
   const styles = typeStyles[type];
-  const Icon = styles.icon;
   const animation = slideDirections[position];
 
   // Auto-dismiss
@@ -294,7 +293,7 @@ function ToastItem({ toast, position, onRemove }: ToastItemProps) {
       <div className="flex items-start gap-3 p-4">
         {/* Icon */}
         <div className={cn('flex-shrink-0 mt-0.5', styles.iconColor)}>
-          <Icon size={18} />
+          <Icon name={styles.icon} size={18} />
         </div>
 
         {/* Content */}
@@ -318,7 +317,7 @@ function ToastItem({ toast, position, onRemove }: ToastItemProps) {
           onClick={() => onRemove(toast.id)}
           className="flex-shrink-0 p-1 text-text-muted hover:text-text-primary rounded transition-colors"
         >
-          <X size={14} />
+          <Icon name="close" size={14} />
         </button>
       </div>
 

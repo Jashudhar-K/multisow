@@ -2,6 +2,7 @@
  * Command Palette Component
  * =========================
  * Cmd/Ctrl+K quick search and navigation.
+ * Includes live crop + preset search from the backend.
  */
 
 'use client';
@@ -9,26 +10,8 @@
 import { useState, useEffect, useCallback, useRef, useMemo } from 'react';
 import { useRouter } from 'next/navigation';
 import { motion, AnimatePresence } from 'framer-motion';
-import {
-  Search,
-  Home,
-  LayoutDashboard,
-  Layers,
-  Compass,
-  Brain,
-  Palette,
-  Leaf,
-  Calculator,
-  BookOpen,
-  FileText,
-  Settings,
-  User,
-  Command,
-  ArrowRight,
-  Hash,
-  Zap,
-} from 'lucide-react';
-import { cn } from '@/lib/utils';
+import { Icon } from '@/components/ui/Icon';
+import { cn } from '@/lib/index';
 import { modalBackdrop, modalContent } from '@/lib/animations';
 
 interface CommandItem {
@@ -43,29 +26,81 @@ interface CommandItem {
 }
 
 const navigationItems: CommandItem[] = [
-  { id: 'home', label: 'Home', description: 'Landing page', icon: <Home size={18} />, href: '/', category: 'navigation', keywords: ['start', 'main'] },
-  { id: 'dashboard', label: 'Dashboard', description: 'Farm overview', icon: <LayoutDashboard size={18} />, href: '/dashboard', category: 'navigation', keywords: ['overview', 'stats'] },
-  { id: 'designer', label: 'Farm Designer', description: '2D/3D crop layout', icon: <Compass size={18} />, href: '/designer', category: 'navigation', keywords: ['layout', 'design', '3d', 'map'] },
-  { id: 'strata', label: 'Strata System', description: '4-layer presets', icon: <Layers size={18} />, href: '/strata', category: 'navigation', keywords: ['layers', 'presets', 'tiers'] },
-  { id: 'predict', label: 'Yield Prediction', description: 'FOHEM ML model', icon: <Brain size={18} />, href: '/predict', category: 'navigation', keywords: ['ml', 'ai', 'forecast'] },
-  { id: 'optimize', label: 'Optimizer', description: 'Genetic optimization', icon: <Palette size={18} />, href: '/optimize', category: 'navigation', keywords: ['genetic', 'improve'] },
-  { id: 'crops', label: 'Crops Database', description: 'Browse species', icon: <Leaf size={18} />, href: '/crops', category: 'navigation', keywords: ['plants', 'species', 'varieties'] },
-  { id: 'calc', label: 'Calculator', description: 'Resource calculator', icon: <Calculator size={18} />, href: '/calc', category: 'navigation', keywords: ['resources', 'compute'] },
-  { id: 'farm', label: 'Farm Data Entry', description: 'Enter farm details', icon: <FileText size={18} />, href: '/farm', category: 'navigation', keywords: ['input', 'data', 'soil'] },
-  { id: 'ai-advisor', label: 'AI Advisor', description: 'Get AI recommendations', icon: <Zap size={18} />, href: '/ai-advisor', category: 'navigation', keywords: ['chat', 'help', 'assistant'] },
-  { id: 'research', label: 'Research Hub', description: 'Success stories', icon: <BookOpen size={18} />, href: '/research', category: 'navigation', keywords: ['studies', 'stories'] },
-  { id: 'docs', label: 'Documentation', description: 'Guides & API', icon: <FileText size={18} />, href: '/docs', category: 'navigation', keywords: ['help', 'guides', 'api'] },
-  { id: 'settings', label: 'Settings', description: 'App preferences', icon: <Settings size={18} />, href: '/settings', category: 'navigation', keywords: ['preferences', 'config'] },
-  { id: 'profile', label: 'Profile', description: 'Your account', icon: <User size={18} />, href: '/profile', category: 'navigation', keywords: ['account', 'user'] },
+  { id: 'home', label: 'Home', description: 'Landing page', icon: <Icon name="home" size={18} />, href: '/', category: 'navigation', keywords: ['start', 'main'] },
+  { id: 'dashboard', label: 'Dashboard', description: 'Farm overview', icon: <Icon name="dashboard" size={18} />, href: '/dashboard', category: 'navigation', keywords: ['overview', 'stats'] },
+  { id: 'designer', label: 'Farm Designer', description: '2D/3D crop layout', icon: <Icon name="explore" size={18} />, href: '/designer', category: 'navigation', keywords: ['layout', 'design', '3d', 'map'] },
+  { id: 'strata', label: 'Strata System', description: '4-layer presets', icon: <Icon name="layers" size={18} />, href: '/strata', category: 'navigation', keywords: ['layers', 'presets', 'tiers'] },
+  { id: 'predict', label: 'Yield Prediction', description: 'FOHEM ML model', icon: <Icon name="psychology" size={18} />, href: '/predict', category: 'navigation', keywords: ['ml', 'ai', 'forecast'] },
+  { id: 'optimize', label: 'Optimizer', description: 'Genetic optimization', icon: <Icon name="palette" size={18} />, href: '/optimize', category: 'navigation', keywords: ['genetic', 'improve'] },
+  { id: 'crops', label: 'Crops Database', description: 'Browse species', icon: <Icon name="eco" size={18} />, href: '/crops', category: 'navigation', keywords: ['plants', 'species', 'varieties'] },
+  { id: 'calc', label: 'Calculator', description: 'Resource calculator', icon: <Icon name="calculate" size={18} />, href: '/calc', category: 'navigation', keywords: ['resources', 'compute'] },
+  { id: 'farm', label: 'Farm Data Entry', description: 'Enter farm details', icon: <Icon name="description" size={18} />, href: '/farm', category: 'navigation', keywords: ['input', 'data', 'soil'] },
+  { id: 'ai-advisor', label: 'AI Advisor', description: 'Get AI recommendations', icon: <Icon name="bolt" size={18} />, href: '/ai-advisor', category: 'navigation', keywords: ['chat', 'help', 'assistant'] },
+  { id: 'research', label: 'Research Hub', description: 'Success stories', icon: <Icon name="menu_book" size={18} />, href: '/research', category: 'navigation', keywords: ['studies', 'stories'] },
+  { id: 'docs', label: 'Documentation', description: 'Guides & API', icon: <Icon name="description" size={18} />, href: '/docs', category: 'navigation', keywords: ['help', 'guides', 'api'] },
+  { id: 'profile', label: 'Profile', description: 'Your account & settings', icon: <Icon name="person" size={18} />, href: '/profile', category: 'navigation', keywords: ['account', 'user', 'settings', 'preferences', 'config'] },
 ];
 
 const actionItems: CommandItem[] = [
-  { id: 'new-design', label: 'New Farm Design', description: 'Start fresh', icon: <Compass size={18} />, href: '/designer?new=true', category: 'actions', keywords: ['create', 'start'] },
-  { id: 'run-prediction', label: 'Run Prediction', description: 'Quick yield forecast', icon: <Brain size={18} />, href: '/predict', category: 'actions', keywords: ['predict', 'forecast'] },
-  { id: 'view-presets', label: 'Browse Presets', description: '6 regional models', icon: <Layers size={18} />, href: '/strata', category: 'actions', keywords: ['templates', 'models'] },
+  { id: 'new-design', label: 'New Farm Design', description: 'Start fresh', icon: <Icon name="explore" size={18} />, href: '/designer?new=true', category: 'actions', keywords: ['create', 'start'] },
+  { id: 'run-prediction', label: 'Run Prediction', description: 'Quick yield forecast', icon: <Icon name="psychology" size={18} />, href: '/predict', category: 'actions', keywords: ['predict', 'forecast'] },
+  { id: 'view-presets', label: 'Browse Presets', description: '6 regional models', icon: <Icon name="layers" size={18} />, href: '/strata', category: 'actions', keywords: ['templates', 'models'] },
 ];
 
 const allItems = [...navigationItems, ...actionItems];
+
+// Known presets — searchable without an API call
+const PRESET_ITEMS: CommandItem[] = [
+  { id: 'preset-kerala', label: 'Kerala Homestead', description: 'Coconut + Banana + Pepper + Ginger', icon: <Icon name="agriculture" size={18} />, href: '/designer?preset=kerala', category: 'tools', keywords: ['kerala', 'coconut', 'banana', 'pepper'] },
+  { id: 'preset-karnataka', label: 'Karnataka Coffee', description: 'Silver Oak + Coffee + Cardamom + Turmeric', icon: <Icon name="agriculture" size={18} />, href: '/designer?preset=karnataka', category: 'tools', keywords: ['karnataka', 'coffee', 'cardamom'] },
+  { id: 'preset-tn', label: 'Tamil Nadu Mango', description: 'Mango + Papaya + Vanilla + Groundnut', icon: <Icon name="agriculture" size={18} />, href: '/designer?preset=tn', category: 'tools', keywords: ['tamil', 'mango', 'papaya'] },
+  { id: 'preset-goa', label: 'Goa Spice Garden', description: 'Coconut + Cocoa + Pepper + Turmeric', icon: <Icon name="agriculture" size={18} />, href: '/designer?preset=goa', category: 'tools', keywords: ['goa', 'spice', 'cocoa', 'turmeric'] },
+  { id: 'preset-andhra', label: 'Andhra Agroforest', description: 'Teak + Banana + Ginger + Groundnut', icon: <Icon name="agriculture" size={18} />, href: '/designer?preset=andhra', category: 'tools', keywords: ['andhra', 'teak', 'agroforest'] },
+  { id: 'preset-wayanad', label: 'Wayanad Organic', description: 'Silver Oak + Coffee + Black Pepper + Turmeric', icon: <Icon name="agriculture" size={18} />, href: '/designer?preset=wayanad', category: 'tools', keywords: ['wayanad', 'organic', 'pepper'] },
+];
+
+// Hook for debounced crop search from backend
+function useCropSearch(query: string, isOpen: boolean): CommandItem[] {
+  const [results, setResults] = useState<CommandItem[]>([])
+
+  useEffect(() => {
+    if (!isOpen || query.length < 2) {
+      setResults([])
+      return
+    }
+
+    const controller = new AbortController()
+    const timer = setTimeout(async () => {
+      try {
+        const res = await fetch(
+          `/api/crops-v2?search=${encodeURIComponent(query)}&limit=5`,
+          { signal: controller.signal }
+        )
+        if (!res.ok) return
+        const data = await res.json()
+        const crops: CommandItem[] = (data.crops ?? data ?? []).slice(0, 5).map((c: any) => ({
+          id: `crop-${c.name ?? c.crop_name}`,
+          label: c.name ?? c.crop_name ?? 'Unknown',
+          description: `${c.layer ?? c.strata_layer ?? ''} layer`,
+          icon: <Icon name="eco" size={18} />,
+          href: `/crops?highlight=${encodeURIComponent(c.name ?? c.crop_name)}`,
+          category: 'tools' as const,
+          keywords: [],
+        }))
+        setResults(crops)
+      } catch {
+        // Silently fail — search is best-effort
+      }
+    }, 250)
+
+    return () => {
+      clearTimeout(timer)
+      controller.abort()
+    }
+  }, [query, isOpen])
+
+  return results
+}
 
 interface CommandPaletteProps {
   isOpen: boolean;
@@ -79,20 +114,35 @@ export function CommandPalette({ isOpen, onClose }: CommandPaletteProps) {
   const listRef = useRef<HTMLDivElement>(null);
   const router = useRouter();
 
+  // Live crop search from backend
+  const cropResults = useCropSearch(query, isOpen)
+
   // Filter items based on query
   const filteredItems = useMemo(() => {
-    if (!query.trim()) return allItems;
-    
+    const base = query.trim() ? allItems : allItems;
     const lowerQuery = query.toLowerCase();
-    return allItems.filter((item) => {
-      const searchText = [
-        item.label,
-        item.description,
-        ...(item.keywords || []),
-      ].join(' ').toLowerCase();
-      return searchText.includes(lowerQuery);
-    });
-  }, [query]);
+
+    const matched = !query.trim()
+      ? base
+      : base.filter((item) => {
+          const searchText = [
+            item.label,
+            item.description,
+            ...(item.keywords || []),
+          ].join(' ').toLowerCase();
+          return searchText.includes(lowerQuery);
+        });
+
+    // Add matching presets
+    const matchedPresets = !query.trim()
+      ? []
+      : PRESET_ITEMS.filter((item) => {
+          const searchText = [item.label, item.description, ...(item.keywords || [])].join(' ').toLowerCase();
+          return searchText.includes(lowerQuery);
+        });
+
+    return [...matched, ...matchedPresets, ...cropResults];
+  }, [query, cropResults]);
 
   // Group filtered items by category
   const groupedItems = useMemo(() => {
@@ -138,14 +188,16 @@ export function CommandPalette({ isOpen, onClose }: CommandPaletteProps) {
         break;
       case 'Enter':
         e.preventDefault();
-        const selected = filteredItems[selectedIndex];
-        if (selected) {
-          if (selected.href) {
-            router.push(selected.href);
-          } else if (selected.action) {
-            selected.action();
+        {
+          const selected = filteredItems[selectedIndex];
+          if (selected) {
+            if (selected.href) {
+              router.push(selected.href);
+            } else if (selected.action) {
+              selected.action();
+            }
+            onClose();
           }
-          onClose();
         }
         break;
       case 'Escape':
@@ -200,7 +252,7 @@ export function CommandPalette({ isOpen, onClose }: CommandPaletteProps) {
             >
               {/* Search input */}
               <div className="flex items-center gap-3 px-4 py-3 border-b border-border-subtle">
-                <Search size={20} className="text-text-muted shrink-0" />
+                <Icon name="search" size={20} className="text-text-muted shrink-0" />
                 <input
                   ref={inputRef}
                   type="text"
@@ -256,7 +308,7 @@ export function CommandPalette({ isOpen, onClose }: CommandPaletteProps) {
                                 )}
                               </div>
                               {currentIndex === selectedIndex && (
-                                <ArrowRight size={16} className="text-primary-400 shrink-0" />
+                                <Icon name="arrow_forward" size={16} className="text-primary-400 shrink-0" />
                               )}
                             </button>
                           );
@@ -297,7 +349,48 @@ export function CommandPalette({ isOpen, onClose }: CommandPaletteProps) {
                                 )}
                               </div>
                               {currentIndex === selectedIndex && (
-                                <ArrowRight size={16} className="text-primary-400 shrink-0" />
+                                <Icon name="arrow_forward" size={16} className="text-primary-400 shrink-0" />
+                              )}
+                            </button>
+                          );
+                        })}
+                      </div>
+                    )}
+
+                    {/* Crops & Presets group */}
+                    {groupedItems.tools.length > 0 && (
+                      <div className="mb-2">
+                        <div className="px-3 py-2 text-xs font-medium text-text-muted uppercase tracking-wider">
+                          Crops &amp; Presets
+                        </div>
+                        {groupedItems.tools.map((item) => {
+                          const currentIndex = itemIndex++;
+                          return (
+                            <button
+                              key={item.id}
+                              data-index={currentIndex}
+                              onClick={() => handleItemClick(item)}
+                              className={cn(
+                                'w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-left transition-colors',
+                                currentIndex === selectedIndex
+                                  ? 'bg-primary-500/20 text-text-primary'
+                                  : 'text-text-secondary hover:bg-overlay hover:text-text-primary'
+                              )}
+                            >
+                              <span className={cn(
+                                'shrink-0',
+                                currentIndex === selectedIndex ? 'text-primary-400' : 'text-text-muted'
+                              )}>
+                                {item.icon}
+                              </span>
+                              <div className="flex-1 min-w-0">
+                                <div className="font-medium truncate">{item.label}</div>
+                                {item.description && (
+                                  <div className="text-sm text-text-muted truncate">{item.description}</div>
+                                )}
+                              </div>
+                              {currentIndex === selectedIndex && (
+                                <Icon name="arrow_forward" size={16} className="text-primary-400 shrink-0" />
                               )}
                             </button>
                           );
@@ -322,7 +415,7 @@ export function CommandPalette({ isOpen, onClose }: CommandPaletteProps) {
                   </span>
                 </div>
                 <span className="flex items-center gap-1">
-                  <Command size={12} />
+                  <Icon name="keyboard_command_key" size={12} />
                   <span>K to toggle</span>
                 </span>
               </div>

@@ -2,17 +2,16 @@ version: '3.8'
 
 services:
   # ---------------------------------------------------------------
-  # Main web app (FastAPI + FOHEM ML routers)
+  # FastAPI backend (FOHEM ML routers)
   # ---------------------------------------------------------------
   web:
     build:
       context: .
       dockerfile: Dockerfile.ml
     ports:
-      - "8000:8000"
+      - "8001:8001"
     volumes:
       - ./backend:/app/backend
-      - ./frontend:/app/frontend
       - ./multisow:/app/multisow
       - app-data:/app/data
     environment:
@@ -26,15 +25,57 @@ services:
       - MULTISOW_MLFLOW_TRACKING_URI=http://mlflow:5000
       - MULTISOW_ENVIRONMENT=production
       - MULTISOW_FOHEM_BOOTSTRAP_ON_STARTUP=true
+      - CORS_ORIGINS=http://localhost:3001,http://frontend:3001
+      - ANTHROPIC_API_KEY=${ANTHROPIC_API_KEY:-}
     depends_on:
-      - influxdb
-      - redis
+      influxdb:
+        condition: service_healthy
+      redis:
+        condition: service_started
     restart: unless-stopped
     healthcheck:
-      test: ["CMD", "python", "-c", "import urllib.request; urllib.request.urlopen('http://localhost:8000/health')"]
+      test: ["CMD", "python", "-c", "import urllib.request; urllib.request.urlopen('http://localhost:8001/health')"]
       interval: 30s
       timeout: 10s
       retries: 3
+
+  # ---------------------------------------------------------------
+  # Next.js frontend
+  # ---------------------------------------------------------------
+  frontend:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - "3001:3001"
+    environment:
+      - PORT=3001
+      - BACKEND_URL=http://web:8001
+      - NEXT_PUBLIC_API_URL=http://localhost:8001
+    depends_on:
+      web:
+        condition: service_healthy
+    restart: unless-stopped
+
+  # ---------------------------------------------------------------
+  # One-shot FOHEM training service (run with: docker compose run train)
+  # ---------------------------------------------------------------
+  train:
+    build:
+      context: .
+      dockerfile: Dockerfile.ml
+    command: >
+      python -m multisow.ml.pipelines.train
+        --epochs 50
+        --output /app/data/models
+    volumes:
+      - ./multisow:/app/multisow
+      - app-data:/app/data
+    environment:
+      - MULTISOW_DATABASE_URL=sqlite:///./sql_app.db
+      - MULTISOW_MLFLOW_TRACKING_URI=http://mlflow:5000
+    profiles:
+      - tools
 
   # ---------------------------------------------------------------
   # InfluxDB 2.x (IoT sensor time-series)

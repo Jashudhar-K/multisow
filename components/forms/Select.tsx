@@ -8,8 +8,8 @@
 
 import { forwardRef, useState, useRef, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { ChevronDown, Check, Search, X, AlertCircle } from 'lucide-react';
-import { cn } from '@/lib/utils';
+import { Icon } from '@/components/ui/Icon';
+import { cn } from '@/lib/index';
 
 export interface SelectOption {
   value: string;
@@ -189,7 +189,7 @@ export const Select = forwardRef<HTMLDivElement, SelectProps>(
 
             <div className="flex items-center gap-1.5">
               {/* Error icon */}
-              {hasError && <AlertCircle size={sizes.icon} className="text-error" />}
+              {hasError && <Icon name="error" size={sizes.icon} className="text-error" />}
 
               {/* Clear button */}
               {clearable && selectedValues.length > 0 && !disabled && (
@@ -198,7 +198,7 @@ export const Select = forwardRef<HTMLDivElement, SelectProps>(
                   onClick={handleClear}
                   className="p-0.5 text-text-muted hover:text-text-secondary transition-colors"
                 >
-                  <X size={sizes.icon} />
+                  <Icon name="close" size={sizes.icon} />
                 </button>
               )}
 
@@ -207,7 +207,7 @@ export const Select = forwardRef<HTMLDivElement, SelectProps>(
                 animate={{ rotate: isOpen ? 180 : 0 }}
                 transition={{ duration: 0.2 }}
               >
-                <ChevronDown size={sizes.icon} className="text-text-muted" />
+                <Icon name="expand_more" size={sizes.icon} className="text-text-muted" />
               </motion.div>
             </div>
           </button>
@@ -226,7 +226,8 @@ export const Select = forwardRef<HTMLDivElement, SelectProps>(
                 {searchable && (
                   <div className="p-2 border-b border-border-subtle">
                     <div className="relative">
-                      <Search
+                      <Icon
+                        name="search"
                         size={14}
                         className="absolute left-3 top-1/2 -translate-y-1/2 text-text-muted"
                       />
@@ -278,7 +279,7 @@ export const Select = forwardRef<HTMLDivElement, SelectProps>(
                                   : 'border-border-default'
                               )}
                             >
-                              {isSelected && <Check size={10} className="text-white" />}
+                              {isSelected && <Icon name="check" size={10} className="text-white" />}
                             </div>
                           )}
 
@@ -301,7 +302,7 @@ export const Select = forwardRef<HTMLDivElement, SelectProps>(
 
                           {/* Check mark for single select */}
                           {!multiple && isSelected && (
-                            <Check size={14} className="text-primary-400 flex-shrink-0" />
+                            <Icon name="check" size={14} className="text-primary-400 flex-shrink-0" />
                           )}
                         </button>
                       );

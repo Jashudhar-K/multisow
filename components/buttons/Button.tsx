@@ -9,15 +9,15 @@
 import { forwardRef, ButtonHTMLAttributes } from 'react';
 import { motion, HTMLMotionProps } from 'framer-motion';
 import Link from 'next/link';
-import { Loader2, LucideIcon } from 'lucide-react';
-import { cn } from '@/lib/utils';
+import { Icon } from '@/components/ui/Icon';
+import { cn } from '@/lib/index';
 
 export interface ButtonProps extends Omit<HTMLMotionProps<'button'>, 'children'> {
   children: React.ReactNode;
   variant?: 'primary' | 'secondary' | 'outline' | 'ghost' | 'danger' | 'success';
   size?: 'xs' | 'sm' | 'md' | 'lg' | 'xl';
-  leftIcon?: LucideIcon;
-  rightIcon?: LucideIcon;
+  leftIcon?: string;
+  rightIcon?: string;
   loading?: boolean;
   disabled?: boolean;
   fullWidth?: boolean;
@@ -86,8 +86,8 @@ export const Button = forwardRef<HTMLButtonElement, ButtonProps>(
       children,
       variant = 'primary',
       size = 'md',
-      leftIcon: LeftIcon,
-      rightIcon: RightIcon,
+      leftIcon: leftIconName,
+      rightIcon: rightIconName,
       loading = false,
       disabled = false,
       fullWidth = false,
@@ -106,17 +106,17 @@ export const Button = forwardRef<HTMLButtonElement, ButtonProps>(
       <>
         {/* Loading spinner */}
         {loading && (
-          <Loader2 size={iconSize} className="animate-spin" />
+          <Icon name="progress_activity" size={iconSize} className="animate-spin" />
         )}
 
         {/* Left icon */}
-        {!loading && LeftIcon && <LeftIcon size={iconSize} />}
+        {!loading && leftIconName && <Icon name={leftIconName} size={iconSize} />}
 
         {/* Label */}
         <span>{children}</span>
 
         {/* Right icon */}
-        {!loading && RightIcon && <RightIcon size={iconSize} />}
+        {!loading && rightIconName && <Icon name={rightIconName} size={iconSize} />}
       </>
     );
 
@@ -182,7 +182,7 @@ Button.displayName = 'Button';
  * IconButton - Square button for icons only
  */
 export interface IconButtonProps extends Omit<HTMLMotionProps<'button'>, 'children'> {
-  icon: LucideIcon;
+  icon: string;
   label: string; // Required for accessibility
   variant?: 'primary' | 'secondary' | 'outline' | 'ghost' | 'danger';
   size?: 'xs' | 'sm' | 'md' | 'lg';
@@ -201,7 +201,7 @@ const iconButtonSizes = {
 export const IconButton = forwardRef<HTMLButtonElement, IconButtonProps>(
   (
     {
-      icon: Icon,
+      icon: iconName,
       label,
       variant = 'ghost',
       size = 'md',
@@ -236,9 +236,9 @@ export const IconButton = forwardRef<HTMLButtonElement, IconButtonProps>(
         {...props}
       >
         {loading ? (
-          <Loader2 size={iconSize} className="animate-spin" />
+          <Icon name="progress_activity" size={iconSize} className="animate-spin" />
         ) : (
-          <Icon size={iconSize} />
+          <Icon name={iconName} size={iconSize} />
         )}
       </motion.button>
     );
@@ -306,7 +306,7 @@ export function ButtonGroup({
  * FloatingActionButton - FAB for primary actions
  */
 export interface FABProps extends Omit<HTMLMotionProps<'button'>, 'children'> {
-  icon: LucideIcon;
+  icon: string;
   label: string;
   extended?: boolean;
   position?: 'bottom-right' | 'bottom-left' | 'bottom-center';
@@ -322,7 +322,7 @@ const fabPositions = {
 export const FAB = forwardRef<HTMLButtonElement, FABProps>(
   (
     {
-      icon: Icon,
+      icon: fabIconName,
       label,
       extended = false,
       position = 'bottom-right',
@@ -353,7 +353,7 @@ export const FAB = forwardRef<HTMLButtonElement, FABProps>(
         animate={{ scale: 1 }}
         {...props}
       >
-        <Icon size={24} />
+        <Icon name={fabIconName} size={24} />
         {extended && <span className="font-medium">{label}</span>}
       </motion.button>
     );

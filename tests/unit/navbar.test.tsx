@@ -10,7 +10,7 @@ describe('Navbar', () => {
 
   it('All nav links are present in DOM', () => {
     render(<Navbar />);
-    const links = ['Features', 'Research', 'Dashboard', 'API Docs', 'GitHub'];
+    const links = ['Home', 'Designer', 'Predict', 'Crops', 'Docs'];
     for (const link of links) {
       expect(screen.getByText(link)).toBeInTheDocument();
     }

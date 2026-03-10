@@ -14,17 +14,8 @@ import {
   ComponentPropsWithoutRef,
 } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import {
-  ChevronUp,
-  ChevronDown,
-  ChevronsUpDown,
-  Search,
-  ChevronLeft,
-  ChevronRight,
-  ChevronsLeft,
-  ChevronsRight,
-} from 'lucide-react';
-import { cn } from '@/lib/utils';
+import { Icon } from '@/components/ui/Icon';
+import { cn } from '@/lib/index';
 
 // ============================================================================
 // Types
@@ -155,7 +146,8 @@ export function DataTable<T extends Record<string, unknown>>({
       {/* Search */}
       {searchable && (
         <div className="relative w-full max-w-sm">
-          <Search
+          <Icon
+            name="search"
             size={16}
             className="absolute left-3 top-1/2 -translate-y-1/2 text-text-muted"
           />
@@ -329,16 +321,17 @@ function SortIcon({
 }) {
   if (!active || !direction) {
     return (
-      <ChevronsUpDown
+      <Icon
+        name="unfold_more"
         size={14}
         className="text-text-muted/50"
       />
     );
   }
   return direction === 'asc' ? (
-    <ChevronUp size={14} className="text-primary-400" />
+    <Icon name="expand_less" size={14} className="text-primary-400" />
   ) : (
-    <ChevronDown size={14} className="text-primary-400" />
+    <Icon name="expand_more" size={14} className="text-primary-400" />
   );
 }
 
@@ -370,13 +363,13 @@ function TablePagination({
           onClick={() => onPageChange(1)}
           disabled={currentPage === 1}
         >
-          <ChevronsLeft size={16} />
+          <Icon name="first_page" size={16} />
         </PaginationButton>
         <PaginationButton
           onClick={() => onPageChange(currentPage - 1)}
           disabled={currentPage === 1}
         >
-          <ChevronLeft size={16} />
+          <Icon name="chevron_left" size={16} />
         </PaginationButton>
 
         <span className="px-3 py-1.5 text-text-primary">
@@ -387,13 +380,13 @@ function TablePagination({
           onClick={() => onPageChange(currentPage + 1)}
           disabled={currentPage === totalPages}
         >
-          <ChevronRight size={16} />
+          <Icon name="chevron_right" size={16} />
         </PaginationButton>
         <PaginationButton
           onClick={() => onPageChange(totalPages)}
           disabled={currentPage === totalPages}
         >
-          <ChevronsRight size={16} />
+          <Icon name="last_page" size={16} />
         </PaginationButton>
       </div>
     </div>

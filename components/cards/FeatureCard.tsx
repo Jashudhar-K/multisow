@@ -8,9 +8,9 @@
 
 import { forwardRef } from 'react';
 import { motion, HTMLMotionProps } from 'framer-motion';
-import { ArrowRight } from 'lucide-react';
+import { Icon } from '@/components/ui/Icon';
 import Link from 'next/link';
-import { cn } from '@/lib/utils';
+import { cn } from '@/lib/index';
 
 export interface FeatureCardProps {
   title: string;
@@ -157,7 +157,8 @@ export const FeatureCard = forwardRef<HTMLDivElement, FeatureCardProps>(
 
           {/* Arrow */}
           {showArrow && isInteractive && (
-            <ArrowRight
+            <Icon
+              name="arrow_forward"
               size={16}
               className="text-text-muted group-hover:text-primary-400 group-hover:translate-x-1 transition-all flex-shrink-0 mt-1"
             />
@@ -247,7 +248,8 @@ export function IconFeatureCard({
         )}
       </div>
       {href && (
-        <ArrowRight
+        <Icon
+          name="arrow_forward"
           size={18}
           className="text-text-muted group-hover:text-primary-400 group-hover:translate-x-1 transition-all flex-shrink-0"
         />

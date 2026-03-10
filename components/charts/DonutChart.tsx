@@ -8,7 +8,7 @@
 
 import { useState, useMemo, useRef } from 'react';
 import { motion, useInView } from 'framer-motion';
-import { cn } from '@/lib/utils';
+import { cn } from '@/lib/index';
 
 export interface DonutChartDataPoint {
   label: string;

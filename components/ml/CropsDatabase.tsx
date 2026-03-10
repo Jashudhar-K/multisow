@@ -2,20 +2,7 @@
 
 import { useState, useEffect } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
-import {
-  Sprout,
-  Loader2,
-  AlertTriangle,
-  Search,
-  Filter,
-  Layers,
-  DollarSign,
-  Ruler,
-  Sun,
-  Leaf,
-} from 'lucide-react'
-
-// ============================================================================
+import { Icon } from '@/components/ui/Icon';// ============================================================================
 // TYPES
 // ============================================================================
 
@@ -110,7 +97,7 @@ export default function CropsDatabase() {
       {/* Header */}
       <div>
         <h2 className="text-xl font-bold text-white flex items-center gap-2">
-          <Sprout className="w-5 h-5 text-lime-400" />
+          <Icon name="agriculture" className="w-5 h-5 text-lime-400" />
           Crops Database
         </h2>
         <p className="text-sm text-neutral-400 mt-1">
@@ -122,7 +109,7 @@ export default function CropsDatabase() {
       <div className="glass rounded-xl p-4 flex flex-col sm:flex-row gap-3">
         {/* Search */}
         <div className="relative flex-1">
-          <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-neutral-400" />
+          <Icon name="search" className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-neutral-400" />
           <input
             value={search}
             onChange={(e) => setSearch(e.target.value)}
@@ -133,7 +120,7 @@ export default function CropsDatabase() {
 
         {/* Layer filter */}
         <div className="flex gap-2 items-center">
-          <Filter className="w-4 h-4 text-neutral-400" />
+          <Icon name="filter_list" className="w-4 h-4 text-neutral-400" />
           {['all', 'canopy', 'middle', 'understory'].map((l) => (
             <button
               key={l}
@@ -165,14 +152,14 @@ export default function CropsDatabase() {
       {/* Loading */}
       {loading && (
         <div className="flex items-center justify-center py-12 text-neutral-400">
-          <Loader2 className="w-5 h-5 animate-spin mr-2" /> Loading crops…
+          <Icon name="progress_activity" className="w-5 h-5 animate-spin mr-2" /> Loading crops…
         </div>
       )}
 
       {/* Error */}
       {error && (
         <div className="glass border border-red-500/30 rounded-xl p-4 flex items-start gap-3">
-          <AlertTriangle className="w-5 h-5 text-red-400 mt-0.5" />
+          <Icon name="warning" className="w-5 h-5 text-red-400 mt-0.5" />
           <p className="text-red-400 text-sm">{error}</p>
         </div>
       )}
@@ -205,22 +192,22 @@ export default function CropsDatabase() {
 
                 <div className="grid grid-cols-2 gap-x-4 gap-y-1 text-xs mt-3">
                   <div className="flex items-center gap-1 text-neutral-400">
-                    <Leaf className="w-3 h-3" /> Yield
+                    <Icon name="eco" className="w-3 h-3" /> Yield
                   </div>
                   <div className="text-white text-right">{crop.typical_yield_t_ha} t/ha</div>
 
                   <div className="flex items-center gap-1 text-neutral-400">
-                    <DollarSign className="w-3 h-3" /> Price
+                    <Icon name="currency_rupee" className="w-3 h-3" /> Price
                   </div>
                   <div className="text-white text-right">₹{crop.price_per_tonne_inr.toLocaleString()}/t</div>
 
                   <div className="flex items-center gap-1 text-neutral-400">
-                    <Ruler className="w-3 h-3" /> Spacing
+                    <Icon name="straighten" className="w-3 h-3" /> Spacing
                   </div>
                   <div className="text-white text-right">{crop.min_spacing_m}–{crop.max_spacing_m}m</div>
 
                   <div className="flex items-center gap-1 text-neutral-400">
-                    <Sun className="w-3 h-3" /> Shade tol.
+                    <Icon name="light_mode" className="w-3 h-3" /> Shade tol.
                   </div>
                   <div className="text-white text-right">{(crop.shade_tolerance * 100).toFixed(0)}%</div>
                 </div>

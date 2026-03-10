@@ -2,18 +2,7 @@
 
 import { useState } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
-import {
-  Calculator,
-  Loader2,
-  AlertTriangle,
-  DollarSign,
-  TrendingUp,
-  Leaf,
-  Droplets,
-  BarChart3,
-} from 'lucide-react'
-
-// ============================================================================
+import { Icon } from '@/components/ui/Icon';// ============================================================================
 // TYPES
 // ============================================================================
 
@@ -125,7 +114,7 @@ export default function ResourceCalculator() {
       {/* Header */}
       <div>
         <h2 className="text-xl font-bold text-white flex items-center gap-2">
-          <Calculator className="w-5 h-5 text-emerald-400" />
+          <Icon name="calculate" className="w-5 h-5 text-emerald-400" />
           Resource Calculator
         </h2>
         <p className="text-sm text-neutral-400 mt-1">
@@ -163,7 +152,7 @@ export default function ResourceCalculator() {
           disabled={loading}
           className="px-6 py-2.5 bg-emerald-500 text-black font-semibold rounded-xl hover:bg-emerald-400 disabled:opacity-50 disabled:cursor-not-allowed transition flex items-center gap-2"
         >
-          {loading ? <Loader2 className="w-4 h-4 animate-spin" /> : <Calculator className="w-4 h-4" />}
+          {loading ? <Icon name="progress_activity" className="w-4 h-4 animate-spin" /> : <Icon name="calculate" className="w-4 h-4" />}
           {loading ? 'Calculating…' : 'Calculate Resources'}
         </button>
       </div>
@@ -171,7 +160,7 @@ export default function ResourceCalculator() {
       {/* Error */}
       {error && (
         <div className="glass border border-red-500/30 rounded-xl p-4 flex items-start gap-3">
-          <AlertTriangle className="w-5 h-5 text-red-400 mt-0.5" />
+          <Icon name="warning" className="w-5 h-5 text-red-400 mt-0.5" />
           <p className="text-red-400 text-sm">{error}</p>
         </div>
       )}
@@ -188,28 +177,28 @@ export default function ResourceCalculator() {
             {/* Summary cards */}
             <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
               <SummaryCard
-                icon={DollarSign}
+                icon="currency_rupee"
                 label="Total Setup Cost"
                 value={`₹${breakdown.total_establishment.toLocaleString()}`}
                 sub={`for ${acres} acres`}
                 color="text-yellow-400"
               />
               <SummaryCard
-                icon={TrendingUp}
+                icon="trending_up"
                 label="Annual Revenue"
                 value={`₹${breakdown.annual_revenue.toLocaleString()}`}
                 sub="projected"
                 color="text-green-400"
               />
               <SummaryCard
-                icon={BarChart3}
+                icon="bar_chart"
                 label="ROI"
                 value={`${breakdown.roi_pct.toFixed(0)}%`}
                 sub="first year"
                 color={breakdown.roi_pct > 50 ? 'text-green-400' : 'text-yellow-400'}
               />
               <SummaryCard
-                icon={DollarSign}
+                icon="currency_rupee"
                 label="Payback"
                 value={`${breakdown.payback_months} mo`}
                 sub="estimated"
@@ -255,13 +244,13 @@ export default function ResourceCalculator() {
 // ============================================================================
 
 function SummaryCard({
-  icon: Icon,
+  icon: iconName,
   label,
   value,
   sub,
   color,
 }: {
-  icon: any
+  icon: string
   label: string
   value: string
   sub: string
@@ -273,7 +262,7 @@ function SummaryCard({
       initial={{ opacity: 0, scale: 0.95 }}
       animate={{ opacity: 1, scale: 1 }}
     >
-      <Icon className={`w-5 h-5 mx-auto mb-2 ${color}`} />
+      <Icon name={iconName} className={`w-5 h-5 mx-auto mb-2 ${color}`} />
       <div className={`text-xl font-bold ${color}`}>{value}</div>
       <div className="text-xs text-neutral-400 mt-0.5">{label}</div>
       <div className="text-[10px] text-neutral-500">{sub}</div>

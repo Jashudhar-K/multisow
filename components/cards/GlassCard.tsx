@@ -8,7 +8,7 @@
 
 import { forwardRef } from 'react';
 import { motion, HTMLMotionProps } from 'framer-motion';
-import { cn } from '@/lib/utils';
+import { cn } from '@/lib/index';
 
 export interface GlassCardProps extends Omit<HTMLMotionProps<'div'>, 'children'> {
   children: React.ReactNode;
@@ -68,7 +68,13 @@ export const GlassCard = forwardRef<HTMLDivElement, GlassCardProps>(
           hover && 'hover:border-border-default hover:shadow-lg cursor-pointer',
           className
         )}
-        {...props}
+        {...(hover
+          ? {
+              whileHover: { y: -3, transition: { duration: 0.2, ease: 'easeOut' } },
+              whileTap: { scale: 0.985 },
+              ...props,
+            }
+          : props)}
       >
         {children}
       </motion.div>

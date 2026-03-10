@@ -8,7 +8,7 @@
 
 import { forwardRef, useState, useRef, useEffect, useCallback } from 'react';
 import { motion } from 'framer-motion';
-import { cn } from '@/lib/utils';
+import { cn } from '@/lib/index';
 
 export interface SliderMark {
   value: number;

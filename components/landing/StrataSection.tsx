@@ -2,7 +2,7 @@
 
 import { motion, useInView } from 'framer-motion'
 import { useRef } from 'react'
-import { TreePine, Leaf, Sprout, Flower2 } from 'lucide-react'
+import { Icon } from '@/components/ui/Icon'
 import type { StrataLayer } from '@/types/landing'
 
 const layers: StrataLayer[] = [
@@ -76,11 +76,11 @@ const layers: StrataLayer[] = [
   },
 ]
 
-const iconMap = {
-  treePine: TreePine,
-  leaf: Leaf,
-  sprout: Sprout,
-  flower: Flower2,
+const materialIconMap: Record<string, string> = {
+  treePine: 'park',
+  leaf: 'eco',
+  sprout: 'energy_savings_leaf',
+  flower: 'grass',
 }
 
 function AnimatedBar({
@@ -187,7 +187,7 @@ export default function StrataSection() {
         {/* Strata Diagram */}
         <div className="max-w-2xl mx-auto">
           {layers.map((layer, index) => {
-            const IconComponent = iconMap[layer.icon as keyof typeof iconMap]
+            const iconName = materialIconMap[layer.icon as keyof typeof materialIconMap]
             return (
               <div key={layer.id}>
                 <motion.div
@@ -211,7 +211,7 @@ export default function StrataSection() {
                     {/* Icon + Labels */}
                     <div className="flex items-center gap-3 sm:w-48 shrink-0">
                       <div className="w-10 h-10 rounded-lg bg-white/10 flex items-center justify-center">
-                        <IconComponent size={20} className="text-green-400" />
+                        <Icon name={iconName ?? 'help'} size={20} className="text-green-400" />
                       </div>
                       <div>
                         <span className="text-[10px] uppercase tracking-widest text-green-400/80 font-medium">

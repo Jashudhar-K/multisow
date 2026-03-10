@@ -1,10 +1,41 @@
 import { render, screen, fireEvent } from '@testing-library/react';
+import { describe, it, expect, vi } from 'vitest';
+
+// Mock @react-three/fiber to avoid WebGL/Canvas errors in jsdom
+vi.mock('@react-three/fiber', () => ({
+  Canvas: ({ children }: { children: React.ReactNode }) => (
+    <div data-testid="r3f-canvas">{children}</div>
+  ),
+  useFrame: vi.fn(),
+  useThree: vi.fn(() => ({ camera: {}, gl: { domElement: document.createElement('canvas') }, scene: {} })),
+  extend: vi.fn(),
+}));
+
+// Mock @react-three/drei to avoid WebGL issues in jsdom
+vi.mock('@react-three/drei', () => ({
+  OrbitControls: () => null,
+  Environment: () => null,
+  Grid: () => null,
+  Html: ({ children }: { children: React.ReactNode }) => <div>{children}</div>,
+  PerspectiveCamera: () => null,
+  Sky: () => null,
+  Plane: () => null,
+  Line: () => null,
+  useTexture: vi.fn(() => ({})),
+  Text: ({ children }: { children: React.ReactNode }) => <span>{children}</span>,
+  Box: () => null,
+  Sphere: () => null,
+  Cylinder: () => null,
+  Float: ({ children }: { children: React.ReactNode }) => <>{children}</>,
+  Sparkles: () => null,
+  useGLTF: vi.fn(() => ({ scene: null })),
+}));
+
 import FarmCanvas from '@/components/farm/FarmScene';
-import { describe, it, expect } from 'vitest';
 
 describe('FarmCanvas', () => {
   it('Renders without crashing', () => {
-    render(<FarmCanvas plants={[]} overlays={{ sunlight: false, rootCompetition: false, waterZones: false }} />);
+    render(<FarmCanvas plants={[]} />);
     expect(screen.getByTestId('farm-canvas')).toBeInTheDocument();
   });
 

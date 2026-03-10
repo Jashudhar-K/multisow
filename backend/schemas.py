@@ -15,6 +15,10 @@ class CropBase(BaseModel):
     name: str
     stratum_id: int
     light_requirement: str
+    soil_type_compatibility: Optional[list] = None
+    intercrop_layer: Optional[str] = None
+    spacing_m: Optional[float] = None
+    yield_t_ha: Optional[float] = None
 
 class CropCreate(CropBase):
     pass

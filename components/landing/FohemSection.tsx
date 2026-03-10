@@ -2,7 +2,7 @@
 
 import { motion, useInView } from 'framer-motion'
 import { useRef } from 'react'
-import { Brain, Network, Zap, Dna } from 'lucide-react'
+import { Icon } from '@/components/ui/Icon'
 import {
   GlassCard,
   GlassCardContent,
@@ -44,11 +44,11 @@ const cards: FohemCard[] = [
   },
 ]
 
-const iconMap = {
-  brain: Brain,
-  network: Network,
-  zap: Zap,
-  dna: Dna,
+const materialIconMap: Record<string, string> = {
+  brain: 'psychology',
+  network: 'account_tree',
+  zap: 'bolt',
+  dna: 'genetics',
 }
 
 const colorStyles = {
@@ -94,7 +94,7 @@ export default function FohemSection() {
         {/* Card Grid */}
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 mb-16">
           {cards.map((card, index) => {
-            const IconComponent = iconMap[card.icon as keyof typeof iconMap]
+            const iconName = materialIconMap[card.icon] ?? 'help'
             const colors = colorStyles[card.color as keyof typeof colorStyles]
             return (
               <GlassCard
@@ -116,7 +116,7 @@ export default function FohemSection() {
                   <div
                     className={`w-12 h-12 rounded-xl flex items-center justify-center ${colors.icon}`}
                   >
-                    <IconComponent size={24} />
+                    <Icon name={iconName} size={24} />
                   </div>
                   <h3 className="text-text-primary font-bold text-xl">{card.title}</h3>
                   <p className="text-text-secondary text-sm leading-relaxed flex-1">

@@ -1,9 +1,9 @@
-import PageLayout from '@/components/layout/PageLayout';
+/**
+ * /settings — Redirects to /profile.
+ * Settings functionality has been consolidated into the Profile page.
+ */
+import { redirect } from 'next/navigation'
 
 export default function SettingsPage() {
-  return (
-    <PageLayout title="Settings">
-      <div className="glass p-8 text-white text-lg text-center">Settings content coming soon.</div>
-    </PageLayout>
-  );
+  redirect('/profile')
 }

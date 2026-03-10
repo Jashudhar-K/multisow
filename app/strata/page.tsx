@@ -4,7 +4,7 @@ import Link from 'next/link';
 import { useSearchParams } from 'next/navigation';
 import { useEffect, useState, Suspense, useMemo } from 'react';
 import dynamic from 'next/dynamic';
-import { X, Eye, Maximize2, RotateCcw } from 'lucide-react';
+import { Icon } from '@/components/ui/Icon';
 import { generatePlantsFromModel, generateRowsFromModel } from '@/lib/generatePlantsFromModel';
 
 // Dynamically import FarmScene to avoid SSR issues
@@ -147,21 +147,21 @@ function Model3DPreview({ model, onClose }: { model: typeof cropModels[0]; onClo
               className="p-2 rounded-lg text-neutral-400 hover:text-white hover:bg-white/10 transition-colors"
               title="Reset View"
             >
-              <RotateCcw size={20} />
+              <Icon name="refresh" size={20} />
             </button>
             <button
               onClick={() => setIsFullscreen(!isFullscreen)}
               className="p-2 rounded-lg text-neutral-400 hover:text-white hover:bg-white/10 transition-colors"
               title={isFullscreen ? 'Exit Fullscreen' : 'Fullscreen'}
             >
-              <Maximize2 size={20} />
+              <Icon name="fullscreen" size={20} />
             </button>
             <button
               onClick={onClose}
               className="p-2 rounded-lg text-neutral-400 hover:text-white hover:bg-white/10 transition-colors"
               title="Close"
             >
-              <X size={20} />
+              <Icon name="close" size={20} />
             </button>
           </div>
         </div>
@@ -352,7 +352,7 @@ function StrataContent() {
                   onClick={() => setPreviewModel(model)}
                   className="w-full flex items-center justify-center gap-2 px-4 py-2.5 bg-green-600 hover:bg-green-500 text-white rounded-xl font-semibold transition-colors"
                 >
-                  <Eye size={18} />
+                  <Icon name="visibility" size={18} />
                   View 3D Model
                 </button>
               </div>

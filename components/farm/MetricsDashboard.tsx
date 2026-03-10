@@ -2,23 +2,7 @@
 
 import { useState, useMemo, useRef, useEffect } from 'react'
 import { motion, useInView, AnimatePresence } from 'framer-motion'
-import {
-  BarChart3,
-  TrendingUp,
-  Droplets,
-  Leaf,
-  Sun,
-  TreeDeciduous,
-  Map,
-  DollarSign,
-  Layers,
-  Activity,
-  ChevronDown,
-  ChevronUp,
-  RefreshCw,
-  Download,
-  Info,
-} from 'lucide-react'
+import { Icon } from '@/components/ui/Icon'
 import type { FarmMetrics, YieldForecast, LightInterceptionResult, StrataLayerId } from '@/types/farm'
 
 // ============================================================================
@@ -68,7 +52,7 @@ interface StatCardProps {
   value: number
   unit: string
   prefix?: string
-  icon: typeof BarChart3
+  icon: string
   color: string
   bgColor: string
   trend?: number
@@ -81,7 +65,7 @@ function StatCard({
   value,
   unit,
   prefix = '',
-  icon: Icon,
+  icon: iconName,
   color,
   bgColor,
   trend,
@@ -110,7 +94,7 @@ function StatCard({
 
       {/* Icon */}
       <div className={`inline-flex p-2 rounded-lg ${bgColor} mb-3`}>
-        <Icon size={20} className={color} />
+        <Icon name={iconName} size={20} className={color} />
       </div>
 
       {/* Value */}
@@ -138,7 +122,7 @@ function StatCard({
       {description && (
         <div className="absolute top-2 right-2 opacity-0 group-hover:opacity-100 transition-opacity">
           <div className="relative group/tip">
-            <Info size={14} className="text-neutral-500" />
+            <Icon name="info" size={14} className="text-neutral-500" />
             <div className="absolute right-0 top-full mt-1 w-48 p-2 rounded-lg bg-black/90 text-xs text-neutral-300 opacity-0 group-hover/tip:opacity-100 transition-opacity z-10">
               {description}
             </div>
@@ -241,7 +225,7 @@ function LightInterceptionDiagram({ layers }: LightInterceptionDiagramProps) {
           animate={isInView ? { opacity: 1, scale: 1 } : {}}
           className="p-2 rounded-full bg-yellow-500/20"
         >
-          <Sun size={24} className="text-yellow-400" />
+          <Icon name="light_mode" size={24} className="text-yellow-400" />
         </motion.div>
       </div>
 
@@ -514,7 +498,7 @@ export default function MetricsDashboard({
       {/* Header */}
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-2">
-          <Activity size={20} className="text-green-400" />
+          <Icon name="monitoring" size={20} className="text-green-400" />
           <h2 className="text-lg font-bold text-white">Real-time Analytics</h2>
         </div>
         <div className="flex items-center gap-2">
@@ -525,7 +509,7 @@ export default function MetricsDashboard({
               title="Refresh"
               className="p-2 rounded-lg bg-white/5 text-neutral-400 hover:bg-white/10 hover:text-white transition-all disabled:opacity-50"
             >
-              <RefreshCw size={16} className={isLoading ? 'animate-spin' : ''} />
+              <Icon name="refresh" size={16} className={isLoading ? 'animate-spin' : ''} />
             </button>
           )}
           {onExport && (
@@ -534,7 +518,7 @@ export default function MetricsDashboard({
               title="Export"
               className="p-2 rounded-lg bg-white/5 text-neutral-400 hover:bg-white/10 hover:text-white transition-all"
             >
-              <Download size={16} />
+              <Icon name="download" size={16} />
             </button>
           )}
         </div>
@@ -546,7 +530,7 @@ export default function MetricsDashboard({
           label="Total Area"
           value={metrics.totalArea}
           unit="ha"
-          icon={Map}
+          icon="map"
           color="text-blue-400"
           bgColor="bg-blue-500/10"
           decimals={2}
@@ -556,7 +540,7 @@ export default function MetricsDashboard({
           label="Tree Density"
           value={metrics.treeDensity}
           unit="/ha"
-          icon={TreeDeciduous}
+          icon="park"
           color="text-green-400"
           bgColor="bg-green-500/10"
           trend={5}
@@ -566,7 +550,7 @@ export default function MetricsDashboard({
           label="Land Equivalent Ratio"
           value={metrics.ler}
           unit=""
-          icon={Layers}
+          icon="layers"
           color="text-emerald-400"
           bgColor="bg-emerald-500/10"
           trend={12}
@@ -577,7 +561,7 @@ export default function MetricsDashboard({
           label="Water Savings"
           value={metrics.waterSavings}
           unit="%"
-          icon={Droplets}
+          icon="water_drop"
           color="text-cyan-400"
           bgColor="bg-cyan-500/10"
           description="Water saved compared to conventional farming"
@@ -586,7 +570,7 @@ export default function MetricsDashboard({
           label="Carbon Capture"
           value={metrics.carbonSequestration}
           unit="t/yr"
-          icon={Leaf}
+          icon="eco"
           color="text-teal-400"
           bgColor="bg-teal-500/10"
           decimals={1}
@@ -597,7 +581,7 @@ export default function MetricsDashboard({
           value={metrics.totalRevenue / 1000}
           unit="k/yr"
           prefix="₹"
-          icon={DollarSign}
+          icon="currency_rupee"
           color="text-amber-400"
           bgColor="bg-amber-500/10"
           trend={8}
@@ -614,15 +598,15 @@ export default function MetricsDashboard({
             className="w-full flex items-center justify-between p-4"
           >
             <div className="flex items-center gap-2">
-              <Sun size={18} className="text-yellow-400" />
+              <Icon name="light_mode" size={18} className="text-yellow-400" />
               <span className="text-sm font-medium text-white">
                 Light Interception (Beer-Lambert)
               </span>
             </div>
             {expandedSection === 'light' ? (
-              <ChevronUp size={18} className="text-neutral-400" />
+              <Icon name="expand_less" size={18} className="text-neutral-400" />
             ) : (
-              <ChevronDown size={18} className="text-neutral-400" />
+              <Icon name="expand_more" size={18} className="text-neutral-400" />
             )}
           </button>
           <AnimatePresence>
@@ -646,13 +630,13 @@ export default function MetricsDashboard({
             className="w-full flex items-center justify-between p-4"
           >
             <div className="flex items-center gap-2">
-              <BarChart3 size={18} className="text-green-400" />
+              <Icon name="bar_chart" size={18} className="text-green-400" />
               <span className="text-sm font-medium text-white">LER Breakdown</span>
             </div>
             {expandedSection === 'ler' ? (
-              <ChevronUp size={18} className="text-neutral-400" />
+              <Icon name="expand_less" size={18} className="text-neutral-400" />
             ) : (
-              <ChevronDown size={18} className="text-neutral-400" />
+              <Icon name="expand_more" size={18} className="text-neutral-400" />
             )}
           </button>
           <AnimatePresence>
@@ -676,13 +660,13 @@ export default function MetricsDashboard({
             className="w-full flex items-center justify-between p-4"
           >
             <div className="flex items-center gap-2">
-              <TrendingUp size={18} className="text-emerald-400" />
+              <Icon name="trending_up" size={18} className="text-emerald-400" />
               <span className="text-sm font-medium text-white">Revenue Forecast</span>
             </div>
             {expandedSection === 'forecast' ? (
-              <ChevronUp size={18} className="text-neutral-400" />
+              <Icon name="expand_less" size={18} className="text-neutral-400" />
             ) : (
-              <ChevronDown size={18} className="text-neutral-400" />
+              <Icon name="expand_more" size={18} className="text-neutral-400" />
             )}
           </button>
           <AnimatePresence>

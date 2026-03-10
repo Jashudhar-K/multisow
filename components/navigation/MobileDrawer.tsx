@@ -10,26 +10,8 @@ import { useState, useEffect, useCallback } from 'react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { motion, AnimatePresence } from 'framer-motion';
-import {
-  X,
-  LayoutDashboard,
-  Layers,
-  Calculator,
-  Wand2,
-  LineChart,
-  Cog,
-  BookOpen,
-  Sprout,
-  Map,
-  PenTool,
-  Brain,
-  Save,
-  Beaker,
-  User,
-  Settings,
-  LogOut,
-} from 'lucide-react';
-import { cn } from '@/lib/utils';
+import { Icon } from '@/components/ui/Icon';
+import { cn } from '@/lib/index';
 import { slideInFromLeft, staggerContainer, staggerItem } from '@/lib/animations';
 
 interface NavItem {
@@ -40,19 +22,19 @@ interface NavItem {
 }
 
 const navItems: NavItem[] = [
-  { href: '/dashboard', label: 'Dashboard', icon: <LayoutDashboard size={20} />, description: 'Overview & analytics' },
-  { href: '/strata', label: 'Strata Builder', icon: <Layers size={20} />, description: 'Design crop layers' },
-  { href: '/crops', label: 'Crops Database', icon: <Sprout size={20} />, description: 'Browse all crops' },
-  { href: '/farm', label: 'Farm View', icon: <Map size={20} />, description: '3D farm visualization' },
-  { href: '/designer', label: 'Designer', icon: <PenTool size={20} />, description: 'Visual crop designer' },
-  { href: '/calc', label: 'Calculator', icon: <Calculator size={20} />, description: 'Spacing & yield' },
-  { href: '/optimize', label: 'Optimizer', icon: <Wand2 size={20} />, description: 'AI optimization' },
-  { href: '/predict', label: 'Predictions', icon: <LineChart size={20} />, description: 'Yield predictions' },
-  { href: '/custom-model', label: 'Custom Model', icon: <Cog size={20} />, description: 'Train your model' },
-  { href: '/presets', label: 'Presets', icon: <Save size={20} />, description: 'Regional templates' },
-  { href: '/ai-advisor', label: 'AI Advisor', icon: <Brain size={20} />, description: 'Smart recommendations' },
-  { href: '/research', label: 'Research', icon: <Beaker size={20} />, description: 'Latest studies' },
-  { href: '/docs', label: 'Documentation', icon: <BookOpen size={20} />, description: 'Guides & API' },
+  { href: '/dashboard', label: 'Dashboard', icon: <Icon name="dashboard" size={20} />, description: 'Overview & analytics' },
+  { href: '/strata', label: 'Strata Builder', icon: <Icon name="layers" size={20} />, description: 'Design crop layers' },
+  { href: '/crops', label: 'Crops Database', icon: <Icon name="agriculture" size={20} />, description: 'Browse all crops' },
+  { href: '/farm', label: 'Farm View', icon: <Icon name="map" size={20} />, description: '3D farm visualization' },
+  { href: '/designer', label: 'Designer', icon: <Icon name="draw" size={20} />, description: 'Visual crop designer' },
+  { href: '/calc', label: 'Calculator', icon: <Icon name="calculate" size={20} />, description: 'Spacing & yield' },
+  { href: '/optimize', label: 'Optimizer', icon: <Icon name="auto_fix_high" size={20} />, description: 'AI optimization' },
+  { href: '/predict', label: 'Predictions', icon: <Icon name="show_chart" size={20} />, description: 'Yield predictions' },
+  { href: '/custom-model', label: 'Custom Model', icon: <Icon name="settings" size={20} />, description: 'Train your model' },
+  { href: '/presets', label: 'Presets', icon: <Icon name="save" size={20} />, description: 'Regional templates' },
+  { href: '/ai-advisor', label: 'AI Advisor', icon: <Icon name="psychology" size={20} />, description: 'Smart recommendations' },
+  { href: '/research', label: 'Research', icon: <Icon name="science" size={20} />, description: 'Latest studies' },
+  { href: '/docs', label: 'Documentation', icon: <Icon name="menu_book" size={20} />, description: 'Guides & API' },
 ];
 
 interface UserData {
@@ -117,7 +99,7 @@ export function MobileDrawer({ isOpen, onClose, user, onLogout }: MobileDrawerPr
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
             transition={{ duration: 0.2 }}
-            className="fixed inset-0 bg-black/60 backdrop-blur-sm z-[var(--z-overlay)]"
+            className="fixed inset-0 bg-black/60 backdrop-blur-sm z-overlay"
             onClick={onClose}
           />
 
@@ -127,13 +109,13 @@ export function MobileDrawer({ isOpen, onClose, user, onLogout }: MobileDrawerPr
             initial="hidden"
             animate="visible"
             exit="exit"
-            className="fixed inset-y-0 left-0 w-[85%] max-w-sm bg-background border-r border-border-default z-[var(--z-modal)] flex flex-col"
+            className="fixed inset-y-0 left-0 w-[85%] max-w-sm bg-background border-r border-border-default z-modal flex flex-col"
           >
             {/* Header */}
             <div className="flex items-center justify-between p-4 border-b border-border-subtle">
               <Link href="/" onClick={onClose} className="flex items-center gap-2">
                 <div className="w-8 h-8 rounded-lg bg-primary-600 flex items-center justify-center">
-                  <Sprout size={18} className="text-white" />
+                  <Icon name="agriculture" size={18} className="text-white" />
                 </div>
                 <span className="text-lg font-semibold text-text-primary tracking-tight">
                   MultiSow
@@ -144,7 +126,7 @@ export function MobileDrawer({ isOpen, onClose, user, onLogout }: MobileDrawerPr
                 className="p-2 rounded-lg hover:bg-surface transition-colors"
                 aria-label="Close menu"
               >
-                <X size={20} className="text-text-secondary" />
+                <Icon name="close" size={20} className="text-text-secondary" />
               </button>
             </div>
 
@@ -214,14 +196,14 @@ export function MobileDrawer({ isOpen, onClose, user, onLogout }: MobileDrawerPr
                       href="/profile"
                       className="flex-1 flex items-center justify-center gap-2 px-3 py-2 text-sm text-text-secondary bg-surface rounded-lg hover:bg-overlay transition-colors"
                     >
-                      <User size={16} />
+                      <Icon name="person" size={16} />
                       Profile
                     </Link>
                     <Link
                       href="/settings"
                       className="flex-1 flex items-center justify-center gap-2 px-3 py-2 text-sm text-text-secondary bg-surface rounded-lg hover:bg-overlay transition-colors"
                     >
-                      <Settings size={16} />
+                      <Icon name="settings" size={16} />
                       Settings
                     </Link>
                   </div>
@@ -234,7 +216,7 @@ export function MobileDrawer({ isOpen, onClose, user, onLogout }: MobileDrawerPr
                     }}
                     className="w-full flex items-center justify-center gap-2 px-3 py-2 text-sm text-error bg-error-bg rounded-lg hover:bg-error/20 transition-colors"
                   >
-                    <LogOut size={16} />
+                    <Icon name="logout" size={16} />
                     Log out
                   </button>
                 </div>

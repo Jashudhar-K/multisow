@@ -4,7 +4,9 @@ import { DM_Sans, Inter, JetBrains_Mono } from 'next/font/google';
 import { ErrorBoundary } from '@/components/ui/ErrorBoundary';
 import { SkeletonCard } from '@/components/ui/SkeletonCard';
 import SidebarLayout from '@/components/layout/SidebarLayout';
-import { ThemeProvider } from '@/components/theme';
+import { ThemeProvider } from '@/components/theme/ThemeProvider';
+import { AIFarmProvider } from '@/context/AIFarmContext';
+import { AuthProvider } from '@/components/auth/AuthProvider';
 
 // Typography: DM Sans for body, Inter for display headings
 const dmSans = DM_Sans({ 
@@ -56,13 +58,25 @@ export default function RootLayout({
         <meta name="twitter:description" content="Design the perfect 4-layer intercropping system for your land with stratified AI. Maximise yield, minimise resource waste." />
         <meta name="twitter:image" content="/og-image.png" />
         <link rel="icon" href="/favicon.ico" />
+        <link rel="manifest" href="/manifest.json" />
+        <link rel="preconnect" href={process.env.NEXT_PUBLIC_API_URL ?? 'http://localhost:8001'} />
+        <link rel="preconnect" href="https://fonts.googleapis.com" />
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
+        <link
+          rel="stylesheet"
+          href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200&display=swap"
+        />
       </head>
       <body className="antialiased">
-        <ThemeProvider defaultTheme="dark">
-          <ErrorBoundary fallback={<SkeletonCard className="max-w-xl mx-auto mt-24" lines={6} />}>
-            <SidebarLayout>{children}</SidebarLayout>
-          </ErrorBoundary>
-        </ThemeProvider>
+        <AuthProvider>
+          <ThemeProvider defaultTheme="dark">
+            <AIFarmProvider>
+              <ErrorBoundary fallback={<SkeletonCard className="max-w-xl mx-auto mt-24" lines={6} />}>
+                <SidebarLayout>{children}</SidebarLayout>
+              </ErrorBoundary>
+            </AIFarmProvider>
+          </ThemeProvider>
+        </AuthProvider>
       </body>
     </html>
   );

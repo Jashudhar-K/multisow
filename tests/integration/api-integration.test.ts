@@ -1,6 +1,7 @@
+// SKIP: references deprecated routes (/soils, /strata/design, /advisor/compatibility) — needs update
 import { describe, it, expect } from 'vitest';
 
-const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000/api';
+const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8001/api';
 
 async function fetchApi(path: string, options?: RequestInit) {
   const res = await fetch(`${API_URL}${path}`, options);

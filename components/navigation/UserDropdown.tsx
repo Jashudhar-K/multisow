@@ -9,15 +9,8 @@
 import { useState, useRef, useEffect } from 'react';
 import Link from 'next/link';
 import { motion, AnimatePresence } from 'framer-motion';
-import {
-  User,
-  Settings,
-  LogOut,
-  LayoutDashboard,
-  HelpCircle,
-  ChevronDown,
-} from 'lucide-react';
-import { cn } from '@/lib/utils';
+import { Icon } from '@/components/ui/Icon';
+import { cn } from '@/lib/index';
 import { dropdownVariants } from '@/lib/animations';
 
 interface UserData {
@@ -112,7 +105,8 @@ export function UserDropdown({ user, onLogin, onLogout, className }: UserDropdow
           {user.name}
         </span>
         
-        <ChevronDown 
+        <Icon 
+          name="expand_more" 
           size={16} 
           className={cn(
             'text-text-muted transition-transform duration-200',
@@ -147,7 +141,7 @@ export function UserDropdown({ user, onLogin, onLogout, className }: UserDropdow
                   onClick={() => setIsOpen(false)}
                   className="flex items-center gap-3 px-4 py-2.5 text-sm text-text-secondary hover:text-text-primary hover:bg-overlay transition-colors"
                 >
-                  <LayoutDashboard size={16} />
+                  <Icon name="dashboard" size={16} />
                   Dashboard
                 </Link>
                 <Link
@@ -155,7 +149,7 @@ export function UserDropdown({ user, onLogin, onLogout, className }: UserDropdow
                   onClick={() => setIsOpen(false)}
                   className="flex items-center gap-3 px-4 py-2.5 text-sm text-text-secondary hover:text-text-primary hover:bg-overlay transition-colors"
                 >
-                  <User size={16} />
+                  <Icon name="person" size={16} />
                   Profile
                 </Link>
                 <Link
@@ -163,7 +157,7 @@ export function UserDropdown({ user, onLogin, onLogout, className }: UserDropdow
                   onClick={() => setIsOpen(false)}
                   className="flex items-center gap-3 px-4 py-2.5 text-sm text-text-secondary hover:text-text-primary hover:bg-overlay transition-colors"
                 >
-                  <Settings size={16} />
+                  <Icon name="settings" size={16} />
                   Settings
                 </Link>
                 <Link
@@ -171,7 +165,7 @@ export function UserDropdown({ user, onLogin, onLogout, className }: UserDropdow
                   onClick={() => setIsOpen(false)}
                   className="flex items-center gap-3 px-4 py-2.5 text-sm text-text-secondary hover:text-text-primary hover:bg-overlay transition-colors"
                 >
-                  <HelpCircle size={16} />
+                  <Icon name="help" size={16} />
                   Help & Docs
                 </Link>
               </div>
@@ -185,7 +179,7 @@ export function UserDropdown({ user, onLogin, onLogout, className }: UserDropdow
                   }}
                   className="flex items-center gap-3 w-full px-4 py-2.5 text-sm text-error hover:bg-error-bg transition-colors"
                 >
-                  <LogOut size={16} />
+                  <Icon name="logout" size={16} />
                   Log out
                 </button>
               </div>

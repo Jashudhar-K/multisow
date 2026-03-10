@@ -8,8 +8,8 @@
 
 import { forwardRef, useState, InputHTMLAttributes } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Eye, EyeOff, AlertCircle, CheckCircle, LucideIcon, Search, X } from 'lucide-react';
-import { cn } from '@/lib/utils';
+import { Icon } from '@/components/ui/Icon';
+import { cn } from '@/lib/index';
 
 export interface InputProps extends Omit<InputHTMLAttributes<HTMLInputElement>, 'size'> {
   label?: string;
@@ -17,8 +17,8 @@ export interface InputProps extends Omit<InputHTMLAttributes<HTMLInputElement>, 
   error?: string;
   success?: string;
   hint?: string;
-  leftIcon?: LucideIcon;
-  rightIcon?: LucideIcon;
+  leftIcon?: string;
+  rightIcon?: string;
   leftAddon?: React.ReactNode;
   rightAddon?: React.ReactNode;
   size?: 'sm' | 'md' | 'lg';
@@ -61,8 +61,8 @@ export const Input = forwardRef<HTMLInputElement, InputProps>(
       error,
       success,
       hint,
-      leftIcon: LeftIcon,
-      rightIcon: RightIcon,
+      leftIcon: leftIconName,
+      rightIcon: rightIconName,
       leftAddon,
       rightAddon,
       size = 'md',
@@ -114,9 +114,9 @@ export const Input = forwardRef<HTMLInputElement, InputProps>(
           {/* Input Wrapper */}
           <div className="relative flex-1">
             {/* Left Icon */}
-            {(LeftIcon || isSearch) && (
+            {(leftIconName || isSearch) && (
               <div className="absolute left-3 top-1/2 -translate-y-1/2 text-text-muted">
-                {isSearch ? <Search size={sizes.icon} /> : LeftIcon && <LeftIcon size={sizes.icon} />}
+                <Icon name={leftIconName || 'search'} size={sizes.icon} />
               </div>
             )}
 
@@ -132,9 +132,9 @@ export const Input = forwardRef<HTMLInputElement, InputProps>(
                 variantStyles[variant],
                 sizes.input,
                 // Left padding for icon
-                (LeftIcon || isSearch) && 'pl-10',
+                (leftIconName || isSearch) && 'pl-10',
                 // Right padding for icons/buttons
-                (RightIcon || isPassword || clearable || hasError || hasSuccess) && 'pr-10',
+                (rightIconName || isPassword || clearable || hasError || hasSuccess) && 'pr-10',
                 // Addons
                 leftAddon && 'rounded-l-none',
                 rightAddon && 'rounded-r-none',
@@ -164,7 +164,7 @@ export const Input = forwardRef<HTMLInputElement, InputProps>(
                   onClick={onClear}
                   className="p-0.5 text-text-muted hover:text-text-secondary transition-colors"
                 >
-                  <X size={sizes.icon} />
+                  <Icon name="close" size={sizes.icon} />
                 </button>
               )}
 
@@ -175,17 +175,17 @@ export const Input = forwardRef<HTMLInputElement, InputProps>(
                   onClick={() => setShowPassword(!showPassword)}
                   className="p-0.5 text-text-muted hover:text-text-secondary transition-colors"
                 >
-                  {showPassword ? <EyeOff size={sizes.icon} /> : <Eye size={sizes.icon} />}
+                  {showPassword ? <Icon name="visibility_off" size={sizes.icon} /> : <Icon name="visibility" size={sizes.icon} />}
                 </button>
               )}
 
               {/* Status icons */}
-              {hasError && !isPassword && <AlertCircle size={sizes.icon} className="text-error" />}
-              {hasSuccess && !hasError && !isPassword && <CheckCircle size={sizes.icon} className="text-success" />}
+              {hasError && !isPassword && <Icon name="error" size={sizes.icon} className="text-error" />}
+              {hasSuccess && !hasError && !isPassword && <Icon name="check_circle" size={sizes.icon} className="text-success" />}
 
               {/* Custom right icon */}
-              {RightIcon && !hasError && !hasSuccess && !isPassword && !clearable && (
-                <RightIcon size={sizes.icon} className="text-text-muted" />
+              {rightIconName && !hasError && !hasSuccess && !isPassword && !clearable && (
+                <Icon name={rightIconName} size={sizes.icon} className="text-text-muted" />
               )}
             </div>
           </div>

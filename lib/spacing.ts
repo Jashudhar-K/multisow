@@ -183,3 +183,59 @@ function inferDensity(count: number, farmArea: number, layer: StrataLayer): Targ
 export function getCropData(species: string) {
   return SPACING_DATABASE[species.toLowerCase()] || null;
 }
+
+// ---------------------------------------------------------------------------
+// Standalone helper functions (used by tests and external modules)
+// ---------------------------------------------------------------------------
+
+/**
+ * Calculate plants-per-hectare for a given spacing grid.
+ * An optional density modifier tightens ('high') or loosens ('low') the grid.
+ *
+ * @param rowSpacingM     Row spacing in metres
+ * @param inRowSpacingM   In-row (plant) spacing in metres
+ * @param density         Optional density adjustment
+ */
+export function plantsPerHectare(
+  rowSpacingM: number,
+  inRowSpacingM: number,
+  density?: TargetDensity
+): number {
+  const factor =
+    density === 'high' ? 0.8 :
+    density === 'low'  ? 1.2 : 1.0;
+  const r = rowSpacingM * factor;
+  const c = inRowSpacingM * factor;
+  if (r <= 0 || c <= 0) return 0;
+  return Math.floor(10000 / (r * c));
+}
+
+/**
+ * Return the recommended row spacing for a species / layer combination.
+ *
+ * @param species  Crop name (case-insensitive)
+ * @param layer    Strata layer
+ * @param density  Target density (default: 'medium')
+ */
+export function rowSpacing(
+  species: string,
+  layer: StrataLayer,
+  density: TargetDensity = 'medium'
+): number {
+  return calculateOptimalSpacing(species, layer, 10000, density).rowSpacing;
+}
+
+/**
+ * Return the recommended in-row spacing for a species / layer combination.
+ *
+ * @param species  Crop name (case-insensitive)
+ * @param layer    Strata layer
+ * @param density  Target density (default: 'medium')
+ */
+export function inRowSpacing(
+  species: string,
+  layer: StrataLayer,
+  density: TargetDensity = 'medium'
+): number {
+  return calculateOptimalSpacing(species, layer, 10000, density).inRowSpacing;
+}

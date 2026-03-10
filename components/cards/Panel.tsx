@@ -8,8 +8,8 @@
 
 import { forwardRef, useState, createContext, useContext } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { ChevronDown, ChevronRight, LucideIcon } from 'lucide-react';
-import { cn } from '@/lib/utils';
+import { Icon } from '@/components/ui/Icon';
+import { cn } from '@/lib/index';
 
 // ============================================================================
 // Panel Context
@@ -81,7 +81,7 @@ export function Panel({
 
 export interface PanelHeaderProps {
   children: React.ReactNode;
-  icon?: LucideIcon;
+  icon?: string;
   collapsible?: boolean;
   actions?: React.ReactNode;
   className?: string;
@@ -89,7 +89,7 @@ export interface PanelHeaderProps {
 
 export function PanelHeader({
   children,
-  icon: Icon,
+  icon: iconName,
   collapsible = true,
   actions,
   className,
@@ -111,10 +111,10 @@ export function PanelHeader({
             animate={{ rotate: isOpen ? 0 : -90 }}
             transition={{ duration: 0.2 }}
           >
-            <ChevronDown size={18} className="text-text-muted" />
+            <Icon name="expand_more" size={18} className="text-text-muted" />
           </motion.div>
         )}
-        {Icon && <Icon size={18} className="text-text-muted flex-shrink-0" />}
+        {iconName && <Icon name={iconName} size={18} className="text-text-muted flex-shrink-0" />}
         <div className="min-w-0 flex-1">{children}</div>
       </div>
       {actions && (
@@ -183,7 +183,7 @@ export interface SectionProps {
   children: React.ReactNode;
   title?: string;
   description?: string;
-  icon?: LucideIcon;
+  icon?: string;
   actions?: React.ReactNode;
   variant?: 'default' | 'card' | 'transparent';
   className?: string;
@@ -195,7 +195,7 @@ export const Section = forwardRef<HTMLDivElement, SectionProps>(
       children,
       title,
       description,
-      icon: Icon,
+      icon: sectionIconName,
       actions,
       variant = 'default',
       className,
@@ -215,7 +215,7 @@ export const Section = forwardRef<HTMLDivElement, SectionProps>(
           <SectionHeader
             title={title}
             description={description}
-            icon={Icon}
+            icon={sectionIconName}
             actions={actions}
             variant={variant}
           />
@@ -235,7 +235,7 @@ Section.displayName = 'Section';
 export interface SectionHeaderProps {
   title?: string;
   description?: string;
-  icon?: LucideIcon;
+  icon?: string;
   actions?: React.ReactNode;
   variant?: 'default' | 'card' | 'transparent';
   className?: string;
@@ -244,7 +244,7 @@ export interface SectionHeaderProps {
 export function SectionHeader({
   title,
   description,
-  icon: Icon,
+  icon: headerIconName,
   actions,
   variant = 'default',
   className,
@@ -259,9 +259,9 @@ export function SectionHeader({
       )}
     >
       <div className="flex items-start gap-3 min-w-0">
-        {Icon && (
+        {headerIconName && (
           <div className="p-2 rounded-lg bg-primary-500/15 text-primary-400 flex-shrink-0">
-            <Icon size={18} />
+            <Icon name={headerIconName} size={18} />
           </div>
         )}
         <div className="min-w-0">
@@ -311,7 +311,7 @@ export interface AccordionItem {
   id: string;
   title: string;
   description?: string;
-  icon?: LucideIcon;
+  icon?: string;
   content: React.ReactNode;
 }
 
@@ -349,7 +349,6 @@ export function Accordion({
     <div className={cn('space-y-2', className)}>
       {items.map((item) => {
         const isOpen = expanded.has(item.id);
-        const Icon = item.icon;
 
         return (
           <div
@@ -361,9 +360,9 @@ export function Accordion({
               className="flex items-center gap-3 w-full px-4 py-3 text-left hover:bg-surface-hover transition-colors"
             >
               <motion.div animate={{ rotate: isOpen ? 90 : 0 }} transition={{ duration: 0.15 }}>
-                <ChevronRight size={16} className="text-text-muted" />
+                <Icon name="chevron_right" size={16} className="text-text-muted" />
               </motion.div>
-              {Icon && <Icon size={18} className="text-text-muted flex-shrink-0" />}
+              {item.icon && <Icon name={item.icon} size={18} className="text-text-muted flex-shrink-0" />}
               <div className="flex-1 min-w-0">
                 <div className="font-medium text-text-primary text-sm">{item.title}</div>
                 {item.description && (

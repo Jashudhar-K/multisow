@@ -2,17 +2,7 @@
 
 import { useState } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
-import {
-  Brain,
-  Loader2,
-  AlertTriangle,
-  Lightbulb,
-  ChevronRight,
-  TrendingUp,
-  TrendingDown,
-} from 'lucide-react'
-
-// ============================================================================
+import { Icon } from '@/components/ui/Icon';// ============================================================================
 // TYPES
 // ============================================================================
 
@@ -39,7 +29,7 @@ function WaterfallChart({ data }: { data: { feature: string; shap_value: number 
   return (
     <div className="space-y-2">
       <h4 className="text-sm font-semibold text-white flex items-center gap-2">
-        <TrendingUp className="w-4 h-4 text-green-400" />
+        <Icon name="trending_up" className="w-4 h-4 text-green-400" />
         SHAP Waterfall
       </h4>
       {sorted.map((item, i) => {
@@ -83,7 +73,7 @@ function LimeChart({ data }: { data: { feature: string; weight: number }[] }) {
   return (
     <div className="space-y-2">
       <h4 className="text-sm font-semibold text-white flex items-center gap-2">
-        <Brain className="w-4 h-4 text-cyan-400" />
+        <Icon name="psychology" className="w-4 h-4 text-cyan-400" />
         LIME Contributions
       </h4>
       {sorted.map((item, i) => {
@@ -179,7 +169,7 @@ export default function ExplainPredictionTool({
       {/* Header */}
       <div>
         <h2 className="text-xl font-bold text-white flex items-center gap-2">
-          <Brain className="w-5 h-5 text-cyan-400" />
+          <Icon name="psychology" className="w-5 h-5 text-cyan-400" />
           Explain Prediction
         </h2>
         <p className="text-sm text-neutral-400 mt-1">
@@ -218,7 +208,7 @@ export default function ExplainPredictionTool({
             disabled={loading}
             className="px-6 py-2 bg-cyan-500 text-black font-semibold rounded-xl hover:bg-cyan-400 disabled:opacity-50 disabled:cursor-not-allowed transition flex items-center gap-2"
           >
-            {loading ? <Loader2 className="w-4 h-4 animate-spin" /> : <Brain className="w-4 h-4" />}
+            {loading ? <Icon name="progress_activity" className="w-4 h-4 animate-spin" /> : <Icon name="psychology" className="w-4 h-4" />}
             {loading ? 'Explaining…' : 'Explain'}
           </button>
         </div>
@@ -227,7 +217,7 @@ export default function ExplainPredictionTool({
       {/* Error */}
       {error && (
         <div className="glass border border-red-500/30 rounded-xl p-4 flex items-start gap-3">
-          <AlertTriangle className="w-5 h-5 text-red-400 mt-0.5" />
+          <Icon name="warning" className="w-5 h-5 text-red-400 mt-0.5" />
           <div>
             <p className="text-red-400 font-medium text-sm">Explain Failed</p>
             <p className="text-neutral-400 text-xs mt-1">{error}</p>
@@ -248,7 +238,7 @@ export default function ExplainPredictionTool({
             {result.natural_language_summary && (
               <div className="glass border border-cyan-500/20 rounded-xl p-5">
                 <h3 className="text-sm font-semibold text-cyan-400 mb-2 flex items-center gap-2">
-                  <Lightbulb className="w-4 h-4" />
+                  <Icon name="lightbulb" className="w-4 h-4" />
                   Summary
                 </h3>
                 <p className="text-sm text-neutral-200 leading-relaxed">{result.natural_language_summary}</p>
@@ -272,7 +262,7 @@ export default function ExplainPredictionTool({
             {result.recommendation_actions.length > 0 && (
               <div className="glass rounded-xl p-4 border border-green-500/20">
                 <h3 className="text-sm font-semibold text-green-400 mb-3 flex items-center gap-2">
-                  <Lightbulb className="w-4 h-4" />
+                  <Icon name="lightbulb" className="w-4 h-4" />
                   Recommended Actions
                 </h3>
                 <ul className="space-y-2">
@@ -284,7 +274,7 @@ export default function ExplainPredictionTool({
                       animate={{ opacity: 1, x: 0 }}
                       transition={{ delay: i * 0.1 }}
                     >
-                      <ChevronRight className="w-4 h-4 text-green-400 mt-0.5 shrink-0" />
+                      <Icon name="chevron_right" className="w-4 h-4 text-green-400 mt-0.5 shrink-0" />
                       {action}
                     </motion.li>
                   ))}

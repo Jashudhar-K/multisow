@@ -8,7 +8,7 @@
 
 import Image, { ImageProps } from 'next/image';
 import { memo, useState, forwardRef, ComponentPropsWithoutRef } from 'react';
-import { cn } from '@/lib/utils';
+import { cn } from '@/lib/index';
 
 // ============================================================================
 // Optimized Image Component

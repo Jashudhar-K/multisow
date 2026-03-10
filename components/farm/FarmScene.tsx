@@ -5,7 +5,6 @@ import { Canvas, useFrame, useThree } from '@react-three/fiber'
 import {
   OrbitControls,
   Environment,
-  Grid,
   Html,
   PerspectiveCamera,
   Sky,
@@ -232,6 +231,89 @@ function Tree({ position, species, maturityStage = 1, isSelected, onClick }: Tre
           <meshBasicMaterial color="#22c55e" transparent opacity={0.8} />
         </mesh>
       )}
+    </group>
+  )
+}
+
+// ============================================================================
+// CENT GRID — gridlines labeled in cents (1 cent ≈ 40.47 m²)
+// ============================================================================
+
+const CENT_SIDE_M = Math.sqrt(40.4686) // ≈ 6.36 m per cent side
+
+function CentGrid({ fieldSize, center }: { fieldSize: number; center: [number, number, number] }) {
+  const lines = useMemo(() => {
+    const halfSize = fieldSize / 2
+    const cx = center[0]
+    const cz = center[2]
+    const step = CENT_SIDE_M
+    const pts: { start: [number, number, number]; end: [number, number, number]; major: boolean }[] = []
+
+    // How many subdivisions in each direction
+    const count = Math.ceil(halfSize / step)
+
+    for (let i = -count; i <= count; i++) {
+      const offset = i * step
+      // Lines parallel to Z (varying X)
+      pts.push({
+        start: [cx + offset, 0.02, cz - halfSize],
+        end: [cx + offset, 0.02, cz + halfSize],
+        major: i % 10 === 0,
+      })
+      // Lines parallel to X (varying Z)
+      pts.push({
+        start: [cx - halfSize, 0.02, cz + offset],
+        end: [cx + halfSize, 0.02, cz + offset],
+        major: i % 10 === 0,
+      })
+    }
+    return pts
+  }, [fieldSize, center])
+
+  // Labels at every 10-cent boundary
+  const labels = useMemo(() => {
+    const halfSize = fieldSize / 2
+    const cx = center[0]
+    const cz = center[2]
+    const step = CENT_SIDE_M
+    const count = Math.ceil(halfSize / step)
+    const result: { pos: [number, number, number]; text: string }[] = []
+
+    for (let i = -count; i <= count; i += 10) {
+      if (i === 0) continue
+      const offset = i * step
+      const centVal = Math.abs(i)
+      result.push({
+        pos: [cx + offset, 0.1, cz - halfSize + 2],
+        text: `${centVal}¢`,
+      })
+      result.push({
+        pos: [cx - halfSize + 2, 0.1, cz + offset],
+        text: `${centVal}¢`,
+      })
+    }
+    // Origin label
+    result.push({ pos: [cx - halfSize + 2, 0.1, cz - halfSize + 2], text: '0' })
+    return result
+  }, [fieldSize, center])
+
+  return (
+    <group>
+      {lines.map((l, i) => (
+        <Line key={i} points={[l.start, l.end]}
+          color={l.major ? '#15803d' : '#22c55e'}
+          lineWidth={l.major ? 1.5 : 0.5}
+          transparent
+          opacity={l.major ? 0.5 : 0.2}
+        />
+      ))}
+      {labels.map((lb, i) => (
+        <Html key={i} position={lb.pos} center distanceFactor={fieldSize * 0.8}>
+          <span className="text-[10px] text-green-500/60 font-mono whitespace-nowrap select-none pointer-events-none">
+            {lb.text}
+          </span>
+        </Html>
+      ))}
     </group>
   )
 }
@@ -580,20 +662,9 @@ function FarmSceneContent({
       {/* Ground */}
       <Ground size={fieldSize} position={farmCenter} />
       
-      {/* Grid overlay */}
+      {/* Grid overlay — cent-labeled */}
       {showGrid && (
-        <Grid
-          args={[fieldSize, fieldSize]}
-          cellSize={5}
-          cellThickness={0.5}
-          cellColor="#22c55e"
-          sectionSize={10}
-          sectionThickness={1}
-          sectionColor="#15803d"
-          fadeDistance={fieldSize}
-          fadeStrength={1}
-          position={[farmCenter[0], 0.01, farmCenter[2]]}
-        />
+        <CentGrid fieldSize={fieldSize} center={farmCenter} />
       )}
       
       {/* Nutrient heatmap */}
@@ -674,7 +745,7 @@ export default function FarmScene(props: FarmSceneProps) {
   const { className, cameraPosition, ...sceneProps } = props
   
   return (
-    <div className={`w-full h-full ${className || ''}`} style={{ minHeight: '400px' }}>
+    <div data-testid="farm-canvas" className={`w-full h-full ${className || ''}`} style={{ minHeight: '400px' }}>
       <Suspense fallback={<LoadingFallback />}>
         <Canvas
           shadows

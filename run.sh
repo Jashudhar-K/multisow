@@ -32,8 +32,8 @@ fi
 
 echo "[2/3] Starting application..."
 echo ""
-echo "  Application: http://localhost:3000"
-echo "  API Docs:    http://localhost:8000/docs"
+echo "  Application: http://localhost:3001"
+  echo "  API Docs:    http://localhost:8001/docs"
 echo ""
 echo "  Browser will open automatically when ready."
 echo "  Press CTRL+C to stop the server."
@@ -41,7 +41,7 @@ echo "============================================================"
 echo ""
 
 # Start backend in background
-python3 -m uvicorn backend.main:app --host 0.0.0.0 --port 8000 --reload &
+python3 -m uvicorn backend.main:app --host 0.0.0.0 --port 8001 --reload &
 BACKEND_PID=$!
 
 # Start Next.js in background
@@ -50,11 +50,11 @@ NEXT_PID=$!
 
 # Wait for server to be ready
 echo "[3/3] Waiting for services to start..."
-while ! curl -s http://localhost:8000/health > /dev/null 2>&1; do
+while ! curl -s http://localhost:8001/health > /dev/null 2>&1; do
     sleep 1
 done
 
-while ! curl -s http://localhost:3000 > /dev/null 2>&1; do
+while ! curl -s http://localhost:3001 > /dev/null 2>&1; do
     sleep 1
 done
 
@@ -62,10 +62,10 @@ echo "Server ready! Opening browser..."
 
 # Open browser based on OS
 if [[ "$OSTYPE" == "darwin"* ]]; then
-    open http://localhost:3000
+    open http://localhost:3001
 elif [[ "$OSTYPE" == "linux-gnu"* ]]; then
     if command -v xdg-open &> /dev/null; then
-        xdg-open http://localhost:3000
+        xdg-open http://localhost:3001
     fi
 fi
 

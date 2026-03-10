@@ -13,13 +13,14 @@ export interface PlantLayout {
   species: string;
   spacingRadius: number;
   growthStage: number;  // 0–1, full maturity
+  height?: number;    // optional height for layer comparison
 }
 
 export interface RegionalPreset {
-  id: string;
+  id?: string;
   name: string;
-  acres: number;
-  cropSchedule: {
+  acres?: number;
+  cropSchedule?: {
     overstory?: { crop: string; spacing: number; plants: number };
     middle?: { crop: string; spacing: number; plants: number };
     understory?: { crop: string; spacing: number; plants: number };
@@ -31,8 +32,8 @@ export interface RegionalPreset {
  * Convert a preset model to a plant layout
  */
 export function presetToLayout(preset: RegionalPreset, targetAcres?: number): PlantLayout[] {
-  const acres = targetAcres || preset.acres;
-  const scale = Math.sqrt(acres / preset.acres); // Scale factor for area
+  const acres = targetAcres ?? preset.acres ?? 1;
+  const scale = preset.acres != null ? Math.sqrt(acres / preset.acres) : 1; // Scale factor for area
   
   const layout: PlantLayout[] = [];
   let plantId = 0;
@@ -507,6 +508,24 @@ function generateGenericLayout(
   sideLength: number,
   genId: () => string
 ) {
+  // cropSchedule may be absent for landing-type presets → use a sensible default
+  if (!preset.cropSchedule) {
+    // Fallback: 3-layer layout using preset name as species label
+    const label = preset.name || 'Crop';
+    for (let y = 8; y < sideLength; y += 8) {
+      for (let x = 8; x < sideLength; x += 8) {
+        layout.push({ id: genId(), x, y, layer: 'overstory', species: label, spacingRadius: 4, growthStage: 0.8, height: 10 });
+      }
+    }
+    for (let y = 4; y < sideLength; y += 4) {
+      for (let x = 4; x < sideLength; x += 4) {
+        const nearTree = layout.some(p => p.layer === 'overstory' && Math.hypot(p.x - x, p.y - y) < 3);
+        if (!nearTree) layout.push({ id: genId(), x, y, layer: 'middle', species: label, spacingRadius: 2, growthStage: 0.7, height: 4 });
+      }
+    }
+    return;
+  }
+
   const schedule = preset.cropSchedule;
   
   // Place overstory

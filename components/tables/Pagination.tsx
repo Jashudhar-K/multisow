@@ -8,14 +8,8 @@
 
 import { useMemo, ReactNode } from 'react';
 import { motion } from 'framer-motion';
-import {
-  ChevronLeft,
-  ChevronRight,
-  ChevronsLeft,
-  ChevronsRight,
-  MoreHorizontal,
-} from 'lucide-react';
-import { cn } from '@/lib/utils';
+import { Icon } from '@/components/ui/Icon';
+import { cn } from '@/lib/index';
 
 // ============================================================================
 // Types
@@ -105,7 +99,7 @@ export function Pagination({
           onClick={() => onPageChange(currentPage - 1)}
           disabled={currentPage === 1}
         >
-          <ChevronLeft size={iconSize} />
+          <Icon name="chevron_left" size={iconSize} />
         </PaginationButton>
         <span className="text-sm text-text-secondary px-2">
           {currentPage} / {totalPages}
@@ -115,7 +109,7 @@ export function Pagination({
           onClick={() => onPageChange(currentPage + 1)}
           disabled={currentPage === totalPages}
         >
-          <ChevronRight size={iconSize} />
+          <Icon name="chevron_right" size={iconSize} />
         </PaginationButton>
       </div>
     );
@@ -130,7 +124,7 @@ export function Pagination({
             onClick={() => onPageChange(1)}
             disabled={currentPage === 1}
           >
-            <ChevronsLeft size={iconSize} />
+            <Icon name="first_page" size={iconSize} />
           </PaginationButton>
         )}
         <PaginationButton
@@ -138,7 +132,7 @@ export function Pagination({
           onClick={() => onPageChange(currentPage - 1)}
           disabled={currentPage === 1}
         >
-          <ChevronLeft size={iconSize} />
+          <Icon name="chevron_left" size={iconSize} />
         </PaginationButton>
         <span className={cn('px-3 text-text-primary', sizeStyles[size])}>
           Page {currentPage} of {totalPages}
@@ -148,7 +142,7 @@ export function Pagination({
           onClick={() => onPageChange(currentPage + 1)}
           disabled={currentPage === totalPages}
         >
-          <ChevronRight size={iconSize} />
+          <Icon name="chevron_right" size={iconSize} />
         </PaginationButton>
         {showFirstLast && (
           <PaginationButton
@@ -156,7 +150,7 @@ export function Pagination({
             onClick={() => onPageChange(totalPages)}
             disabled={currentPage === totalPages}
           >
-            <ChevronsRight size={iconSize} />
+            <Icon name="last_page" size={iconSize} />
           </PaginationButton>
         )}
       </div>
@@ -176,19 +170,19 @@ export function Pagination({
           disabled={currentPage === 1}
           aria-label="First page"
         >
-          <ChevronsLeft size={iconSize} />
+            <Icon name="first_page" size={iconSize} />
+          </PaginationButton>
+        )}
+        <PaginationButton
+          size={size}
+          onClick={() => onPageChange(currentPage - 1)}
+          disabled={currentPage === 1}
+          aria-label="Previous page"
+        >
+          <Icon name="chevron_left" size={iconSize} />
         </PaginationButton>
-      )}
-      <PaginationButton
-        size={size}
-        onClick={() => onPageChange(currentPage - 1)}
-        disabled={currentPage === 1}
-        aria-label="Previous page"
-      >
-        <ChevronLeft size={iconSize} />
-      </PaginationButton>
 
-      {range.map((item, index) => {
+      {range.map((item) => {
         if (typeof item === 'string') {
           return (
             <span
@@ -198,7 +192,7 @@ export function Pagination({
                 sizeStyles[size]
               )}
             >
-              <MoreHorizontal size={iconSize} />
+              <Icon name="more_horiz" size={iconSize} />
             </span>
           );
         }
@@ -223,7 +217,7 @@ export function Pagination({
         disabled={currentPage === totalPages}
         aria-label="Next page"
       >
-        <ChevronRight size={iconSize} />
+        <Icon name="chevron_right" size={iconSize} />
       </PaginationButton>
       {showFirstLast && (
         <PaginationButton
@@ -232,7 +226,7 @@ export function Pagination({
           disabled={currentPage === totalPages}
           aria-label="Last page"
         >
-          <ChevronsRight size={iconSize} />
+          <Icon name="last_page" size={iconSize} />
         </PaginationButton>
       )}
     </nav>

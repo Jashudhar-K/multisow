@@ -4,8 +4,8 @@ import { useState, useEffect, useRef } from 'react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { motion, AnimatePresence, useScroll, useMotionValueEvent } from 'framer-motion';
-import { Menu, X, Sprout, Search, Command } from 'lucide-react';
-import { cn } from '@/lib/utils';
+import { Icon } from '@/components/ui/Icon';
+import { cn } from '@/lib/index';
 import { UserDropdown } from '@/components/navigation/UserDropdown';
 import { useCommandPalette } from '@/components/navigation/CommandPalette';
 
@@ -66,7 +66,7 @@ export default function Navbar() {
   return (
     <motion.nav
       className={cn(
-        'fixed top-0 left-0 right-0 z-[var(--z-sticky)] transition-all duration-300',
+        'fixed top-0 left-0 right-0 z-sticky transition-all duration-300',
         'backdrop-blur-xl border-b',
         isScrolled 
           ? 'bg-background/90 border-border-default shadow-glass' 
@@ -81,7 +81,7 @@ export default function Navbar() {
           {/* Logo */}
           <Link href="/" className="flex items-center gap-2 group" aria-label="MultiSow Home">
             <div className="w-8 h-8 rounded-lg bg-primary-600 flex items-center justify-center group-hover:bg-primary-500 transition-colors">
-              <Sprout size={18} className="text-white" />
+              <Icon name="agriculture" size={18} className="text-white" />
             </div>
             <span className="text-primary-400 font-bold text-xl tracking-tight">MultiSow</span>
           </Link>
@@ -122,10 +122,10 @@ export default function Navbar() {
                 'transition-colors'
               )}
             >
-              <Search size={14} />
+              <Icon name="search" size={14} />
               <span className="text-sm hidden lg:inline">Search...</span>
               <kbd className="hidden lg:flex items-center gap-0.5 px-1.5 py-0.5 text-[10px] bg-overlay rounded font-mono">
-                <Command size={10} />K
+                <Icon name="keyboard_command_key" size={10} />K
               </kbd>
             </button>
 
@@ -142,7 +142,7 @@ export default function Navbar() {
             onClick={() => setIsMobileOpen((v) => !v)}
             aria-label={isMobileOpen ? 'Close menu' : 'Open menu'}
           >
-            {isMobileOpen ? <X size={20} /> : <Menu size={20} />}
+            {isMobileOpen ? <Icon name="close" size={20} /> : <Icon name="menu" size={20} />}
           </button>
         </div>
       </div>
@@ -152,7 +152,7 @@ export default function Navbar() {
         {isMobileOpen && (
           <motion.div
             ref={mobileMenuRef}
-            className="md:hidden bg-surface/95 backdrop-blur-xl border-t border-border-subtle fixed top-16 left-0 right-0 z-[var(--z-dropdown)]"
+            className="md:hidden bg-surface/95 backdrop-blur-xl border-t border-border-subtle fixed top-16 left-0 right-0 z-dropdown"
             initial={{ opacity: 0, height: 0 }}
             animate={{ opacity: 1, height: 'auto' }}
             exit={{ opacity: 0, height: 0 }}
@@ -167,7 +167,7 @@ export default function Navbar() {
                 }}
                 className="w-full flex items-center gap-3 p-3 rounded-xl bg-overlay text-text-secondary hover:text-text-primary transition-colors"
               >
-                <Search size={18} />
+                <Icon name="search" size={18} />
                 <span>Search...</span>
               </button>
 

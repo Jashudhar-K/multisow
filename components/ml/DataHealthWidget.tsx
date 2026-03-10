@@ -2,18 +2,7 @@
 
 import { useState, useEffect } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
-import {
-  HeartPulse,
-  Loader2,
-  AlertTriangle,
-  CheckCircle2,
-  XCircle,
-  RefreshCw,
-  Calendar,
-  Database,
-} from 'lucide-react'
-
-// ============================================================================
+import { Icon } from '@/components/ui/Icon';// ============================================================================
 // TYPES
 // ============================================================================
 
@@ -73,14 +62,16 @@ export default function DataHealthWidget({ defaultFarmId }: { defaultFarmId?: st
       ? 'Fair'
       : 'Poor'
 
-  const missingEntries = report ? Object.entries(report.missing_pct).sort((a, b) => b[1] - a[1]) : []
+  const missingEntries = (report?.missing_pct && typeof report.missing_pct === 'object')
+    ? Object.entries(report.missing_pct).sort((a, b) => b[1] - a[1])
+    : []
 
   return (
     <div className="space-y-4">
       {/* Header */}
       <div className="flex items-center justify-between">
         <h3 className="text-lg font-bold text-white flex items-center gap-2">
-          <HeartPulse className="w-5 h-5 text-rose-400" />
+          <Icon name="monitor_heart" className="w-5 h-5 text-rose-400" />
           Data Health
         </h3>
         <button
@@ -89,7 +80,7 @@ export default function DataHealthWidget({ defaultFarmId }: { defaultFarmId?: st
           className="p-1.5 rounded-lg hover:bg-white/5 transition text-neutral-400 hover:text-white disabled:opacity-50"
           title="Refresh"
         >
-          <RefreshCw className={`w-4 h-4 ${loading ? 'animate-spin' : ''}`} />
+          <Icon name="refresh" className={`w-4 h-4 ${loading ? 'animate-spin' : ''}`} />
         </button>
       </div>
 
@@ -107,14 +98,14 @@ export default function DataHealthWidget({ defaultFarmId }: { defaultFarmId?: st
           disabled={loading || !farmId.trim()}
           className="px-4 py-2 bg-rose-500 text-white text-sm font-semibold rounded-lg hover:bg-rose-400 disabled:opacity-50 disabled:cursor-not-allowed transition"
         >
-          {loading ? <Loader2 className="w-4 h-4 animate-spin" /> : 'Check'}
+          {loading ? <Icon name="progress_activity" className="w-4 h-4 animate-spin" /> : 'Check'}
         </button>
       </div>
 
       {/* Error */}
       {error && (
         <div className="flex items-start gap-2 text-sm text-red-400">
-          <AlertTriangle className="w-4 h-4 mt-0.5" />
+          <Icon name="warning" className="w-4 h-4 mt-0.5" />
           {error}
         </div>
       )}
@@ -130,16 +121,16 @@ export default function DataHealthWidget({ defaultFarmId }: { defaultFarmId?: st
           >
             {/* Quality score */}
             <div className="glass rounded-xl p-4 text-center">
-              <div className={`text-4xl font-black ${qualityColor(report.quality_score)}`}>
-                {(report.quality_score * 100).toFixed(0)}%
+              <div className={`text-4xl font-black ${qualityColor(report.quality_score ?? 0)}`}>
+                {((report.quality_score ?? 0) * 100).toFixed(0)}%
               </div>
-              <div className={`text-sm font-medium mt-1 ${qualityColor(report.quality_score)}`}>
-                {report.quality_score >= 0.8 ? (
-                  <span className="flex items-center justify-center gap-1"><CheckCircle2 className="w-4 h-4" /> {qualityLabel(report.quality_score)}</span>
-                ) : report.quality_score >= 0.5 ? (
-                  <span className="flex items-center justify-center gap-1"><AlertTriangle className="w-4 h-4" /> {qualityLabel(report.quality_score)}</span>
+              <div className={`text-sm font-medium mt-1 ${qualityColor(report.quality_score ?? 0)}`}>
+                {(report.quality_score ?? 0) >= 0.8 ? (
+                  <span className="flex items-center justify-center gap-1"><Icon name="check_circle" className="w-4 h-4" /> {qualityLabel(report.quality_score ?? 0)}</span>
+                ) : (report.quality_score ?? 0) >= 0.5 ? (
+                  <span className="flex items-center justify-center gap-1"><Icon name="warning" className="w-4 h-4" /> {qualityLabel(report.quality_score ?? 0)}</span>
                 ) : (
-                  <span className="flex items-center justify-center gap-1"><XCircle className="w-4 h-4" /> {qualityLabel(report.quality_score)}</span>
+                  <span className="flex items-center justify-center gap-1"><Icon name="cancel" className="w-4 h-4" /> {qualityLabel(report.quality_score ?? 0)}</span>
                 )}
               </div>
               <div className="text-xs text-neutral-500 mt-1">Data Quality Score</div>
@@ -148,14 +139,14 @@ export default function DataHealthWidget({ defaultFarmId }: { defaultFarmId?: st
             {/* Stats row */}
             <div className="grid grid-cols-2 gap-3">
               <div className="glass rounded-lg p-3 text-center">
-                <Database className="w-4 h-4 text-blue-400 mx-auto mb-1" />
-                <div className="text-lg font-bold text-white">{report.total_records.toLocaleString()}</div>
+                <Icon name="database" className="w-4 h-4 text-blue-400 mx-auto mb-1" />
+                <div className="text-lg font-bold text-white">{(report.total_records ?? 0).toLocaleString()}</div>
                 <div className="text-[10px] text-neutral-400">Total Records</div>
               </div>
               <div className="glass rounded-lg p-3 text-center">
-                <Calendar className="w-4 h-4 text-purple-400 mx-auto mb-1" />
+                <Icon name="calendar_month" className="w-4 h-4 text-purple-400 mx-auto mb-1" />
                 <div className="text-sm font-semibold text-white mt-1">
-                  {report.temporal_coverage.start
+                  {report.temporal_coverage?.start
                     ? `${report.temporal_coverage.start} → ${report.temporal_coverage.end}`
                     : 'N/A'}
                 </div>

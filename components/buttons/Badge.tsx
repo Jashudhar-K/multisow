@@ -8,8 +8,8 @@
 
 import { forwardRef } from 'react';
 import { motion } from 'framer-motion';
-import { X, LucideIcon } from 'lucide-react';
-import { cn } from '@/lib/utils';
+import { Icon } from '@/components/ui/Icon';
+import { cn } from '@/lib/index';
 
 // ============================================================================
 // Badge
@@ -20,7 +20,7 @@ export interface BadgeProps {
   variant?: 'solid' | 'soft' | 'outline' | 'dot';
   color?: 'default' | 'primary' | 'success' | 'warning' | 'error' | 'accent';
   size?: 'sm' | 'md' | 'lg';
-  icon?: LucideIcon;
+  icon?: string;
   className?: string;
 }
 
@@ -87,7 +87,7 @@ export const Badge = forwardRef<HTMLSpanElement, BadgeProps>(
       variant = 'soft',
       color = 'default',
       size = 'md',
-      icon: Icon,
+      icon: iconName,
       className,
     },
     ref
@@ -106,7 +106,7 @@ export const Badge = forwardRef<HTMLSpanElement, BadgeProps>(
         {variant === 'dot' && (
           <span className={cn('w-1.5 h-1.5 rounded-full mr-1.5', dotColors[color])} />
         )}
-        {Icon && variant !== 'dot' && <Icon size={iconSizes[size]} />}
+        {iconName && variant !== 'dot' && <Icon name={iconName} size={iconSizes[size]} />}
         {children}
       </span>
     );
@@ -226,7 +226,7 @@ export interface TagProps {
   children: React.ReactNode;
   color?: 'default' | 'primary' | 'success' | 'warning' | 'error' | 'accent';
   size?: 'sm' | 'md' | 'lg';
-  icon?: LucideIcon;
+  icon?: string;
   removable?: boolean;
   onRemove?: () => void;
   onClick?: () => void;
@@ -255,7 +255,7 @@ export const Tag = forwardRef<HTMLSpanElement, TagProps>(
       children,
       color = 'default',
       size = 'md',
-      icon: Icon,
+      icon: tagIconName,
       removable = false,
       onRemove,
       onClick,
@@ -281,7 +281,7 @@ export const Tag = forwardRef<HTMLSpanElement, TagProps>(
         whileHover={isInteractive ? { scale: 1.02 } : undefined}
         whileTap={isInteractive ? { scale: 0.98 } : undefined}
       >
-        {Icon && <Icon size={iconSizes[size]} />}
+        {tagIconName && <Icon name={tagIconName} size={iconSizes[size]} />}
         <span className="truncate">{children}</span>
         {removable && (
           <button
@@ -297,7 +297,7 @@ export const Tag = forwardRef<HTMLSpanElement, TagProps>(
               disabled && 'pointer-events-none'
             )}
           >
-            <X size={iconSizes[size]} />
+            <Icon name="close" size={iconSizes[size]} />
           </button>
         )}
       </motion.span>

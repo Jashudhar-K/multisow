@@ -1,22 +1,8 @@
 'use client'
 
-import { useState, useCallback, useMemo } from 'react'
+import { useMemo, useState, useCallback } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
-import {
-  Rows3,
-  Grid3x3,
-  AlignHorizontalJustifyStart,
-  AlignVerticalJustifyStart,
-  Minus,
-  Plus,
-  RotateCcw,
-  Settings2,
-  Wand2,
-  ChevronDown,
-  ChevronUp,
-  TreeDeciduous,
-  Info,
-} from 'lucide-react'
+import { Icon } from '@/components/ui/Icon'
 import type { StrataLayerId, Species, PlantingRow, RowGrid, LayoutPattern } from '@/types/farm'
 
 // ============================================================================
@@ -149,7 +135,7 @@ function NumberInput({
           title="Decrease"
           className="p-1.5 rounded-lg bg-white/5 text-neutral-400 hover:bg-white/10 hover:text-white transition-all"
         >
-          <Minus size={14} />
+          <Icon name="remove" size={14} />
         </button>
         <div className="flex-1 px-3 py-1.5 rounded-lg bg-white/5 text-center">
           <span className="text-sm font-mono text-white">{value}</span>
@@ -160,7 +146,7 @@ function NumberInput({
           title="Increase"
           className="p-1.5 rounded-lg bg-white/5 text-neutral-400 hover:bg-white/10 hover:text-white transition-all"
         >
-          <Plus size={14} />
+          <Icon name="add" size={14} />
         </button>
       </div>
     </div>
@@ -478,7 +464,7 @@ export default function RowLayoutTools({
   if (isCompact) {
     return (
       <div className="flex items-center gap-2 p-2 bg-black/90 backdrop-blur-md rounded-lg border border-white/10">
-        <Rows3 size={16} className="text-green-400" />
+        <Icon name="table_rows" size={16} className="text-green-400" />
         <span className="text-sm text-white">Row Spacing: {config.rowSpacing}m</span>
         <span className="text-neutral-500">|</span>
         <span className="text-sm text-white">In-Row: {config.inRowSpacing}m</span>
@@ -503,11 +489,11 @@ export default function RowLayoutTools({
         onClick={() => setIsExpanded(!isExpanded)}
       >
         <div className="flex items-center gap-2">
-          <Grid3x3 size={18} className="text-green-400" />
+          <Icon name="grid_on" size={18} className="text-green-400" />
           <span className="text-sm font-medium text-white">Row Layout Tools</span>
         </div>
         <motion.div animate={{ rotate: isExpanded ? 180 : 0 }}>
-          <ChevronDown size={16} className="text-neutral-400" />
+          <Icon name="expand_more" size={16} className="text-neutral-400" />
         </motion.div>
       </div>
 
@@ -591,9 +577,9 @@ export default function RowLayoutTools({
                 onClick={() => setShowAdvanced(!showAdvanced)}
                 className="flex items-center gap-2 text-xs text-neutral-400 hover:text-white transition-colors"
               >
-                <Settings2 size={14} />
+                <Icon name="settings" size={14} />
                 <span>Advanced Options</span>
-                {showAdvanced ? <ChevronUp size={14} /> : <ChevronDown size={14} />}
+                {showAdvanced ? <Icon name="expand_less" size={14} /> : <Icon name="expand_more" size={14} />}
               </button>
 
               <AnimatePresence>
@@ -630,7 +616,7 @@ export default function RowLayoutTools({
             {/* Statistics */}
             <div className="border-t border-white/10 pt-3">
               <div className="flex items-center gap-2 mb-2">
-                <TreeDeciduous size={14} className="text-green-400" />
+                <Icon name="park" size={14} className="text-green-400" />
                 <span className="text-xs text-neutral-400">Estimated Layout</span>
               </div>
               <StatsPreview
@@ -646,21 +632,21 @@ export default function RowLayoutTools({
                 onClick={handleReset}
                 className="flex-1 px-4 py-2 rounded-lg bg-white/5 text-neutral-400 text-sm font-medium hover:bg-white/10 hover:text-white transition-all"
               >
-                <RotateCcw size={14} className="inline mr-2" />
+                <Icon name="refresh" size={14} className="inline mr-2" />
                 Reset
               </button>
               <button
                 onClick={() => onGenerateGrid(config)}
                 className="flex-1 px-4 py-2 rounded-lg bg-green-600 text-white text-sm font-medium hover:bg-green-500 transition-all"
               >
-                <Wand2 size={14} className="inline mr-2" />
+                <Icon name="auto_fix_high" size={14} className="inline mr-2" />
                 Generate Grid
               </button>
             </div>
 
             {/* Help text */}
             <div className="flex items-start gap-2 p-2 rounded-lg bg-blue-500/10 border border-blue-500/20">
-              <Info size={14} className="text-blue-400 mt-0.5 shrink-0" />
+              <Icon name="info" size={14} className="text-blue-400 mt-0.5 shrink-0" />
               <p className="text-xs text-blue-300">
                 Draw a field boundary first, then click "Generate Grid" to auto-fill with rows.
               </p>

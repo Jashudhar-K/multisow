@@ -16,14 +16,19 @@ load_dotenv(PROJECT_ROOT / ".env")
 
 from . import models, schemas, crud, database, ai_advisor
 from .routers import nlp as nlp_router
+from .routers import crop_recommender_router
+from .routers import crop_library_router
+from .data.preset_generator import generate_presets
 
 # ML imports (graceful fallback)
 try:
-    from multisow.ml.routers import predict as ml_predict
-    from multisow.ml.routers import explain as ml_explain
-    from multisow.ml.routers import train as ml_train
-    from multisow.ml.routers import data as ml_data
-    from multisow.ml.routers import optimize as ml_optimize
+    from multisow.ml.routers.ml_routes import (
+        all_ml_routers,
+        set_fohem_system,
+        set_train_deps,
+        set_data_deps,
+        set_explain_deps,
+    )
     from multisow.ml.models.fohem import FOHEMSystem
     from multisow.ml.pipelines.feature_store import FeatureStore
     from multisow.ml.pipelines.ingest import (
@@ -65,9 +70,9 @@ async def lifespan(app: FastAPI):
             feature_store = FeatureStore()
 
             # Wire router dependencies
-            ml_predict.set_fohem_system(fohem_system)
-            ml_train.set_train_deps(fohem_system, feature_store)
-            ml_data.set_data_deps(
+            set_fohem_system(fohem_system)
+            set_train_deps(fohem_system, feature_store)
+            set_data_deps(
                 sensor_ingester=IoTSensorIngester(
                     url=os.getenv("MULTISOW_INFLUXDB_URL", "http://localhost:8086"),
                     token=os.getenv("MULTISOW_INFLUXDB_TOKEN", ""),
@@ -78,7 +83,7 @@ async def lifespan(app: FastAPI):
                 climate_ingester=ClimateDataIngester(),
                 feature_store=feature_store,
             )
-            ml_explain.set_explain_deps(
+            set_explain_deps(
                 fohem_system=fohem_system,
                 shap_explainers={},
                 lime_explainers={},
@@ -110,9 +115,15 @@ app = FastAPI(
     lifespan=lifespan,
 )
 
+_raw_origins = os.environ.get(
+    "CORS_ORIGINS",
+    "http://localhost:3001,http://localhost:3000",
+)
+_allow_origins = [o.strip() for o in _raw_origins.split(",") if o.strip()]
+
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"], # Simplified for the integrated environment
+    allow_origins=_allow_origins,
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
@@ -122,16 +133,19 @@ app.add_middleware(
 # Mount ML routers (graceful skip if imports failed)
 # -----------------------------------------------------------------------
 if HAS_ML:
-    app.include_router(ml_predict.router)
-    app.include_router(ml_explain.router)
-    app.include_router(ml_train.router)
-    app.include_router(ml_data.router)
-    app.include_router(ml_optimize.router)
+    for ml_router in all_ml_routers:
+        app.include_router(ml_router)
     logger.info("ML routers mounted at /ml/*")
 
 
 # Mount NLP router
 app.include_router(nlp_router.router)
+
+# Mount Crop Recommender router (standalone, independent of FOHEM/ML subsystem)
+app.include_router(crop_recommender_router.router)
+
+# Mount Crop Library router (dataset-driven crop knowledge API)
+app.include_router(crop_library_router.router)
 
 # Root redirect to frontend
 @app.get("/")
@@ -159,10 +173,13 @@ advisor = ai_advisor.AIStratificationAdvisor()
 @app.get("/presets")
 def get_presets_root():
     """
-    Returns all 6 regional preset models (for /presets, not /api/presets).
+    Returns preset intercropping models derived from the crop dataset.
     Mirrors the advisor._preset_candidates() output.
     """
-    return advisor._preset_candidates()
+    try:
+        return generate_presets()
+    except Exception:
+        return advisor._preset_candidates()
 
 @app.post("/api/crops/", response_model=schemas.Crop)
 def create_crop(crop: schemas.CropCreate, db: Session = Depends(get_db)):
@@ -193,62 +210,11 @@ def analyze_plot(plot_id: int, db: Session = Depends(get_db)):
 
 @app.get("/api/presets", response_model=List[dict])
 def get_presets():
-    return [
-        {
-            "id": "wayanad-classic",
-            "name": "Wayanad Classic",
-            "description": "Traditional Kerala multi-tier system optimized for tropical climate.",
-            "region": "Wayanad, Kerala",
-            "soilType": "laterite",
-            "difficulty": "Beginner",
-            "acres": 2,
-            "estimatedYield": "390 Quintals",
-            "estimatedRevenue": "₹13.5L/year",
-            "color": "#10b981",
-            "cropSchedule": {
-                "overstory": {"crop": "Coconut Palm", "spacing": 8, "plants": 146},
-                "middle": {"crop": "Banana", "spacing": 3, "plants": 900},
-                "understory": {"crop": "Turmeric", "spacing": 50, "plants": 45000},
-                "vertical": {"crop": "Black Pepper", "perTree": 2, "total": 292}
-            }
-        },
-        {
-            "id": "karnataka-spice",
-            "name": "Karnataka Spice Garden",
-            "description": "High-value spice-focused model ideal for coffee-growing regions.",
-            "region": "Coorg, Karnataka",
-            "soilType": "laterite",
-            "difficulty": "Intermediate",
-            "acres": 3,
-            "estimatedYield": "510 Quintals",
-            "estimatedRevenue": "₹7.8L/year",
-            "color": "#f59e0b",
-            "cropSchedule": {
-                "overstory": {"crop": "Silver Oak", "spacing": 10, "plants": 140},
-                "middle": {"crop": "Papaya", "spacing": 2.5, "plants": 1940},
-                "understory": {"crop": "Cardamom", "spacing": 40, "plants": 55000},
-                "vertical": {"crop": "Vanilla", "perTree": 3, "total": 420}
-            }
-        },
-        {
-            "id": "maharashtra-balanced",
-            "name": "Maharashtra Coconut-Mango",
-            "description": "Balanced system with coconut palms and premium fruits.",
-            "region": "Konkan, Maharashtra",
-            "soilType": "black",
-            "difficulty": "Intermediate",
-            "acres": 2.5,
-            "estimatedYield": "520 Quintals",
-            "estimatedRevenue": "₹26.2L/year",
-            "color": "#06b6d4",
-            "cropSchedule": {
-                "overstory": {"crop": "Coconut Palm", "spacing": 8, "plants": 182},
-                "middle": {"crop": "Mango", "spacing": 3, "plants": 1000},
-                "understory": {"crop": "Turmeric", "spacing": 50, "plants": 55000},
-                "vertical": {"crop": "Black Pepper", "perTree": 2, "total": 364}
-            }
-        }
-    ]
+    """Return dataset-derived intercropping presets (falls back to hardcoded on error)."""
+    try:
+        return generate_presets()
+    except Exception:
+        return advisor._preset_candidates()
 
 @app.post("/api/ai/plan", response_model=schemas.AIPlanResponse)
 def ai_plan(req: schemas.AIPlanRequest):

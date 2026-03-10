@@ -8,8 +8,8 @@
 
 import { useRef, useEffect, useState } from 'react';
 import { motion, useInView } from 'framer-motion';
-import { Info, TrendingUp, TrendingDown, Minus } from 'lucide-react';
-import { cn } from '@/lib/utils';
+import { Icon } from '@/components/ui/Icon';
+import { cn } from '@/lib/index';
 import { Sparkline, SparklineBar } from './Sparkline';
 
 export interface MetricCardProps {
@@ -164,7 +164,7 @@ export function MetricCard({
   };
 
   // Trend indicator
-  const TrendIcon = trend && trend > 0 ? TrendingUp : trend && trend < 0 ? TrendingDown : Minus;
+  const trendIconName = trend && trend > 0 ? 'trending_up' : trend && trend < 0 ? 'trending_down' : 'remove';
   const trendColor = trend && trend > 0 ? 'text-success' : trend && trend < 0 ? 'text-error' : 'text-text-muted';
 
   if (loading) {
@@ -245,7 +245,7 @@ export function MetricCard({
         
         {trend !== undefined && (
           <div className={cn('flex items-center gap-1 text-xs font-medium', trendColor)}>
-            <TrendIcon size={14} />
+            <Icon name={trendIconName} size={14} />
             <span>{Math.abs(trend)}%</span>
             {trendLabel && <span className="text-text-muted">{trendLabel}</span>}
           </div>
@@ -256,7 +256,7 @@ export function MetricCard({
       {description && (
         <div className="absolute top-3 right-3 opacity-0 group-hover:opacity-100 transition-opacity">
           <div className="relative group/tip">
-            <Info size={14} className="text-text-muted hover:text-text-secondary cursor-help" />
+            <Icon name="info" size={14} className="text-text-muted hover:text-text-secondary cursor-help" />
             <div className="absolute right-0 top-full mt-2 w-48 p-3 rounded-xl bg-overlay backdrop-blur-sm border border-border-subtle text-xs text-text-secondary opacity-0 group-hover/tip:opacity-100 transition-opacity z-20 shadow-lg">
               {description}
             </div>

@@ -177,7 +177,6 @@ export function useComputed<T>(
   compute: () => T,
   deps: DependencyList
 ): T {
-  // eslint-disable-next-line react-hooks/exhaustive-deps
   return useMemo(compute, deps);
 }
 
@@ -207,7 +206,6 @@ export function useExpensiveValue<T>(
       const id = setTimeout(() => setValue(compute()), 0);
       return () => clearTimeout(id);
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, deps);
 
   return value;

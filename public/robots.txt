@@ -1,0 +1,9 @@
+User-agent: *
+Allow: /
+Disallow: /api/
+Disallow: /login
+Disallow: /signup
+Disallow: /profile
+Disallow: /settings
+
+Sitemap: https://multisow.app/sitemap.xml

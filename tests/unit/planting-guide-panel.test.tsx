@@ -6,8 +6,9 @@ import { describe, it, expect } from 'vitest';
 describe('PlantingGuidePanel', () => {
   it('Renders for each of the 6 preset IDs', () => {
     for (const id of presetIds) {
-      render(<PlantingGuidePanel presetId={id} />);
-      expect(screen.getByText(/Planting Guide|Guide|Overview/i)).toBeInTheDocument();
+      const { unmount } = render(<PlantingGuidePanel presetId={id} />);
+      expect(screen.getAllByText(/Planting Guide|Guide|Overview/i).length).toBeGreaterThan(0);
+      unmount();
     }
   });
 

@@ -8,16 +8,8 @@
 
 import { ReactNode, ComponentPropsWithoutRef } from 'react';
 import { motion } from 'framer-motion';
-import {
-  Inbox,
-  Search,
-  AlertCircle,
-  FileX,
-  FolderOpen,
-  Database,
-  Loader2,
-} from 'lucide-react';
-import { cn } from '@/lib/utils';
+import { Icon } from '@/components/ui/Icon';
+import { cn } from '@/lib/index';
 
 // ============================================================================
 // Types
@@ -50,32 +42,32 @@ const variantConfig: Record<
   { icon: ReactNode; title: string; description: string }
 > = {
   default: {
-    icon: <Inbox />,
+    icon: <Icon name="inbox" />,
     title: 'No items',
     description: 'There are no items to display.',
   },
   search: {
-    icon: <Search />,
+    icon: <Icon name="search" />,
     title: 'No results found',
     description: 'Try adjusting your search or filters.',
   },
   error: {
-    icon: <AlertCircle />,
+    icon: <Icon name="error" />,
     title: 'Something went wrong',
     description: 'An error occurred while loading data.',
   },
   noData: {
-    icon: <FileX />,
+    icon: <Icon name="cancel" />,
     title: 'No data available',
     description: 'Data is not available at this time.',
   },
   folder: {
-    icon: <FolderOpen />,
+    icon: <Icon name="folder_open" />,
     title: 'Empty folder',
     description: 'This folder is empty.',
   },
   database: {
-    icon: <Database />,
+    icon: <Icon name="database" />,
     title: 'No records',
     description: 'No records found in the database.',
   },
@@ -201,7 +193,8 @@ export function LoadingState({
       )}
       {...props}
     >
-      <Loader2
+      <Icon
+        name="progress_activity"
         size={styles.spinner}
         className="text-primary-500 animate-spin mb-4"
       />

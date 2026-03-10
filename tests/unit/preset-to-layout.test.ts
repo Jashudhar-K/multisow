@@ -41,7 +41,7 @@ describe('presetToLayout', () => {
 
   it('Plants for canopy layer have height > middle tier plants', () => {
     const layout = presetToLayout(mockPreset, 1);
-    const canopy = layout.filter(p => p.layer === 'canopy');
+    const canopy = layout.filter(p => p.layer === 'overstory');
     const mid = layout.filter(p => p.layer === 'middle');
     if (canopy.length && mid.length) {
       expect(Math.min(...canopy.map(p => p.height || 0))).toBeGreaterThan(Math.max(...mid.map(p => p.height || 0)));

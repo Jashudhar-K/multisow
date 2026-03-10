@@ -1,9 +1,20 @@
-import { describe, it, expect } from 'vitest';
+import { describe, it, expect, vi, beforeEach } from 'vitest';
 
 // Unit test for the explain_prediction_naturally function (Python, but we can check API contract)
 describe('LLM Advisor API contract', () => {
+  beforeEach(() => {
+    // Mock fetch to simulate backend response without requiring a live server
+    vi.stubGlobal('fetch', vi.fn(() =>
+      Promise.resolve({
+        ok: true,
+        json: () => Promise.resolve({
+          explanation: 'The coconut-banana-turmeric system achieved a Land Equivalent Ratio of 1.3, indicating 30% higher land use efficiency than monoculture.'
+        }),
+      } as Response)
+    ));
+  });
+
   it('should return a non-empty explanation string for valid input', async () => {
-    // Simulate a backend call (mocked)
     const response = await fetch('/api/nlp/explain-prediction', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },

@@ -8,8 +8,8 @@
 
 import { forwardRef, createContext, useContext, InputHTMLAttributes } from 'react';
 import { motion } from 'framer-motion';
-import { Check, Minus } from 'lucide-react';
-import { cn } from '@/lib/utils';
+import { Icon } from '@/components/ui/Icon';
+import { cn } from '@/lib/index';
 
 // ============================================================================
 // Checkbox
@@ -88,9 +88,9 @@ export const Checkbox = forwardRef<HTMLInputElement, CheckboxProps>(
               transition={{ duration: 0.15 }}
             >
               {indeterminate ? (
-                <Minus size={sizes.icon} className="text-white" />
+                <Icon name="remove" size={sizes.icon} className="text-white" />
               ) : (
-                <Check size={sizes.icon} className="text-white" />
+                <Icon name="check" size={sizes.icon} className="text-white" />
               )}
             </motion.div>
           </motion.div>

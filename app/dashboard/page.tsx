@@ -1,266 +1,300 @@
 'use client'
 
-import PageLayout from '@/components/layout/PageLayout'
-import MetricsDashboard from '@/components/farm/MetricsDashboard'
-import dynamic from 'next/dynamic'
+import { useMemo } from 'react'
 import { motion } from 'framer-motion'
 import Link from 'next/link'
-import { 
-  TrendingUp, 
-  Cpu, 
-  Calculator, 
-  Database,
-  Droplets,
-  Leaf,
-  Map,
-  DollarSign,
-  Layers,
-} from 'lucide-react'
+import { Icon } from '@/components/ui/Icon'
+import { formatArea, formatMoney, formatLER, thaToTotalTonnes } from '@/lib/units'
+import PageLayout from '@/components/layout/PageLayout'
+import { useAIFarm } from '@/context/AIFarmContext'
+import { DashboardSkeleton } from '@/components/skeletons'
 import { MetricCard, MetricCardGrid, AreaChart, BarChart } from '@/components/charts'
 import { GlassCard, GlassCardHeader, GlassCardContent } from '@/components/cards'
+import dynamic from 'next/dynamic'
 
 const DataHealthWidget = dynamic(() => import('@/components/ml/DataHealthWidget'), { ssr: false })
 
+// ---------------------------------------------------------------------------
+// Helpers
+// ---------------------------------------------------------------------------
+function kv(v: number, digits = 1) { return v.toFixed(digits) }
 
-import { useEffect, useState } from 'react';
+// Build yield-by-layer bar data from the latest prediction
+function buildLayerYieldData(layers: Record<string, { predicted_yield_t_ha?: number }> | null | undefined) {
+  if (!layers || typeof layers !== 'object') return []
+  const COLORS: Record<string, 'primary' | 'success' | 'warning' | 'accent'> = {
+    canopy: 'primary', middle: 'success', midstory: 'success',
+    understory: 'warning', belowground: 'accent', groundcover: 'accent',
+  }
+  return Object.entries(layers).map(([key, val]) => ({
+    label: key.charAt(0).toUpperCase() + key.slice(1),
+    value: val.predicted_yield_t_ha ?? 0,
+    color: (COLORS[key] ?? 'primary') as 'primary' | 'success' | 'warning' | 'accent',
+  }))
+}
 
-// Sample data for charts
-const yieldTrendData = [
-  { label: 'Jan', value: 2400 },
-  { label: 'Feb', value: 2800 },
-  { label: 'Mar', value: 3200 },
-  { label: 'Apr', value: 2900 },
-  { label: 'May', value: 3500 },
-  { label: 'Jun', value: 4200 },
-];
-
-const cropDistributionData = [
-  { label: 'Tomatoes', value: 3200, color: 'success' as const },
-  { label: 'Peppers', value: 2800, color: 'warning' as const },
-  { label: 'Beans', value: 2100, color: 'primary' as const },
-  { label: 'Maize', value: 1800, color: 'accent' as const },
-];
+// ---------------------------------------------------------------------------
+// Empty state — shown when a farm exists but no predictions yet
+// ---------------------------------------------------------------------------
+function DashboardEmptyState() {
+  return (
+    <motion.div
+      initial={{ opacity: 0, y: 24 }}
+      animate={{ opacity: 1, y: 0 }}
+      className="flex flex-col items-center justify-center py-24 text-center"
+    >
+      <Icon name="dashboard" size={48} className="text-white/10 mb-4" />
+      <h2 className="text-xl font-semibold text-white/80 mb-2">No predictions yet</h2>
+      <p className="text-white/40 max-w-md mb-6">
+        Run your first yield prediction in the Designer or Predict page to see real data here.
+      </p>
+      <div className="flex gap-3">
+        <Link
+          href="/designer"
+          className="px-5 py-2.5 rounded-xl bg-green-500/15 text-green-400 font-medium text-sm border border-green-500/20 hover:bg-green-500/25 transition-colors"
+        >
+          Open Designer
+        </Link>
+        <Link
+          href="/predict"
+          className="px-5 py-2.5 rounded-xl bg-white/5 text-white/60 font-medium text-sm border border-white/10 hover:bg-white/10 transition-colors"
+        >
+          Run Prediction
+        </Link>
+      </div>
+    </motion.div>
+  )
+}
 
 export default function DashboardPage() {
-  // Load farm profile from localStorage if available
-  const [metrics, setMetrics] = useState({
-    totalArea: 2.5,
-    plantedArea: 2.0,
-    treeDensity: 120,
-    ler: 1.85,
-    waterSavings: 68,
-    carbonSequestration: 2.4,
-    expectedYield: [],
-    totalRevenue: 120000,
-    roi: 35,
-    rootOverlapIndex: 0.28,
-    canopyCover: 92,
-  });
-  const [farmProfile, setFarmProfile] = useState<any>(null);
+  const { currentFarm, selectedModel, predictions } = useAIFarm()
 
-  useEffect(() => {
-    if (typeof window !== 'undefined') {
-      const stored = localStorage.getItem('multisow_farm_profile');
-      if (stored) {
-        const farm = JSON.parse(stored);
-        setFarmProfile(farm);
-        // Map farm profile to metrics (simple mapping, can be extended)
-        setMetrics((prev) => ({
-          ...prev,
-          totalArea: farm.size ? parseFloat(farm.size) * 0.4047 : prev.totalArea,
-          plantedArea: farm.size ? parseFloat(farm.size) * 0.4047 : prev.plantedArea,
-          treeDensity: farm.recommendedCrops?.length ? 100 + farm.recommendedCrops.length * 20 : prev.treeDensity,
-          ler: 1.2 + (farm.recommendedCrops?.length || 1) * 0.15,
-          waterSavings: farm.irrigation === 'Drip' ? 80 : farm.irrigation === 'Rain-fed' ? 60 : prev.waterSavings,
-          carbonSequestration: 2.0 + (farm.recommendedCrops?.length || 1) * 0.3,
-          totalRevenue: 100000 + (farm.recommendedCrops?.length || 1) * 20000,
-          roi: 25 + (farm.recommendedCrops?.length || 1) * 5,
-          rootOverlapIndex: 0.2 + (farm.recommendedCrops?.length || 1) * 0.02,
-          canopyCover: 80 + (farm.recommendedCrops?.length || 1) * 3,
-        }));
-      }
-    }
-  }, []);
+  const latestPred = predictions[0] ?? null
+
+  // KPI derivation
+  const kpis = useMemo(() => {
+    const acres = currentFarm?.acres ?? 2.5
+    const ler = latestPred?.system_LER ?? 1.65
+    const totalYieldTha = latestPred?.layers
+      ? Object.values(latestPred.layers).reduce((s, l) => s + ((l as any).predicted_yield_t_ha ?? 0), 0)
+      : 3.8
+    const totalTonnes = thaToTotalTonnes(totalYieldTha, acres)
+    // Revenue estimate: avg ₹80/kg for mixed spice-fruit system
+    const revenueINR = totalTonnes * 1000 * 80
+    const waterSaved = 62 + (ler - 1) * 10   // heuristic based on LER
+
+    return { acres, ler, totalTonnes, revenueINR, waterSaved }
+  }, [currentFarm, latestPred])
+
+  // Time-series sparkline data (simulated from LER if no real data)
+  const yieldTrendData = useMemo(() => {
+    const base = kpis.totalTonnes
+    return Array.from({ length: 8 }, (_, i) => ({
+      label: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug'][i],
+      value: parseFloat((base * (0.75 + i * 0.04 + Math.sin(i) * 0.05)).toFixed(2)),
+    }))
+  }, [kpis.totalTonnes])
+
+  const layerYieldData = useMemo(() => {
+    if (latestPred) return buildLayerYieldData(latestPred.layers as any)
+    return [
+      { label: 'Canopy', value: 1.8, color: 'primary' as const },
+      { label: 'Midstory', value: 1.2, color: 'success' as const },
+      { label: 'Understory', value: 0.5, color: 'warning' as const },
+      { label: 'Groundcover', value: 0.3, color: 'accent' as const },
+    ]
+  }, [latestPred])
 
   return (
     <PageLayout title="Farmer Dashboard">
       <div className="space-y-6">
-        {/* Top row: Quick Stats + AI/ML Tools + Data Health */}
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-          {/* ML Quick Actions */}
-          <motion.div 
-            initial={{ opacity: 0, y: 20 }} 
-            animate={{ opacity: 1, y: 0 }} 
-            transition={{ delay: 0.1 }}
-          >
-            <GlassCard className="h-full">
-              <GlassCardHeader>
-                <h3 className="text-primary-400 font-bold text-lg flex items-center gap-2">
-                  <Cpu size={20} />
-                  AI/ML Tools
-                </h3>
-              </GlassCardHeader>
-              <GlassCardContent className="space-y-3">
-                <Link href="/predict" className="flex items-center gap-3 w-full px-4 py-3 rounded-xl bg-primary-500/15 border border-primary-500/30 text-primary-400 font-medium hover:bg-primary-500/25 transition-all">
-                  <TrendingUp size={18} />
-                  <span>Yield Prediction</span>
-                </Link>
-                <Link href="/optimize" className="flex items-center gap-3 w-full px-4 py-3 rounded-xl bg-accent-500/15 border border-accent-500/30 text-accent-400 font-medium hover:bg-accent-500/25 transition-all">
-                  <Cpu size={18} />
-                  <span>Strata Optimizer</span>
-                </Link>
-                <Link href="/calc" className="flex items-center gap-3 w-full px-4 py-3 rounded-xl bg-success/15 border border-success/30 text-success font-medium hover:bg-success/25 transition-all">
-                  <Calculator size={18} />
-                  <span>Resource Calculator</span>
-                </Link>
-                <Link href="/crops" className="flex items-center gap-3 w-full px-4 py-3 rounded-xl bg-warning/10 border border-warning/30 text-warning font-medium hover:bg-warning/20 transition-all">
-                  <Database size={18} />
-                  <span>Crops Database</span>
-                </Link>
-              </GlassCardContent>
-            </GlassCard>
-          </motion.div>
 
-          {/* Data Health - takes 2 columns on larger screens */}
-          <motion.div 
-            className="lg:col-span-2"
-            initial={{ opacity: 0, y: 20 }} 
-            animate={{ opacity: 1, y: 0 }} 
-            transition={{ delay: 0.2 }}
-          >
-            <GlassCard className="h-full">
-              <GlassCardContent>
-                <DataHealthWidget defaultFarmId="farm-001" />
-              </GlassCardContent>
-            </GlassCard>
+        {/* Farm context banner */}
+        {currentFarm ? (
+          <motion.div initial={{ opacity: 0, y: -8 }} animate={{ opacity: 1, y: 0 }}
+            className="flex items-center justify-between px-5 py-3 rounded-xl bg-green-500/10 border border-green-500/20">
+            <div>
+              <span className="font-semibold text-green-400">{currentFarm.name}</span>
+              <span className="text-white/40 text-sm ml-3">{currentFarm.acres} acres · {currentFarm.region} · {currentFarm.soilType}</span>
+            </div>
+            {selectedModel && (
+              <span className="text-xs text-white/40 bg-white/5 px-3 py-1 rounded-full border border-white/10">
+                {selectedModel.name}
+              </span>
+            )}
           </motion.div>
-        </div>
-
-        {/* Farm Profile Summary Card */}
-        {farmProfile && (
-          <motion.div 
-            initial={{ opacity: 0, y: 20 }} 
-            animate={{ opacity: 1, y: 0 }} 
-            transition={{ delay: 0.25 }}
-          >
-            <GlassCard>
-              <GlassCardContent className="flex flex-col md:flex-row gap-4 items-center">
-                <div className="flex-1">
-                  <div className="text-primary-400 font-bold text-lg">{farmProfile.name || 'My Farm'}</div>
-                  <div className="text-text-secondary text-sm">{farmProfile.location || ''}</div>
-                  <div className="text-text-muted text-sm">Soil: {farmProfile.soilType || ''}</div>
-                </div>
-                <div className="flex-1 flex flex-col gap-1">
-                  <div className="text-text-secondary text-xs">Owner: {farmProfile.owner || ''}</div>
-                  <div className="text-text-secondary text-xs">Region: {farmProfile.region || ''}</div>
-                  <div className="text-text-secondary text-xs">Season: {farmProfile.season || ''}</div>
-                </div>
-              </GlassCardContent>
-            </GlassCard>
+        ) : (
+          <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }}
+            className="flex items-center justify-between px-5 py-3 rounded-xl bg-white/5 border border-white/10">
+            <span className="text-white/50 text-sm">No farm set up yet.</span>
+            <Link href="/onboarding" className="text-green-400 text-sm font-medium hover:underline">
+              Set up your farm →
+            </Link>
           </motion.div>
         )}
 
-        {/* Key Metrics Row */}
-        <motion.div
-          initial={{ opacity: 0, y: 20 }} 
-          animate={{ opacity: 1, y: 0 }} 
-          transition={{ delay: 0.3 }}
-        >
+        {/* Empty state when farm exists but no predictions */}
+        {currentFarm && predictions.length === 0 && <DashboardEmptyState />}
+
+        {/* Main content — only show when we have data */}
+        {(predictions.length > 0 || !currentFarm) && (
+        <>
+        {/* KPI row */}
+        <motion.div initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.05 }}>
           <MetricCardGrid columns={4}>
             <MetricCard
-              label="Total Area"
-              value={metrics.totalArea}
-              unit="ha"
-              icon={<Map size={20} />}
+              label="Farm Area"
+              value={kpis.acres}
+              unit="acres"
+              icon={<Icon name="map" size={20} />}
               color="primary"
-              sparklineData={[2.0, 2.2, 2.3, 2.4, 2.5]}
-              trend={8}
-              description="Total cultivated land area"
+              decimals={2}
+              description="Total cultivated area"
             />
             <MetricCard
-              label="Land Equivalent Ratio"
-              value={metrics.ler}
-              icon={<Layers size={20} />}
+              label="System LER"
+              value={kpis.ler}
+              icon={<Icon name="layers" size={20} />}
               color="success"
               decimals={2}
-              sparklineData={[1.4, 1.5, 1.6, 1.7, 1.85]}
-              trend={12}
-              description="Measure of intercropping efficiency vs monoculture"
+              sparklineData={[1.2, 1.35, 1.45, 1.55, kpis.ler]}
+              trend={((kpis.ler - 1.2) / 1.2 * 100)}
+              description="Land Equivalent Ratio — higher = better intercropping"
             />
             <MetricCard
-              label="Water Savings"
-              value={metrics.waterSavings}
-              unit="%"
-              icon={<Droplets size={20} />}
+              label="Predicted Yield"
+              value={kpis.totalTonnes}
+              unit="tonnes"
+              icon={<Icon name="trending_up" size={20} />}
               color="accent"
-              sparklineData={[55, 60, 62, 65, 68]}
-              trend={5}
-              description="Water usage reduction through smart irrigation"
+              decimals={2}
+              sparklineData={[2.5, 2.9, 3.2, 3.5, kpis.totalTonnes]}
+              trend={12}
+              description="Total system yield across all layers"
             />
             <MetricCard
-              label="Total Revenue"
-              value={metrics.totalRevenue}
-              prefix="$"
-              icon={<DollarSign size={20} />}
+              label="Est. Revenue"
+              value={Math.round(kpis.revenueINR / 100000)}
+              prefix="₹"
+              unit="L"
+              icon={<Icon name="currency_rupee" size={20} />}
               color="warning"
-              sparklineData={[80000, 90000, 100000, 110000, 120000]}
+              decimals={0}
+              sparklineData={[80, 95, 110, 125, Math.round(kpis.revenueINR / 100000)]}
               trend={15}
-              description="Projected annual revenue"
+              description="Estimated annual farm revenue"
             />
           </MetricCardGrid>
         </motion.div>
 
-        {/* Charts Row */}
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-          <motion.div 
-            initial={{ opacity: 0, y: 20 }} 
-            animate={{ opacity: 1, y: 0 }} 
-            transition={{ delay: 0.35 }}
-          >
+        {/* Charts + Quick Actions */}
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+          {/* Yield trend chart */}
+          <motion.div className="lg:col-span-2"
+            initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.1 }}>
             <GlassCard className="h-full">
+              <GlassCardHeader>
+                <h3 className="font-semibold text-white flex items-center gap-2">
+                  <Icon name="show_chart" size={16} className="text-green-400" /> Yield Trend
+                </h3>
+              </GlassCardHeader>
               <GlassCardContent>
-                <AreaChart
-                  data={yieldTrendData}
-                  title="Yield Trend (kg/ha)"
-                  width={500}
-                  height={220}
-                  color="primary"
-                />
+                <AreaChart data={yieldTrendData} title="Total Yield (tonnes)" width={480} height={200} color="primary" />
               </GlassCardContent>
             </GlassCard>
           </motion.div>
-          
-          <motion.div 
-            initial={{ opacity: 0, y: 20 }} 
-            animate={{ opacity: 1, y: 0 }} 
-            transition={{ delay: 0.4 }}
-          >
+
+          {/* Quick links */}
+          <motion.div initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.15 }}>
             <GlassCard className="h-full">
-              <GlassCardContent>
-                <BarChart
-                  data={cropDistributionData}
-                  title="Crop Distribution (kg)"
-                  width={500}
-                  height={220}
-                />
+              <GlassCardHeader>
+                <h3 className="font-semibold text-white flex items-center gap-2">
+                  <Icon name="memory" size={16} className="text-green-400" /> AI/ML Tools
+                </h3>
+              </GlassCardHeader>
+              <GlassCardContent className="space-y-3">
+                <Link href="/predict" className="interactive-link flex items-center gap-3 w-full px-4 py-3 rounded-xl bg-white/5 border border-white/10 text-white/70 font-medium hover:bg-white/10 hover:text-white text-sm">
+                  <Icon name="trending_up" size={16} className="text-green-400" /> Yield Prediction
+                </Link>
+                <Link href="/optimize" className="interactive-link flex items-center gap-3 w-full px-4 py-3 rounded-xl bg-white/5 border border-white/10 text-white/70 font-medium hover:bg-white/10 hover:text-white text-sm">
+                  <Icon name="bolt" size={16} className="text-amber-400" /> Strata Optimizer
+                </Link>
+                <Link href="/designer" className="interactive-link flex items-center gap-3 w-full px-4 py-3 rounded-xl bg-white/5 border border-white/10 text-white/70 font-medium hover:bg-white/10 hover:text-white text-sm">
+                  <Icon name="layers" size={16} className="text-blue-400" /> Farm Designer
+                </Link>
+                <Link href="/crops" className="interactive-link flex items-center gap-3 w-full px-4 py-3 rounded-xl bg-white/5 border border-white/10 text-white/70 font-medium hover:bg-white/10 hover:text-white text-sm">
+                  <Icon name="database" size={16} className="text-purple-400" /> Crops Database
+                </Link>
+                <Link href="/calc" className="interactive-link flex items-center gap-3 w-full px-4 py-3 rounded-xl bg-white/5 border border-white/10 text-white/70 font-medium hover:bg-white/10 hover:text-white text-sm">
+                  <Icon name="calculate" size={16} className="text-cyan-400" /> Calculator
+                </Link>
               </GlassCardContent>
             </GlassCard>
           </motion.div>
         </div>
 
-        {/* Full-width Metrics Dashboard */}
-        <motion.div 
-          initial={{ opacity: 0, y: 20 }} 
-          animate={{ opacity: 1, y: 0 }} 
-          transition={{ delay: 0.45 }}
-        >
-          <GlassCard>
-            <GlassCardContent>
-              <MetricsDashboard metrics={metrics} />
-            </GlassCardContent>
-          </GlassCard>
-        </motion.div>
+        {/* Layer yield breakdown + Data health */}
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+          <motion.div initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.2 }}>
+            <GlassCard className="h-full">
+              <GlassCardHeader>
+                <h3 className="font-semibold text-white flex items-center gap-2">
+                  <Icon name="bar_chart" size={16} className="text-green-400" /> Yield by Layer
+                </h3>
+              </GlassCardHeader>
+              <GlassCardContent>
+                <BarChart data={layerYieldData} title="Predicted Yield per Layer (tonnes)" width={420} height={200} />
+              </GlassCardContent>
+            </GlassCard>
+          </motion.div>
+
+          <motion.div initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.25 }}>
+            <GlassCard className="h-full">
+              <GlassCardContent>
+                <DataHealthWidget defaultFarmId={currentFarm?.name?.replace(/\s+/g, '_').toLowerCase() ?? 'farm-001'} />
+              </GlassCardContent>
+            </GlassCard>
+          </motion.div>
+        </div>
+
+        {/* Last prediction details */}
+        {latestPred && (
+          <motion.div initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.3 }}>
+            <GlassCard>
+              <GlassCardHeader>
+                <h3 className="font-semibold text-white flex items-center gap-2">
+                  <Icon name="bolt" size={16} className="text-amber-400" /> Latest Prediction Summary
+                </h3>
+                <span className="text-xs text-white/30 ml-auto">
+                  {new Date(latestPred.timestamp).toLocaleString()}
+                </span>
+              </GlassCardHeader>
+              <GlassCardContent>
+                <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+                  {Object.entries(latestPred.layers ?? {}).map(([layer, pred]) => {
+                    const p = pred as any
+                    return (
+                      <div key={layer} className="rounded-xl bg-white/5 border border-white/10 px-4 py-3 text-center">
+                        <div className="text-xs text-white/40 capitalize mb-1">{layer}</div>
+                        <div className="text-xl font-bold text-green-400">{(p.predicted_yield_t_ha ?? 0).toFixed(2)}</div>
+                        <div className="text-xs text-white/30">tonnes/acre</div>
+                      </div>
+                    )
+                  })}
+                </div>
+                {(latestPred as any).optimal_geometry_recommendation && (
+                  <p className="mt-4 text-sm text-white/60 leading-relaxed">
+                    {(latestPred as any).optimal_geometry_recommendation}
+                  </p>
+                )}
+              </GlassCardContent>
+            </GlassCard>
+          </motion.div>
+        )}
+        </>
+        )}
       </div>
     </PageLayout>
-  );
+  )
 }
+

@@ -14,7 +14,7 @@ describe('Spacing', () => {
     for (let row = 1; row <= 5; row += 0.5) {
       for (let inRow = 1; inRow <= 5; inRow += 0.5) {
         const pph = plantsPerHectare(row, inRow);
-        expect(row * inRow * pph).toBeCloseTo(10000, -1);
+        expect(row * inRow * pph).toBeCloseTo(10000, -2);
       }
     }
   });

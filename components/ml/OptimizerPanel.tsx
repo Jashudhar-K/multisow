@@ -2,21 +2,7 @@
 
 import { useState } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
-import {
-  Cpu,
-  Loader2,
-  AlertTriangle,
-  Zap,
-  Trophy,
-  Leaf,
-  DollarSign,
-  AlertCircle,
-  ChevronDown,
-  ChevronUp,
-  Layers,
-} from 'lucide-react'
-
-// ============================================================================
+import { Icon } from '@/components/ui/Icon';// ============================================================================
 // TYPES
 // ============================================================================
 
@@ -102,7 +88,7 @@ function RecCard({ rec, expanded, onToggle }: { rec: StrataRec; expanded: boolea
       <button onClick={onToggle} className="w-full px-4 py-3 flex items-center justify-between text-left">
         <div className="flex items-center gap-3">
           {rec.rank === 1 ? (
-            <Trophy className="w-5 h-5 text-yellow-400" />
+            <Icon name="emoji_events" className="w-5 h-5 text-yellow-400" />
           ) : (
             <span className="w-5 h-5 flex items-center justify-center text-neutral-400 text-sm font-bold">#{rec.rank}</span>
           )}
@@ -117,7 +103,7 @@ function RecCard({ rec, expanded, onToggle }: { rec: StrataRec; expanded: boolea
             LER {m.ler.toFixed(2)}
           </span>
           <span className="text-sm text-white font-semibold">{m.total_yield_t_ha} t/ha</span>
-          {expanded ? <ChevronUp className="w-4 h-4 text-neutral-400" /> : <ChevronDown className="w-4 h-4 text-neutral-400" />}
+          {expanded ? <Icon name="expand_less" className="w-4 h-4 text-neutral-400" /> : <Icon name="expand_more" className="w-4 h-4 text-neutral-400" />}
         </div>
       </button>
 
@@ -164,7 +150,7 @@ function RecCard({ rec, expanded, onToggle }: { rec: StrataRec; expanded: boolea
               <div className="mt-3 space-y-1">
                 {rec.synergy_notes.map((n, i) => (
                   <div key={i} className="text-xs text-green-400 flex items-center gap-1">
-                    <Leaf className="w-3 h-3" /> {n}
+                    <Icon name="eco" className="w-3 h-3" /> {n}
                   </div>
                 ))}
               </div>
@@ -173,7 +159,7 @@ function RecCard({ rec, expanded, onToggle }: { rec: StrataRec; expanded: boolea
               <div className="mt-2 space-y-1">
                 {rec.warnings.map((w, i) => (
                   <div key={i} className="text-xs text-yellow-400 flex items-center gap-1">
-                    <AlertCircle className="w-3 h-3" /> {w}
+                    <Icon name="error" className="w-3 h-3" /> {w}
                   </div>
                 ))}
               </div>
@@ -284,7 +270,7 @@ export default function OptimizerPanel() {
       {/* Header */}
       <div>
         <h2 className="text-xl font-bold text-white flex items-center gap-2">
-          <Cpu className="w-5 h-5 text-purple-400" />
+          <Icon name="memory" className="w-5 h-5 text-purple-400" />
           Strata Optimizer
         </h2>
         <p className="text-sm text-neutral-400 mt-1">
@@ -303,9 +289,9 @@ export default function OptimizerPanel() {
             }`}
           >
             {m === 'strata' ? (
-              <span className="flex items-center gap-1.5"><Layers className="w-4 h-4" /> Full Strata</span>
+              <span className="flex items-center gap-1.5"><Icon name="layers" className="w-4 h-4" /> Full Strata</span>
             ) : (
-              <span className="flex items-center gap-1.5"><Zap className="w-4 h-4" /> Quick</span>
+              <span className="flex items-center gap-1.5"><Icon name="bolt" className="w-4 h-4" /> Quick</span>
             )}
           </button>
         ))}
@@ -369,7 +355,7 @@ export default function OptimizerPanel() {
             disabled={loading}
             className="px-6 py-2.5 bg-purple-500 text-white font-semibold rounded-xl hover:bg-purple-400 disabled:opacity-50 disabled:cursor-not-allowed transition flex items-center gap-2"
           >
-            {loading ? <Loader2 className="w-4 h-4 animate-spin" /> : <Cpu className="w-4 h-4" />}
+            {loading ? <Icon name="progress_activity" className="w-4 h-4 animate-spin" /> : <Icon name="memory" className="w-4 h-4" />}
             {loading ? 'Optimizing…' : 'Run Optimization'}
           </button>
         </div>
@@ -407,7 +393,7 @@ export default function OptimizerPanel() {
             disabled={loading}
             className="px-6 py-2.5 bg-purple-500 text-white font-semibold rounded-xl hover:bg-purple-400 disabled:opacity-50 disabled:cursor-not-allowed transition flex items-center gap-2"
           >
-            {loading ? <Loader2 className="w-4 h-4 animate-spin" /> : <Zap className="w-4 h-4" />}
+            {loading ? <Icon name="progress_activity" className="w-4 h-4 animate-spin" /> : <Icon name="bolt" className="w-4 h-4" />}
             {loading ? 'Optimizing…' : 'Quick Optimize'}
           </button>
         </div>
@@ -416,7 +402,7 @@ export default function OptimizerPanel() {
       {/* Error */}
       {error && (
         <div className="glass border border-red-500/30 rounded-xl p-4 flex items-start gap-3">
-          <AlertTriangle className="w-5 h-5 text-red-400 mt-0.5" />
+          <Icon name="warning" className="w-5 h-5 text-red-400 mt-0.5" />
           <div>
             <p className="text-red-400 font-medium text-sm">Optimization Failed</p>
             <p className="text-neutral-400 text-xs mt-1">{error}</p>

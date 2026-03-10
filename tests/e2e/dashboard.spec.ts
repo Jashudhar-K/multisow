@@ -1,17 +1,37 @@
 import { test, expect } from '@playwright/test';
 
-test('dashboard loads and shows metric cards', async ({ page }) => {
-  await page.goto('/dashboard');
-  await expect(page.locator('.glass')).toHaveCount(2);
-});
+test.describe('Dashboard', () => {
+  test('redirects to login when unauthenticated', async ({ page }) => {
+    await page.goto('/dashboard');
+    await expect(page).toHaveURL(/login/);
+  });
 
-test('all existing metrics are visible', async ({ page }) => {
-  await page.goto('/dashboard');
-  await expect(page.locator('text=AI/ML Tools')).toBeVisible();
-});
+  test('shows AI/ML Tools section after login', async ({ page }) => {
+    // Create account + login
+    const email = `dash-test-${Date.now()}@example.com`;
+    await page.goto('/signup');
+    await page.fill('input[id="name"]', 'Dashboard Tester');
+    await page.fill('input[id="email"]', email);
+    await page.fill('input[id="password"]', 'password123');
+    await page.click('button[type="submit"]');
+    await page.waitForURL(/onboarding/, { timeout: 10000 });
 
-test('navigation to other pages works from dashboard', async ({ page }) => {
-  await page.goto('/dashboard');
-  await page.click('text=Yield Prediction');
-  await expect(page).toHaveURL(/predict/);
+    await page.goto('/dashboard');
+    await expect(page.locator('text=AI/ML Tools')).toBeVisible({ timeout: 10000 });
+  });
+
+  test('quick action links are present', async ({ page }) => {
+    const email = `dash-nav-${Date.now()}@example.com`;
+    await page.goto('/signup');
+    await page.fill('input[id="name"]', 'Nav Tester');
+    await page.fill('input[id="email"]', email);
+    await page.fill('input[id="password"]', 'password123');
+    await page.click('button[type="submit"]');
+    await page.waitForURL(/onboarding/, { timeout: 10000 });
+
+    await page.goto('/dashboard');
+    await expect(page.locator('a[href="/predict"]')).toBeVisible({ timeout: 10000 });
+    await expect(page.locator('a[href="/designer"]')).toBeVisible();
+    await expect(page.locator('a[href="/crops"]')).toBeVisible();
+  });
 });

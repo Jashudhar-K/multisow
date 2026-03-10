@@ -1,3 +1,0 @@
-module.exports=[95506,a=>{"use strict";var b=a.i(87924);a.s(["default",0,({children:a,title:c})=>(0,b.jsxs)("div",{className:"p-8 min-h-screen",children:[c&&(0,b.jsx)("h1",{className:"text-3xl font-bold text-white mb-6",children:c}),a]})])},34559,a=>{"use strict";var b=a.i(87924),c=a.i(95506);let d=(0,a.i(19721).default)(async()=>{},{loadableGenerated:{modules:[43675]},ssr:!1});function e(){return(0,b.jsx)(c.default,{title:"Strata Optimizer",children:(0,b.jsx)(d,{})})}a.s(["default",()=>e])}];
-
-//# sourceMappingURL=_5907a5c2._.js.map

@@ -9,7 +9,7 @@
 
 import React, { forwardRef, ButtonHTMLAttributes, InputHTMLAttributes, HTMLAttributes, ReactNode } from 'react';
 import { motion, HTMLMotionProps } from 'framer-motion';
-import { cn } from '@/lib/utils';
+import { cn } from '@/lib/index';
 
 /* ============================================
    BUTTON COMPONENT

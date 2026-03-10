@@ -8,8 +8,8 @@
 
 import { forwardRef, createContext, useContext, useId } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { AlertCircle, HelpCircle } from 'lucide-react';
-import { cn } from '@/lib/utils';
+import { Icon } from '@/components/ui/Icon';
+import { cn } from '@/lib/index';
 
 // ============================================================================
 // FormField Context
@@ -94,7 +94,8 @@ export const FormField = forwardRef<HTMLDivElement, FormFieldProps>(
                 {required && <span className="text-error">*</span>}
                 {tooltip && (
                   <div className="group relative">
-                    <HelpCircle
+                    <Icon
+                      name="help"
                       size={14}
                       className="text-text-muted cursor-help"
                     />
@@ -130,7 +131,7 @@ export const FormField = forwardRef<HTMLDivElement, FormFieldProps>(
                     error ? 'text-error' : 'text-text-muted'
                   )}
                 >
-                  {error && <AlertCircle size={12} className="mt-0.5 flex-shrink-0" />}
+                  {error && <Icon name="error" size={12} className="mt-0.5 flex-shrink-0" />}
                   <span>{error || hint}</span>
                 </motion.div>
               )}

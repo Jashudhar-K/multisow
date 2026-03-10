@@ -15,8 +15,8 @@ import {
   ReactNode,
 } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Sun, Moon, Monitor } from 'lucide-react';
-import { cn } from '@/lib/utils';
+import { Icon } from '@/components/ui/Icon';
+import { cn } from '@/lib/index';
 
 // ============================================================================
 // Types
@@ -200,9 +200,9 @@ export function ThemeToggle({
             transition={{ duration: 0.2 }}
           >
             {resolvedTheme === 'dark' ? (
-              <Moon size={iconSize} />
+              <Icon name="dark_mode" size={iconSize} />
             ) : (
-              <Sun size={iconSize} />
+              <Icon name="light_mode" size={iconSize} />
             )}
           </motion.span>
         </AnimatePresence>
@@ -234,9 +234,9 @@ export function ThemeToggle({
           transition={{ duration: 0.2 }}
         >
           {resolvedTheme === 'dark' ? (
-            <Moon size={iconSize} />
+            <Icon name="dark_mode" size={iconSize} />
           ) : (
-            <Sun size={iconSize} />
+            <Icon name="light_mode" size={iconSize} />
           )}
         </motion.span>
       </AnimatePresence>
@@ -255,10 +255,10 @@ export interface ThemeSelectorProps {
 export function ThemeSelector({ className }: ThemeSelectorProps) {
   const { theme, setTheme } = useTheme();
 
-  const options: { value: Theme; label: string; icon: typeof Sun }[] = [
-    { value: 'light', label: 'Light', icon: Sun },
-    { value: 'dark', label: 'Dark', icon: Moon },
-    { value: 'system', label: 'System', icon: Monitor },
+  const options: { value: Theme; label: string; icon: string }[] = [
+    { value: 'light', label: 'Light', icon: 'light_mode' },
+    { value: 'dark', label: 'Dark', icon: 'dark_mode' },
+    { value: 'system', label: 'System', icon: 'computer' },
   ];
 
   return (
@@ -270,7 +270,7 @@ export function ThemeSelector({ className }: ThemeSelectorProps) {
       role="radiogroup"
       aria-label="Theme selection"
     >
-      {options.map(({ value, label, icon: Icon }) => (
+      {options.map(({ value, label, icon }) => (
         <button
           key={value}
           type="button"
@@ -285,7 +285,7 @@ export function ThemeSelector({ className }: ThemeSelectorProps) {
               : 'text-text-muted hover:text-text-secondary'
           )}
         >
-          <Icon size={14} />
+          <Icon name={icon} size={14} />
           <span>{label}</span>
         </button>
       ))}

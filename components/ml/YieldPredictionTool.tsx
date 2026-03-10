@@ -2,19 +2,7 @@
 
 import { useState } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
-import {
-  TrendingUp,
-  Loader2,
-  Layers,
-  Leaf,
-  AlertTriangle,
-  ChevronDown,
-  ChevronUp,
-  BarChart3,
-  Lightbulb,
-} from 'lucide-react'
-
-// ============================================================================
+import { Icon } from '@/components/ui/Icon';// ============================================================================
 // TYPES
 // ============================================================================
 
@@ -179,11 +167,11 @@ function LayerInputCard({
           className="flex items-center justify-between flex-1 text-left"
         >
           <div className="flex items-center gap-2">
-            <Layers className={`w-4 h-4 ${c.text}`} />
+            <Icon name="layers" className={`w-4 h-4 ${c.text}`} />
             <span className={`font-semibold capitalize ${c.text}`}>{data.layer}</span>
             <span className="text-neutral-400 text-sm">— {data.crop_species || 'no crop'}</span>
           </div>
-          {expanded ? <ChevronUp className="w-4 h-4 text-neutral-400" /> : <ChevronDown className="w-4 h-4 text-neutral-400" />}
+          {expanded ? <Icon name="expand_less" className="w-4 h-4 text-neutral-400" /> : <Icon name="expand_more" className="w-4 h-4 text-neutral-400" />}
         </button>
         <button
           onClick={onRemove}
@@ -445,7 +433,7 @@ export default function YieldPredictionTool({
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
         <div>
           <h2 className="text-xl font-bold text-white flex items-center gap-2">
-            <TrendingUp className="w-5 h-5 text-green-400" />
+            <Icon name="trending_up" className="w-5 h-5 text-green-400" />
             Yield Prediction
           </h2>
           <p className="text-sm text-neutral-400 mt-1">
@@ -499,7 +487,7 @@ export default function YieldPredictionTool({
             disabled={loading || layers.length === 0}
             className="px-6 py-2.5 bg-green-500 text-black font-semibold rounded-xl hover:bg-green-400 disabled:opacity-50 disabled:cursor-not-allowed transition flex items-center gap-2"
           >
-            {loading ? <Loader2 className="w-4 h-4 animate-spin" /> : <BarChart3 className="w-4 h-4" />}
+            {loading ? <Icon name="progress_activity" className="w-4 h-4 animate-spin" /> : <Icon name="bar_chart" className="w-4 h-4" />}
             {loading ? 'Predicting…' : 'Run Prediction'}
           </button>
         </div>
@@ -508,7 +496,7 @@ export default function YieldPredictionTool({
       {/* Error */}
       {error && (
         <div className="glass border border-red-500/30 rounded-xl p-4 flex items-start gap-3">
-          <AlertTriangle className="w-5 h-5 text-red-400 mt-0.5" />
+          <Icon name="warning" className="w-5 h-5 text-red-400 mt-0.5" />
           <div>
             <p className="text-red-400 font-medium text-sm">Prediction Failed</p>
             <p className="text-neutral-400 text-xs mt-1">{error}</p>
@@ -545,7 +533,7 @@ export default function YieldPredictionTool({
               </div>
               {result.optimal_geometry_recommendation && (
                 <p className="text-sm text-neutral-300 flex items-start gap-2">
-                  <Leaf className="w-4 h-4 text-green-400 mt-0.5 shrink-0" />
+                  <Icon name="eco" className="w-4 h-4 text-green-400 mt-0.5 shrink-0" />
                   {result.optimal_geometry_recommendation}
                 </p>
               )}
@@ -555,7 +543,7 @@ export default function YieldPredictionTool({
             {result.nlp_explanation && (
               <div className="glass border border-cyan-500/20 rounded-xl p-5 mb-4">
                 <h3 className="text-sm font-semibold text-cyan-400 mb-2 flex items-center gap-2">
-                  <Lightbulb className="w-4 h-4" />
+                  <Icon name="lightbulb" className="w-4 h-4" />
                   AI Summary
                 </h3>
                 <p className="text-sm text-neutral-200 leading-relaxed">{result.nlp_explanation}</p>

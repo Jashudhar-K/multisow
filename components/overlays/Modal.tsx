@@ -8,8 +8,8 @@
 
 import { forwardRef, useEffect, useCallback, createContext, useContext } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { X } from 'lucide-react';
-import { cn } from '@/lib/utils';
+import { Icon } from '@/components/ui/Icon';
+import { cn } from '@/lib/index';
 import { createPortal } from 'react-dom';
 
 // ============================================================================
@@ -150,7 +150,7 @@ export function Modal({
                   className="absolute top-4 right-4 z-10 p-2 rounded-lg text-text-muted hover:text-text-primary hover:bg-surface-hover transition-colors"
                   aria-label="Close modal"
                 >
-                  <X size={18} />
+                  <Icon name="close" size={18} />
                 </button>
               )}
 
