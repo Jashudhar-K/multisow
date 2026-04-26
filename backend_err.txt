@@ -1,0 +1,12 @@
+scikit-fuzzy not installed; FIS will use parametric fallback
+DEAP not installed; GA will use random-search fallback
+InfluxDB unavailable (No module named 'influxdb_client'); using in-memory mock
+Anthropic API error in chat_multi_turn: Connection error.
+Feature store health report failed: 'FeatureStore' object has no attribute 'health_report'
+Feature store health report failed: 'FeatureStore' object has no attribute 'health_report'
+Feature store health report failed: 'FeatureStore' object has no attribute 'health_report'
+Feature store health report failed: 'FeatureStore' object has no attribute 'health_report'
+Feature store health report failed: 'FeatureStore' object has no attribute 'health_report'
+Feature store health report failed: 'FeatureStore' object has no attribute 'health_report'
+Feature store health report failed: 'FeatureStore' object has no attribute 'health_report'
+Feature store health report failed: 'FeatureStore' object has no attribute 'health_report'

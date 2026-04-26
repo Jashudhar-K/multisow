@@ -56,11 +56,13 @@ function getSpeciesByIdOrName(speciesId: string | null | undefined, layer: Strat
   }
   
   // Fall back based on layer
-  const layerDefaults: Record<StrataLayerId, string> = {
+  const layerDefaults: Record<string, string> = {
     'canopy': 'coconut',
     'middle': 'banana',
+    'midstory': 'banana',
     'understory': 'ginger',
     'root': 'turmeric',
+    'groundcover': 'turmeric',
   }
   
   const fallbackId = layerDefaults[layer] || 'coconut'
@@ -190,7 +192,7 @@ function Tree({ position, species, maturityStage = 1, isSelected, onClick }: Tre
   const canopyColor = new THREE.Color(species.color)
   
   return (
-    <group ref={meshRef} position={position} onClick={onClick}>
+    <group ref={meshRef} position={position} onClick={(e) => { e.stopPropagation(); onClick?.(); }}>
       {/* Trunk */}
       <mesh position={[0, trunkHeight / 2, 0]} castShadow>
         <cylinderGeometry args={[0.15 * maturityStage, 0.25 * maturityStage, trunkHeight, 8]} />
@@ -210,7 +212,7 @@ function Tree({ position, species, maturityStage = 1, isSelected, onClick }: Tre
             <meshStandardMaterial color={canopyColor.clone().multiplyScalar(1.1)} roughness={0.7} />
           </mesh>
         </group>
-      ) : species.layer === 'middle' ? (
+      ) : ['middle', 'midstory'].includes(species.layer) ? (
         // Rounded canopy
         <mesh position={[0, trunkHeight + canopyRadius, 0]} castShadow>
           <sphereGeometry args={[canopyRadius, 12, 12]} />
@@ -224,12 +226,43 @@ function Tree({ position, species, maturityStage = 1, isSelected, onClick }: Tre
         </mesh>
       )}
 
-      {/* Selection ring */}
+      {/* Selection ring and details */}
       {isSelected && (
-        <mesh position={[0, 0.1, 0]} rotation={[-Math.PI / 2, 0, 0]}>
-          <ringGeometry args={[canopyRadius * 1.2, canopyRadius * 1.4, 32]} />
-          <meshBasicMaterial color="#22c55e" transparent opacity={0.8} />
-        </mesh>
+        <group>
+          <mesh position={[0, 0.1, 0]} rotation={[-Math.PI / 2, 0, 0]}>
+            <ringGeometry args={[canopyRadius * 1.2, canopyRadius * 1.4, 32]} />
+            <meshBasicMaterial color="#22c55e" transparent opacity={0.8} />
+          </mesh>
+          <Html position={[0, trunkHeight + canopyHeight + 1.5, 0]} center distanceFactor={18}>
+            <div className="bg-black/95 backdrop-blur-md rounded-2xl p-6 text-white border border-green-500/50 shadow-2xl pointer-events-none w-80 transform -translate-y-4">
+              <h4 className="text-green-400 font-bold text-2xl mb-1">{species.name}</h4>
+              <p className="text-white/60 text-sm italic mb-4">{species.scientificName}</p>
+              
+              <div className="space-y-2.5 text-sm">
+                <div className="flex justify-between items-center border-b border-white/10 pb-1">
+                  <span className="text-white/50">Layer</span>
+                  <span className="capitalize text-white bg-white/10 px-3 py-1 rounded-full text-xs font-medium">{species.layer}</span>
+                </div>
+                <div className="flex justify-between items-center border-b border-white/10 pb-1">
+                  <span className="text-white/50">Water Needs</span>
+                  <span className="capitalize text-white/90 font-medium">{species.waterNeeds}</span>
+                </div>
+                <div className="flex justify-between items-center border-b border-white/10 pb-1">
+                  <span className="text-white/50">Expected Yield</span>
+                  <span className="text-green-400 font-bold">{species.yieldPerTree} kg/yr</span>
+                </div>
+                <div className="flex justify-between items-center border-b border-white/10 pb-1">
+                  <span className="text-white/50">Est. Price</span>
+                  <span className="text-white/90 font-medium">₹{species.pricePerKg}/kg</span>
+                </div>
+                <div className="flex justify-between items-center pb-1">
+                  <span className="text-white/50">Maturity</span>
+                  <span className="text-white/90 font-medium">{species.maturityYears} yrs</span>
+                </div>
+              </div>
+            </div>
+          </Html>
+        </group>
       )}
     </group>
   )

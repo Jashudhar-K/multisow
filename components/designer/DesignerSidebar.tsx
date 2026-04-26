@@ -7,6 +7,7 @@ import type { PlantInstance } from '@/types/farm';
 import type { CompatibilityWarning } from '@/lib/compatibility';
 import { CompatibilitySummary } from '@/components/farm';
 import PlantingGuidePanel from '@/components/designer/PlantingGuidePanel';
+import { useLanguage } from '@/context/LanguageContext';
 
 type SidebarTab = 'status' | 'compatibility' | 'overlays' | 'guide';
 
@@ -22,13 +23,6 @@ interface DesignerSidebarProps {
   selectedPresetId?: string | null;
 }
 
-const TAB_ITEMS: { key: SidebarTab; label: string; icon: string }[] = [
-  { key: 'status', label: 'Status', icon: '📊' },
-  { key: 'compatibility', label: 'Check', icon: '✅' },
-  { key: 'overlays', label: 'Layers', icon: '🗺️' },
-  { key: 'guide', label: 'Guide', icon: '📚' },
-];
-
 const DesignerSidebar: React.FC<DesignerSidebarProps> = ({
   compatibilityWarnings = [],
   plants = [],
@@ -37,6 +31,14 @@ const DesignerSidebar: React.FC<DesignerSidebarProps> = ({
   selectedPresetId = null,
 }) => {
   const [activeTab, setActiveTab] = useState<SidebarTab>('status');
+  const { t } = useLanguage();
+
+  const TAB_ITEMS: { key: SidebarTab; label: string; icon: string }[] = [
+    { key: 'status', label: t('designer.status') || 'Status', icon: '📊' },
+    { key: 'compatibility', label: t('designer.check') || 'Check', icon: '✅' },
+    { key: 'overlays', label: t('designer.layers') || 'Layers', icon: '🗺️' },
+    { key: 'guide', label: t('designer.guide') || 'Guide', icon: '📚' },
+  ];
 
   return (
     <aside className="w-80 shrink-0 bg-[#0F1A0F] border-l border-green-900/30 h-full flex flex-col">
@@ -93,7 +95,7 @@ const DesignerSidebar: React.FC<DesignerSidebarProps> = ({
               <div>
                 <h3 className="text-white text-sm font-semibold mb-3">Layer Distribution</h3>
                 <div className="space-y-2">
-                  {['canopy', 'mid', 'ground'].map((layer) => {
+                  {['canopy', 'midstory', 'understory', 'groundcover'].map((layer) => {
                     const count = plants.filter((p) => p.layer === layer).length;
                     const percentage = plants.length > 0 ? Math.round((count / plants.length) * 100) : 0;
                     return (
@@ -107,9 +109,11 @@ const DesignerSidebar: React.FC<DesignerSidebarProps> = ({
                             className={`h-full rounded ${
                               layer === 'canopy'
                                 ? 'bg-green-500'
-                                : layer === 'mid'
+                                : layer === 'midstory'
                                 ? 'bg-yellow-500'
-                                : 'bg-orange-500'
+                                : layer === 'understory'
+                                ? 'bg-orange-500'
+                                : 'bg-amber-700'
                             }`}
                             style={{ width: `${percentage}%` }}
                           />

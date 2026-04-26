@@ -1,5 +1,7 @@
-import NextAuth from 'next-auth'
-import { authOptions } from '@/lib/auth'
+/**
+ * Auth.js v5 route handler.
+ * Exports GET and POST from the unified handlers object.
+ */
+import { handlers } from '@/lib/auth'
 
-const handler = NextAuth(authOptions)
-export { handler as GET, handler as POST }
+export const { GET, POST } = handlers

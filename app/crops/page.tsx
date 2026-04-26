@@ -2,6 +2,8 @@
 
 import { useState, useEffect } from 'react'
 import PageLayout from '@/components/layout/PageLayout'
+import { MarketPriceTicker } from '@/components/market/MarketPriceTicker'
+import { useLanguage } from '@/context/LanguageContext'
 
 // ── Types ──────────────────────────────────────────────────────────────────
 
@@ -73,11 +75,13 @@ function CropCard({
   name,
   stats,
   selected,
+  price,
   onClick,
 }: {
   name: string
   stats: CropStat | undefined
   selected: boolean
+  price?: { value: number; unit: string }
   onClick: () => void
 }) {
   return (
@@ -89,7 +93,14 @@ function CropCard({
           : 'border-zinc-700 bg-zinc-900 hover:border-zinc-500'
       }`}
     >
-      <p className="text-white font-semibold capitalize mb-2">{name}</p>
+      <div className="flex justify-between items-start mb-2">
+        <p className="text-white font-semibold capitalize">{name}</p>
+        {price && (
+          <span className="text-emerald-400 text-xs font-medium bg-emerald-400/10 px-2 py-0.5 rounded-full border border-emerald-400/20">
+            ₹{price.value}/{price.unit}
+          </span>
+        )}
+      </div>
       {stats ? (
         <div className="flex flex-wrap gap-1">
           <StatBadge label="N" val={stats.N} />
@@ -110,9 +121,12 @@ function CropCard({
 // ── Page ───────────────────────────────────────────────────────────────────
 
 export default function CropsPage() {
+  const { t } = useLanguage()
+  
   // Library state
   const [crops, setCrops] = useState<string[]>([])
   const [allStats, setAllStats] = useState<Record<string, CropStat>>({})
+  const [marketPrices, setMarketPrices] = useState<Record<string, any>>({})
   const [search, setSearch] = useState('')
   const [filterLayer, setFilterLayer] = useState<Layer | ''>('')
   const [layerCropSet, setLayerCropSet] = useState<Set<string>>(new Set())
@@ -145,14 +159,18 @@ export default function CropsPage() {
       setLoadingLibrary(true)
       setLibraryError('')
       try {
-        const [allRes, statsRes] = await Promise.all([
+        const [allRes, statsRes, marketRes] = await Promise.all([
           fetch('/api/crops-v2/all'),
           fetch('/api/crops-v2/stats'),
+          fetch('/api/market-prices'),
         ])
         const { crops: cropList } = await allRes.json()
         const statsData = await statsRes.json()
+        const marketData = await marketRes.json()
+        
         setCrops(Array.isArray(cropList) ? cropList : [])
         setAllStats(statsData ?? {})
+        setMarketPrices(marketData?.prices ?? {})
       } catch {
         setLibraryError('Failed to load crop library. Is the backend running?')
       } finally {
@@ -247,7 +265,7 @@ export default function CropsPage() {
       const res = await fetch('/api/crops-v2/ai-extend', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ crop_list: cropList }),
+        body: JSON.stringify({ crops: cropList }),
       })
       setAiResult(await res.json())
     } catch {
@@ -289,15 +307,17 @@ export default function CropsPage() {
   )
 
   return (
-    <PageLayout title="Crop Library">
+    <>
+      <MarketPriceTicker />
+      <PageLayout title={t('crops.title')}>
       <div className="space-y-12">
 
         {/* ── Library section ── */}
         <section className="space-y-4">
           <div className="space-y-1">
-            <h2 className="text-xl font-bold text-white">All Crops</h2>
+            <h2 className="text-xl font-bold text-white">{t('crops.title')}</h2>
             <p className="text-sm text-zinc-400">
-              {crops.length} crops from the dataset. Click any crop to view its top compatible intercropping partners.
+              {t('crops.subtitle')}
             </p>
           </div>
 
@@ -341,15 +361,19 @@ export default function CropsPage() {
               {displayedCrops.length === 0 && (
                 <p className="text-zinc-500 text-sm col-span-full">No crops match the current filters.</p>
               )}
-              {displayedCrops.map(name => (
-                <CropCard
-                  key={name}
-                  name={name}
-                  stats={allStats[name]}
-                  selected={selectedCrop === name}
-                  onClick={() => handleSelectCrop(name)}
-                />
-              ))}
+              {displayedCrops.map(name => {
+                const priceInfo = marketPrices[name.toLowerCase()]
+                return (
+                  <CropCard
+                    key={name}
+                    name={name}
+                    stats={allStats[name]}
+                    selected={selectedCrop === name}
+                    price={priceInfo ? { value: priceInfo.price, unit: priceInfo.unit } : undefined}
+                    onClick={() => handleSelectCrop(name)}
+                  />
+                )
+              })}
             </div>
           )}
 
@@ -552,6 +576,7 @@ export default function CropsPage() {
 
       </div>
     </PageLayout>
+    </>
   )
 }
 

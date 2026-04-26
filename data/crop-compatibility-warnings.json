@@ -1,0 +1,16 @@
+{
+  "coconut+banana": { "type": "good", "note": "Excellent shade + nitrogen synergy. Banana creates microclimate for young coconut." },
+  "coconut+black pepper": { "type": "good", "note": "Pepper uses coconut trunk as standard. Coconut provides perfect dappled shade." },
+  "coconut+vanilla": { "type": "good", "note": "Vanilla thrives in the high humidity environment created by coconut canopy." },
+  "arecanut+cocoa": { "type": "good", "note": "Cocoa performs excellently under the light shade of arecanut." },
+  "teak+ginger": { "type": "warning", "note": "Teak leaf fall can suppress ginger growth if not cleared regularly." },
+  "tomato+fennel": { "type": "warning", "note": "Fennel stunts tomato growth through allelopathy (chemical inhibition)." },
+  "coffee+black pepper": { "type": "pest", "note": "Shared susceptibility to root-knot nematodes. Monitor soil health carefully." },
+  "banana+cardamom": { "type": "disease", "note": "Banana bunchy top virus vectors can sometimes affect cardamom vigor." },
+  "papaya+black pepper": { "type": "disease", "note": "Both highly susceptible to Phytophthora foot rot in waterlogged soils." },
+  "mango+cashew": { "type": "pest", "note": "Both attract the Tea Mosquito Bug. Avoid planting in adjacent blocks without trap crops." },
+  "mango+papaya": { "type": "warning", "note": "Papaya grows too fast and can crowd out young mango grafts." },
+  "silver oak+coffee": { "type": "good", "note": "Classic combination. Silver oak provides deep-rooted nutrient cycling without competing with coffee." },
+  "jackfruit+black pepper": { "type": "good", "note": "Jackfruit provides an excellent, sturdy standard for pepper vines." },
+  "turmeric+ginger": { "type": "disease", "note": "Planting both together increases risk of rhizome rot spreading between them." }
+}

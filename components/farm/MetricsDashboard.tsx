@@ -202,15 +202,19 @@ function LightInterceptionDiagram({ layers }: LightInterceptionDiagramProps) {
   const layerColors: Record<StrataLayerId, string> = {
     canopy: '#166534',
     middle: '#15803d',
+    midstory: '#15803d',
     understory: '#14b8a6',
     root: '#a16207',
+    groundcover: '#a16207'
   }
 
   const layerNames: Record<StrataLayerId, string> = {
     canopy: 'Canopy',
     middle: 'Middle',
+    midstory: 'Middle',
     understory: 'Understory',
     root: 'Root Zone',
+    groundcover: 'Groundcover'
   }
 
   // Calculate cumulative light transmission

@@ -8,6 +8,7 @@ import { motion } from 'framer-motion'
 import Link from 'next/link'
 import { Icon } from '@/components/ui/Icon'
 import { Spotlight } from '@/components/ui/spotlight'
+import { useLanguage } from '@/context/LanguageContext'
 
 const statPills = [
   '3.5–4.2× More Production',
@@ -33,6 +34,8 @@ const itemVariants = {
 } as const
 
 export default function HeroSection() {
+  const { t } = useLanguage()
+
   return (
     <section
       className="relative min-h-screen flex items-center overflow-hidden bg-background"
@@ -54,7 +57,7 @@ export default function HeroSection() {
           <motion.div variants={itemVariants}>
             <span className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full text-sm font-medium text-success border border-success/30 bg-success/10 shadow-[0_0_15px_rgba(var(--color-success),0.15)]">
               <Icon name="eco" size={14} filled />
-              AI-Powered Farm Planning for Indian Farmers
+              {t('hero.badge') || 'AI-Powered Farm Planning for Indian Farmers'}
             </span>
           </motion.div>
 
@@ -63,12 +66,12 @@ export default function HeroSection() {
             variants={itemVariants}
             className="text-6xl md:text-8xl font-black tracking-tight leading-[0.95]"
           >
-            <span className="text-success">Grow More</span>
+            <span className="text-success">{t('hero.grow') || 'Grow More'}</span>
             <br />
-            <span className="text-text-primary">From Every Cent</span>
+            <span className="text-text-primary">{t('hero.from') || 'From Every Cent'}</span>
             <br />
             <span className="bg-gradient-to-r from-success to-accent bg-clip-text text-transparent">
-              of Land
+              {t('hero.land') || 'of Land'}
             </span>
           </motion.h1>
 
@@ -77,9 +80,7 @@ export default function HeroSection() {
             variants={itemVariants}
             className="text-lg text-text-secondary max-w-xl"
           >
-            Plan multi-layer farms using AI. Get exact planting guides,
-            yield predictions in tonnes per acre, and revenue estimates
-            in ₹ — all in one place.
+            {t('hero.sub') || 'Plan multi-layer farms using AI. Get exact planting guides, yield predictions in tonnes per acre, and revenue estimates in ₹ — all in one place.'}
           </motion.p>
 
           {/* Stat Pills */}
@@ -101,14 +102,14 @@ export default function HeroSection() {
               className="inline-flex items-center gap-2 bg-success hover:bg-success/90 text-white font-bold text-lg px-8 py-4 rounded-full transition-all duration-200 shadow-lg shadow-success/25"
             >
               <Icon name="agriculture" size={20} />
-              Plan My Farm
+              {t('hero.cta1') || 'Plan My Farm'}
             </Link>
             <Link
               href="/designer"
               className="inline-flex items-center gap-2 text-text-secondary hover:text-text-primary font-medium text-lg px-6 py-4 rounded-full border border-border hover:border-border-hover transition-all duration-200"
             >
               <Icon name="grid_on" size={20} />
-              Open Designer
+              {t('hero.cta2') || 'Open Designer'}
             </Link>
           </motion.div>
         </motion.div>

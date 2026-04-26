@@ -313,27 +313,47 @@ async def optimize_strata(body: OptimizationRequest) -> OptimizationResponse:
 
     recommendations = []
     for i, cfg in enumerate(top_configs):
-        strata = {}
-        for layer_name, crop_name, spacing in [
-            ("canopy",     cfg.canopy_crop,     cfg.canopy_spacing),
-            ("middle",     cfg.middle_crop,      cfg.middle_spacing),
-            ("understory", cfg.understory_crop,  cfg.understory_spacing),
-        ]:
-            if crop_name:
-                strata[layer_name] = StrataRecommendation(
-                    crop=crop_name,
-                    spacing_m=spacing,
-                    expected_yield_t_ha=round(cfg.total_yield / max(len([c for c in [cfg.canopy_crop, cfg.middle_crop, cfg.understory_crop] if c]), 1), 2),
-                )
-        recommendations.append(CropRecommendation(
+        n_crops = max(len([c for c in [cfg.canopy_crop, cfg.middle_crop, cfg.understory_crop] if c]), 1)
+        per_layer_yield = round(cfg.total_yield / n_crops, 2)
+
+        # Compute economic estimates from the crop database
+        total_establishment = 0.0
+        total_revenue = 0.0
+        for crop_name in [cfg.canopy_crop, cfg.middle_crop, cfg.understory_crop]:
+            if crop_name and crop_name in CROP_DATABASE:
+                spec = CROP_DATABASE[crop_name]
+                total_establishment += spec.establishment_cost_inr_ha
+                total_revenue += per_layer_yield * spec.price_per_tonne_inr
+
+        canopy_rec = CropRecommendation(
+            crop=cfg.canopy_crop,
+            spacing_m=cfg.canopy_spacing,
+            expected_yield_t_ha=per_layer_yield if cfg.canopy_crop else 0.0,
+        )
+        middle_rec = CropRecommendation(
+            crop=cfg.middle_crop,
+            spacing_m=cfg.middle_spacing,
+            expected_yield_t_ha=per_layer_yield if cfg.middle_crop else 0.0,
+        )
+        understory_rec = CropRecommendation(
+            crop=cfg.understory_crop,
+            spacing_m=cfg.understory_spacing,
+            expected_yield_t_ha=per_layer_yield if cfg.understory_crop else 0.0,
+        )
+
+        recommendations.append(StrataRecommendation(
             rank=i + 1,
-            strata=strata,
+            canopy=canopy_rec,
+            middle=middle_rec,
+            understory=understory_rec,
             metrics=OptimizationMetrics(
                 total_yield_t_ha=round(cfg.total_yield, 2),
                 ler=round(cfg.ler, 3),
                 competition_index=round(cfg.competition_index, 3),
                 net_profit_inr_ha=round(cfg.net_profit_inr_ha, 0),
                 light_efficiency=round(cfg.light_efficiency, 3),
+                establishment_cost_inr_ha=round(total_establishment, 0),
+                annual_revenue_inr_ha=round(total_revenue, 0),
             ),
         ))
 
@@ -341,9 +361,11 @@ async def optimize_strata(body: OptimizationRequest) -> OptimizationResponse:
         optimization_id=str(uuid.uuid4()),
         farm_id=body.farm_id,
         timestamp=datetime.now(tz=timezone.utc),
+        acres=body.acres,
+        soil_type=env.soil_type,
         recommendations=recommendations,
         pareto_front_size=len(pareto_front),
-        generations_run=min(body.n_generations, 40),
+        optimization_stats={"generations_run": min(body.n_generations, 40)},
     )
 
 

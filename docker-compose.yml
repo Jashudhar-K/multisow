@@ -16,7 +16,7 @@ services:
       - app-data:/app/data
     environment:
       - PYTHONUNBUFFERED=1
-      - MULTISOW_DATABASE_URL=sqlite:///./sql_app.db
+      - MULTISOW_DATABASE_URL=postgresql+asyncpg://multisow:multisow-pass@postgres:5432/multisow_db
       - MULTISOW_INFLUXDB_URL=http://influxdb:8086
       - MULTISOW_INFLUXDB_TOKEN=${INFLUXDB_TOKEN:-multisow-dev-token}
       - MULTISOW_INFLUXDB_ORG=multisow
@@ -32,6 +32,8 @@ services:
         condition: service_healthy
       redis:
         condition: service_started
+      postgres:
+        condition: service_healthy
     restart: unless-stopped
     healthcheck:
       test: ["CMD", "python", "-c", "import urllib.request; urllib.request.urlopen('http://localhost:8001/health')"]
@@ -72,10 +74,52 @@ services:
       - ./multisow:/app/multisow
       - app-data:/app/data
     environment:
-      - MULTISOW_DATABASE_URL=sqlite:///./sql_app.db
+      - MULTISOW_DATABASE_URL=postgresql+asyncpg://multisow:multisow-pass@postgres:5432/multisow_db
       - MULTISOW_MLFLOW_TRACKING_URI=http://mlflow:5000
     profiles:
       - tools
+
+  # ---------------------------------------------------------------
+  # arq background worker (ML training, async tasks)
+  # ---------------------------------------------------------------
+  arq_worker:
+    build:
+      context: .
+      dockerfile: Dockerfile.ml
+    command: arq backend.worker.WorkerSettings
+    volumes:
+      - ./backend:/app/backend
+      - ./multisow:/app/multisow
+      - app-data:/app/data
+    environment:
+      - MULTISOW_DATABASE_URL=postgresql+asyncpg://multisow:multisow-pass@postgres:5432/multisow_db
+      - MULTISOW_REDIS_URL=redis://redis:6379/0
+    depends_on:
+      redis:
+        condition: service_started
+      postgres:
+        condition: service_healthy
+    restart: unless-stopped
+
+  # ---------------------------------------------------------------
+  # PostgreSQL 17 (primary relational database)
+  # ---------------------------------------------------------------
+  postgres:
+    image: postgres:17-alpine
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres-data:/var/lib/postgresql/data
+    environment:
+      - POSTGRES_USER=multisow
+      - POSTGRES_PASSWORD=multisow-pass
+      - POSTGRES_DB=multisow_db
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U multisow -d multisow_db"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
 
   # ---------------------------------------------------------------
   # InfluxDB 2.x (IoT sensor time-series)
@@ -94,9 +138,14 @@ services:
       - DOCKER_INFLUXDB_INIT_BUCKET=sensor_data
       - DOCKER_INFLUXDB_INIT_ADMIN_TOKEN=${INFLUXDB_TOKEN:-multisow-dev-token}
     restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "influx", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
 
   # ---------------------------------------------------------------
-  # Redis (Celery broker + result backend)
+  # Redis (arq broker + cache)
   # ---------------------------------------------------------------
   redis:
     image: redis:7-alpine
@@ -125,6 +174,7 @@ services:
 
 volumes:
   app-data:
+  postgres-data:
   influxdb-data:
   redis-data:
   mlflow-data:

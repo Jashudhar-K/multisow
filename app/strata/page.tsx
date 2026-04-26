@@ -106,20 +106,27 @@ function Model3DPreview({ model, onClose }: { model: typeof cropModels[0]; onClo
   const [isFullscreen, setIsFullscreen] = useState(false);
   const [key, setKey] = useState(0);
 
+  const mappedCrops = useMemo(() => model.crops.map((name, i) => ({
+    id: name.toLowerCase().replace(/\s+/g, '-'),
+    name: name,
+    spacingM: i === 0 ? 8 : i === 1 ? 3 : 1, // heuristic: canopy=8m, mid=3m, understory=1m
+    layer: i === 0 ? 'canopy' : i === 1 ? 'midstory' : 'understory',
+  })), [model.crops]);
+
   // Generate plants and rows from the model
   const plants = useMemo(() => generatePlantsFromModel({
     id: model.id,
     name: model.name,
-    crops: model.crops,
+    crops: mappedCrops,
     acres: model.acres,
-  }), [model]);
+  }), [model, mappedCrops]);
 
   const rows = useMemo(() => generateRowsFromModel({
     id: model.id,
     name: model.name,
-    crops: model.crops,
+    crops: mappedCrops,
     acres: model.acres,
-  }), [model]);
+  }), [model, mappedCrops]);
 
   const resetView = () => setKey(prev => prev + 1);
 

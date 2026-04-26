@@ -1,10 +1,18 @@
-import type { NextAuthOptions } from 'next-auth'
-import CredentialsProvider from 'next-auth/providers/credentials'
+/**
+ * Auth.js v5 (next-auth@beta) configuration.
+ *
+ * Replaces the v4 setup. Key differences:
+ *   - Single `auth.ts` export instead of `authOptions + NextAuth()`
+ *   - Built-in middleware support via `auth` wrapper
+ *   - Server Component native — no client-side SessionProvider needed
+ */
+
+import NextAuth from 'next-auth'
+import Credentials from 'next-auth/providers/credentials'
 import bcrypt from 'bcryptjs'
 
-/**
- * In-memory user store. Replace with a real database in production.
- */
+// ── In-memory user store (replace with DB in production) ────────
+
 interface StoredUser {
   id: string
   name: string
@@ -18,7 +26,11 @@ export function findUserByEmail(email: string): StoredUser | undefined {
   return users.find((u) => u.email === email)
 }
 
-export async function createUser(name: string, email: string, password: string): Promise<StoredUser> {
+export async function createUser(
+  name: string,
+  email: string,
+  password: string,
+): Promise<StoredUser> {
   if (findUserByEmail(email)) {
     throw new Error('Email already registered')
   }
@@ -33,14 +45,14 @@ export async function createUser(name: string, email: string, password: string):
   return user
 }
 
-export const authOptions: NextAuthOptions = {
-  secret: process.env.NEXTAUTH_SECRET,
-  session: { strategy: 'jwt' },
-  pages: {
-    signIn: '/login',
-  },
+// ── Auth.js v5 config ───────────────────────────────────────────
+
+import { authConfig } from './auth.config'
+
+export const { handlers, auth, signIn, signOut } = NextAuth({
+  ...authConfig,
   providers: [
-    CredentialsProvider({
+    Credentials({
       name: 'Credentials',
       credentials: {
         email: { label: 'Email', type: 'email' },
@@ -48,29 +60,17 @@ export const authOptions: NextAuthOptions = {
       },
       async authorize(credentials) {
         if (!credentials?.email || !credentials?.password) return null
+        const email = credentials.email as string
+        const password = credentials.password as string
 
-        const user = findUserByEmail(credentials.email)
+        const user = findUserByEmail(email)
         if (!user) return null
 
-        const valid = await bcrypt.compare(credentials.password, user.passwordHash)
+        const valid = await bcrypt.compare(password, user.passwordHash)
         if (!valid) return null
 
         return { id: user.id, name: user.name, email: user.email }
       },
     }),
   ],
-  callbacks: {
-    async jwt({ token, user }) {
-      if (user) {
-        token.id = user.id
-      }
-      return token
-    },
-    async session({ session, token }) {
-      if (session.user && token.id) {
-        ;(session.user as any).id = token.id
-      }
-      return session
-    },
-  },
-}
+})

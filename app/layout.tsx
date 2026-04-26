@@ -7,6 +7,8 @@ import SidebarLayout from '@/components/layout/SidebarLayout';
 import { ThemeProvider } from '@/components/theme/ThemeProvider';
 import { AIFarmProvider } from '@/context/AIFarmContext';
 import { AuthProvider } from '@/components/auth/AuthProvider';
+import { LanguageProvider } from '@/context/LanguageContext';
+import { ServiceWorkerRegistration } from '@/components/pwa/ServiceWorkerRegistration';
 
 // Typography: DM Sans for body, Inter for display headings
 const dmSans = DM_Sans({ 
@@ -68,14 +70,17 @@ export default function RootLayout({
         />
       </head>
       <body className="antialiased">
+        <ServiceWorkerRegistration />
         <AuthProvider>
-          <ThemeProvider defaultTheme="dark">
-            <AIFarmProvider>
-              <ErrorBoundary fallback={<SkeletonCard className="max-w-xl mx-auto mt-24" lines={6} />}>
-                <SidebarLayout>{children}</SidebarLayout>
-              </ErrorBoundary>
-            </AIFarmProvider>
-          </ThemeProvider>
+          <LanguageProvider>
+            <ThemeProvider defaultTheme="dark">
+              <AIFarmProvider>
+                <ErrorBoundary fallback={<SkeletonCard className="max-w-xl mx-auto mt-24" lines={6} />}>
+                  <SidebarLayout>{children}</SidebarLayout>
+                </ErrorBoundary>
+              </AIFarmProvider>
+            </ThemeProvider>
+          </LanguageProvider>
         </AuthProvider>
       </body>
     </html>

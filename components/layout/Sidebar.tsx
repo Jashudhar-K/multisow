@@ -8,29 +8,32 @@ import { motion } from 'framer-motion';
 import { Icon } from '@/components/ui/Icon';
 import { cn } from '@/lib/index';
 import { UserDropdown } from '@/components/navigation/UserDropdown';
+import { useLanguage } from '@/context/LanguageContext';
 
 // ---------------------------------------------------------------------------
 // Primary navigation — Google Navigation Rail style
 // ---------------------------------------------------------------------------
 const PRIMARY_NAV = [
-  { label: 'Home',         href: '/',          icon: 'home' },
-  { label: 'Design Farm',  href: '/designer',  icon: 'agriculture' },
-  { label: 'Dashboard',    href: '/dashboard', icon: 'dashboard' },
-  { label: 'Crop Library', href: '/crops',     icon: 'eco' },
-  { label: 'Research',     href: '/docs',      icon: 'menu_book' },
+  { labelKey: 'nav.home',      href: '/',          icon: 'home' },
+  { labelKey: 'nav.designer',  href: '/designer',  icon: 'agriculture' },
+  { labelKey: 'nav.dashboard', href: '/dashboard', icon: 'dashboard' },
+  { labelKey: 'nav.sensors',   href: '/sensors',   icon: 'sensors' },
+  { labelKey: 'nav.crops',     href: '/crops',     icon: 'eco' },
+  { labelKey: 'nav.research',  href: '/docs',      icon: 'menu_book' },
 ];
 
 // ---------------------------------------------------------------------------
 // Secondary nav
 // ---------------------------------------------------------------------------
 const SECONDARY_NAV = [
-  { label: 'Profile',  href: '/profile',  icon: 'person' },
+  { labelKey: 'nav.profile',  href: '/profile',  icon: 'person' },
 ];
 
 export default function Sidebar() {
   const pathname = usePathname();
   const [isCollapsed, setIsCollapsed] = useState(false);
   const { data: session } = useSession();
+  const { t, language, setLanguage } = useLanguage();
 
   const [mounted, setMounted] = useState(false);
   useEffect(() => setMounted(true), []);
@@ -91,11 +94,11 @@ export default function Sidebar() {
                     : 'text-text-secondary hover:bg-overlay hover:text-text-primary',
                   isCollapsed && 'justify-center px-0'
                 )}
-                title={isCollapsed ? link.label : undefined}
+                title={isCollapsed ? t(link.labelKey) : undefined}
               >
                 <Icon name={link.icon} size={20} filled={isActive} className={cn(isActive && 'text-primary-400')} />
                 {!isCollapsed && (
-                  <span className="font-medium text-sm truncate">{link.label}</span>
+                  <span className="font-medium text-sm truncate">{t(link.labelKey)}</span>
                 )}
               </Link>
             );
@@ -127,18 +130,35 @@ export default function Sidebar() {
                   isActive ? 'bg-primary-600/10 text-primary-400' : 'text-text-muted hover:bg-overlay hover:text-text-secondary',
                   isCollapsed && 'justify-center px-0'
                 )}
-                title={isCollapsed ? link.label : undefined}
+                title={isCollapsed ? t(link.labelKey) : undefined}
               >
                 <Icon name={link.icon} size={18} filled={isActive} />
-                {!isCollapsed && link.label}
+                {!isCollapsed && t(link.labelKey)}
               </Link>
             );
           })}
         </div>
       </nav>
 
-      {/* User section */}
-      <div className="p-3 border-t border-border-subtle">
+      {/* User section and Language */}
+      <div className="p-3 border-t border-border-subtle flex flex-col gap-2">
+        {!isCollapsed && (
+          <div className="flex gap-1 justify-center">
+            {(['en', 'hi', 'ml', 'ta', 'te', 'mr'] as const).map(l => (
+              <button
+                key={l}
+                onClick={() => setLanguage(l)}
+                className={cn(
+                  "text-[10px] uppercase font-bold px-1.5 py-1 rounded transition-colors",
+                  language === l ? "bg-primary-600 text-white" : "text-white/40 hover:text-white hover:bg-white/10"
+                )}
+                title={l.toUpperCase()}
+              >
+                {l}
+              </button>
+            ))}
+          </div>
+        )}
         {isCollapsed ? (
           <Link
             href={session?.user ? '/profile' : '/login'}

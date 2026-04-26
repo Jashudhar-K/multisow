@@ -15,6 +15,8 @@ import { useDesignerState, type LayerKey, type LayerCropEntry } from '@/hooks/us
 import { useAIAdvisor } from '@/hooks/useAIAdvisor'
 import { useAIFarm } from '@/context/AIFarmContext'
 import { DesignerSkeleton, ChartSkeleton } from '@/components/skeletons'
+import { PlantingGuidePanel } from '@/components/designer/PlantingGuidePanel'
+import { CompatibilityWarningPanel } from '@/components/designer/CompatibilityWarningPanel'
 import { generatePlantsFromModel } from '@/lib/generatePlantsFromModel'
 import { formatArea, formatMoney, formatLER, acresToCents, centsToAcres, acresToFarmDimensions, thaToTotalTonnes } from '@/lib/units'
 
@@ -97,6 +99,7 @@ export default function FarmDesignerPage() {
   const ds = useDesignerState()
   const advisor = useAIAdvisor()
   const { isAIProcessing, predictions } = useAIFarm()
+  const [selectedPlantId, setSelectedPlantId] = useState<string | undefined>()
 
   // Memoised guard: every layer is guaranteed to be an array regardless of
   // any stale localStorage entry. useDesignerState now returns safeState but
@@ -116,12 +119,14 @@ export default function FarmDesignerPage() {
 
   // Generate 3D plant instances from the current layer crops
   const generatedPlants = useMemo(() => {
-    const cropNames = Object.values(safeLayers).flat().map(c => c.name)
-    if (cropNames.length === 0) return []
+    const cropObjects = (Object.entries(safeLayers) as [LayerKey, LayerCropEntry[]][]).flatMap(([layerKey, layerCrops]) =>
+      layerCrops.map(c => ({ id: c.id, name: c.name, spacingM: c.spacingM, layer: layerKey }))
+    )
+    if (cropObjects.length === 0) return []
     return generatePlantsFromModel({
       id: 'designer',
       name: ds.state?.farmName ?? 'Farm',
-      crops: cropNames,
+      crops: cropObjects,
       acres: ds.state?.acres ?? 1,
     })
   }, [safeLayers, ds.state?.acres, ds.state?.farmName])
@@ -382,6 +387,9 @@ export default function FarmDesignerPage() {
               )
             })}
           </div>
+
+          {/* Warnings Panel */}
+          <CompatibilityWarningPanel />
         </div>
 
         {/* Apply & Predict button */}
@@ -431,9 +439,10 @@ export default function FarmDesignerPage() {
                     farmBounds={{ x: 0, y: 0, width: ds.farmWidth, height: ds.farmLength }}
                     season={0}
                     overlays={{ sunlight: false, rootCompetition: false, waterZones: false }}
-                    onPlantClick={() => {}}
+                    onPlantClick={setSelectedPlantId}
                     showGrid={true}
                     flyoverActive={false}
+                    selectedPlantId={selectedPlantId}
                   />
                 </Suspense>
               </motion.div>
@@ -442,7 +451,7 @@ export default function FarmDesignerPage() {
             {activeTab === 'planting' && (
               <motion.div key="planting" className="absolute inset-0 overflow-y-auto p-6"
                 initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}>
-                <PlantingGuideInline presetId={ds.state.selectedPresetId} />
+                <PlantingGuidePanel presetId={ds.state.selectedPresetId} />
               </motion.div>
             )}
 

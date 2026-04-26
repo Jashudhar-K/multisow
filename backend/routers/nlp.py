@@ -77,7 +77,12 @@ async def chat(request: ChatRequest):
         messages=messages,
         farm_context=request.farm_context
     )
-    return result
+    # Remap: chat_multi_turn returns {"response": ...} but frontend expects {"answer": ...}
+    return {
+        "answer": result.get("response", result.get("answer", "")),
+        "source": result.get("source", "fallback"),
+        "confidence": 0.95 if result.get("source") == "claude" else 0.6,
+    }
 
 @router.post("/extract-parameters")
 async def extract_parameters(request: ExtractRequest):

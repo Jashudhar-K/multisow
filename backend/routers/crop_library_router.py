@@ -43,11 +43,16 @@ router = APIRouter(prefix="/api/crops-v2", tags=["Crop Library"])
 # ---------------------------------------------------------------------------
 
 class CropInputRequest(BaseModel):
-    """Soil and climate inputs for crop recommendation."""
+    """Soil and climate inputs for crop recommendation.
+    
+    Accepts both uppercase (N, P, K) and lowercase (n, p, k) field names
+    to be compatible with both the frontend form and direct API calls.
+    """
+    model_config = {"populate_by_name": True}
 
-    n: float = Field(..., ge=0, description="Nitrogen (kg/ha)")
-    p: float = Field(..., ge=0, description="Phosphorous (kg/ha)")
-    k: float = Field(..., ge=0, description="Potassium (kg/ha)")
+    n: float = Field(..., ge=0, description="Nitrogen (kg/ha)", alias="N")
+    p: float = Field(..., ge=0, description="Phosphorous (kg/ha)", alias="P")
+    k: float = Field(..., ge=0, description="Potassium (kg/ha)", alias="K")
     temperature: float = Field(..., ge=-10, le=60, description="Mean temperature (°C)")
     humidity: float = Field(..., ge=0, le=100, description="Relative humidity (%)")
     ph: float = Field(..., ge=0, le=14, description="Soil pH (0–14)")

@@ -10,42 +10,19 @@
 
 import type { PlantInstance, StrataLayerId } from '@/types/farm';
 
+export interface CropConfig {
+  id: string;
+  name: string;
+  spacingM: number;
+  layer: string;
+}
+
 export interface CropModelConfig {
   id: string;
   name: string;
-  crops: string[];
+  crops: CropConfig[];
   acres: number;
 }
-
-// Species configurations with proper spacing (metres)
-const speciesConfig: Record<string, {
-  layer: StrataLayerId;
-  spacing: number;
-  rowSpacing: number;
-  heightRange: [number, number];
-}> = {
-  // Canopy layer
-  'Coconut': { layer: 'canopy', spacing: 8, rowSpacing: 8, heightRange: [15, 25] },
-  'Silver Oak': { layer: 'canopy', spacing: 10, rowSpacing: 10, heightRange: [20, 30] },
-  'Mango': { layer: 'canopy', spacing: 10, rowSpacing: 10, heightRange: [10, 15] },
-  'Teak': { layer: 'canopy', spacing: 12, rowSpacing: 12, heightRange: [20, 30] },
-
-  // Middle layer
-  'Banana': { layer: 'middle', spacing: 3, rowSpacing: 3.5, heightRange: [3, 6] },
-  'Papaya': { layer: 'middle', spacing: 2.5, rowSpacing: 3, heightRange: [4, 8] },
-  'Coffee': { layer: 'middle', spacing: 2.5, rowSpacing: 3, heightRange: [2, 4] },
-  'Cocoa': { layer: 'middle', spacing: 3, rowSpacing: 3, heightRange: [4, 8] },
-
-  // Understory layer
-  'Cardamom': { layer: 'understory', spacing: 2, rowSpacing: 2, heightRange: [1, 3] },
-  'Black Pepper': { layer: 'understory', spacing: 2, rowSpacing: 2, heightRange: [1, 3] },
-  'Vanilla': { layer: 'understory', spacing: 1.5, rowSpacing: 2, heightRange: [2, 4] },
-  'Ginger': { layer: 'understory', spacing: 0.5, rowSpacing: 0.3, heightRange: [0.5, 1] },
-
-  // Root layer
-  'Turmeric': { layer: 'root', spacing: 0.3, rowSpacing: 0.4, heightRange: [0.3, 0.6] },
-  'Groundnut': { layer: 'root', spacing: 0.15, rowSpacing: 0.3, heightRange: [0.3, 0.5] },
-};
 
 // Map crop names to species IDs used in FarmScene
 const cropToSpeciesId: Record<string, string> = {
@@ -75,11 +52,11 @@ function seededRandom(seed: number) {
 }
 
 // Performance caps per layer
-const MAX_PLANTS: Record<StrataLayerId, number> = {
-  canopy: 30,
-  middle: 60,
-  understory: 100,
-  root: 50,
+const MAX_PLANTS: Record<string, number> = {
+  canopy: 100,
+  midstory: 200,
+  understory: 300,
+  groundcover: 300,
 };
 
 /**
@@ -92,54 +69,57 @@ export function generatePlantsFromModel(model: CropModelConfig): PlantInstance[]
   const acresInSqM = model.acres * 4046.86;
   const fieldSize = Math.sqrt(acresInSqM); // metres per side (square field)
 
-  // Scale down for visual performance — keep 1:1 below 100 m, compress above
-  const scale = fieldSize <= 100 ? 1 : 100 / fieldSize;
-  const visSize = fieldSize * scale;
-
   let plantId = 0;
 
-  model.crops.forEach((cropName, cropIndex) => {
-    const config = speciesConfig[cropName];
-    if (!config) return;
+  model.crops.forEach((crop, cropIndex) => {
+    const speciesId = cropToSpeciesId[crop.name] || 'coconut';
+    const rng = seededRandom(cropIndex * 9973 + crop.name.length);
 
-    const speciesId = cropToSpeciesId[cropName] || 'coconut';
-    const rng = seededRandom(cropIndex * 9973 + cropName.length);
-
-    const sp = config.spacing * scale;
-    const rsp = config.rowSpacing * scale;
-    const maxPlants = MAX_PLANTS[config.layer];
+    const sp = Math.max(0.2, crop.spacingM);
+    const rsp = sp; // using square spacing
+    const maxPlants = MAX_PLANTS[crop.layer] || 200;
 
     // Inset half-spacing so plants don't sit on the boundary
     const margin = Math.max(sp, rsp) * 0.5;
 
-    const numCols = Math.max(1, Math.floor((visSize - 2 * margin) / sp) + 1);
-    const numRows = Math.max(1, Math.floor((visSize - 2 * margin) / rsp) + 1);
+    let renderSpacingX = sp;
+    let renderSpacingY = rsp;
+
+    const totalIdealPlants = Math.ceil((fieldSize - 2 * margin) / sp) * Math.ceil((fieldSize - 2 * margin) / rsp);
+    if (totalIdealPlants > maxPlants) {
+        const scale = Math.sqrt(totalIdealPlants / maxPlants);
+        renderSpacingX *= scale;
+        renderSpacingY *= scale;
+    }
+
+    const numCols = Math.max(1, Math.floor((fieldSize - 2 * margin) / renderSpacingX) + 1);
+    const numRows = Math.max(1, Math.floor((fieldSize - 2 * margin) / renderSpacingY) + 1);
 
     let count = 0;
     for (let row = 0; row < numRows && count < maxPlants; row++) {
       for (let col = 0; col < numCols && count < maxPlants; col++) {
         // Grid position with small jitter (±10% of spacing)
-        const jitterX = (rng() - 0.5) * sp * 0.2;
-        const jitterY = (rng() - 0.5) * rsp * 0.2;
+        const jitterX = (rng() - 0.5) * renderSpacingX * 0.2;
+        const jitterY = (rng() - 0.5) * renderSpacingY * 0.2;
 
-        const x = margin + col * sp + jitterX;
-        const y = margin + row * rsp + jitterY;
+        const x = margin + col * renderSpacingX + jitterX;
+        const y = margin + row * renderSpacingY + jitterY;
 
         // Clamp inside field
-        const cx = Math.max(0, Math.min(visSize, x));
-        const cy = Math.max(0, Math.min(visSize, y));
+        const cx = Math.max(0, Math.min(fieldSize, x));
+        const cy = Math.max(0, Math.min(fieldSize, y));
 
         // Probabilistic thinning for dense layers to look natural
-        if (config.layer === 'understory' && rng() > 0.7) continue;
-        if (config.layer === 'root' && rng() > 0.6) continue;
+        if (crop.layer === 'understory' && rng() > 0.7) continue;
+        if (crop.layer === 'groundcover' && rng() > 0.6) continue;
 
         plants.push({
           id: `plant-${plantId++}`,
           speciesId,
-          layer: config.layer,
+          layer: crop.layer as StrataLayerId,
           position: { x: cx, y: cy },
           plantedDate: new Date(),
-          currentHeight: config.spacing * (0.6 + rng() * 0.4),
+          currentHeight: sp * (0.6 + rng() * 0.4),
         });
 
         count++;
@@ -166,19 +146,16 @@ export function generateRowsFromModel(model: CropModelConfig) {
 
   const acresInSqM = model.acres * 4046.86;
   const fieldSize = Math.sqrt(acresInSqM);
-  const scale = fieldSize <= 100 ? 1 : 100 / fieldSize;
-  const visSize = fieldSize * scale;
 
   let rowId = 0;
 
-  model.crops.forEach((cropName) => {
-    const config = speciesConfig[cropName];
-    if (!config || config.layer !== 'canopy') return;
+  model.crops.forEach((crop) => {
+    if (crop.layer !== 'canopy') return;
 
-    const speciesId = cropToSpeciesId[cropName] || 'coconut';
-    const rsp = config.rowSpacing * scale;
-    const sp = config.spacing * scale;
-    const numRows = Math.min(5, Math.max(1, Math.floor(visSize / rsp)));
+    const speciesId = cropToSpeciesId[crop.name] || 'coconut';
+    const rsp = Math.max(0.2, crop.spacingM);
+    const sp = rsp;
+    const numRows = Math.max(1, Math.floor((fieldSize - rsp) / rsp) + 1);
     const margin = rsp * 0.5;
 
     for (let i = 0; i < numRows; i++) {
@@ -186,10 +163,10 @@ export function generateRowsFromModel(model: CropModelConfig) {
       rows.push({
         id: `row-${rowId++}`,
         start: [margin, y],
-        end: [visSize - margin, y],
+        end: [fieldSize - margin, y],
         spacing: sp,
         speciesId,
-        layer: config.layer,
+        layer: crop.layer as StrataLayerId,
       });
     }
   });
@@ -202,6 +179,5 @@ export function generateRowsFromModel(model: CropModelConfig) {
  * Useful for setting farmBounds on FarmScene.
  */
 export function getVisualFieldSize(acres: number): number {
-  const fieldSize = Math.sqrt(acres * 4046.86);
-  return fieldSize <= 100 ? fieldSize : 100;
+  return Math.sqrt(acres * 4046.86);
 }

@@ -1,0 +1,536 @@
+
+> multisow-crop-system@1.0.0 dev
+> next dev --webpack -p 3001 -p 3001
+
+▲ Next.js 16.1.6 (webpack)
+- Local:         http://localhost:3001
+- Network:       http://192.168.1.6:3001
+- Environments: .env.local
+- Experiments (use with caution):
+  · optimizePackageImports
+
+✓ Starting...
+⚠ The "middleware" file convention is deprecated. Please use "proxy" instead. Learn more: https://nextjs.org/docs/messages/middleware-to-proxy
+✓ Ready in 2.8s
+○ Compiling / ...
+ GET / 200 in 6.0s (compile: 5.3s, render: 625ms)
+○ Compiling /_not-found ...
+ GET /images/icon-192.png 404 in 45s (compile: 39.8s, render: 5.7s)
+○ Compiling /login ...
+ GET /login?callbackUrl=%2Fdashboard 200 in 5.7s (compile: 5.3s, render: 350ms)
+ GET /images/icon-192.png 404 in 3.0s (compile: 54ms, render: 2.9s)
+○ Compiling /api/auth/[...nextauth] ...
+⚠ Fast Refresh had to perform a full reload. Read more: https://nextjs.org/docs/messages/fast-refresh-reload
+ GET /api/auth/session 200 in 23.5s
+ GET /login?callbackUrl=%2Fdesigner 200 in 23.3s (compile: 22.1s, render: 1214ms)
+ GET /api/auth/session 200 in 853ms (compile: 337ms, render: 516ms)
+ GET /images/icon-192.png 404 in 4.0s (compile: 280ms, render: 3.7s)
+ GET /api/auth/session 200 in 426ms (compile: 211ms, render: 215ms)
+○ Compiling /signup ...
+ GET /signup 200 in 15.5s (compile: 14.7s, render: 796ms)
+○ Compiling /api/auth/signup ...
+ POST /api/auth/signup 201 in 8.2s (compile: 6.7s, render: 1492ms)
+ GET /api/auth/providers 200 in 325ms (compile: 158ms, render: 166ms)
+ GET /api/auth/csrf 200 in 99ms (compile: 33ms, render: 67ms)
+ POST /api/auth/callback/credentials? 200 in 1546ms (compile: 94ms, render: 1452ms)
+ GET /api/auth/session 200 in 126ms (compile: 31ms, render: 95ms)
+○ Compiling /onboarding ...
+ GET /onboarding 200 in 7.1s (compile: 7.0s, render: 111ms)
+ GET /onboarding 200 in 1072ms (compile: 295ms, render: 777ms)
+○ Compiling /api/ai/plan ...
+ POST /api/ai/plan 200 in 10.1s (compile: 8.9s, render: 1149ms)
+○ Compiling /designer ...
+ GET /designer 200 in 16.4s (compile: 15.7s, proxy.ts: 328ms, render: 406ms)
+(node:9396) [DEP0060] DeprecationWarning: The `util._extend` API is deprecated. Please use Object.assign() instead.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+○ Compiling /crops ...
+⚠ Fast Refresh had to perform a full reload. Read more: https://nextjs.org/docs/messages/fast-refresh-reload
+ GET /crops 200 in 24.3s (compile: 21.5s, render: 2.9s)
+○ Compiling /_not-found ...
+ GET /api/auth/session 200 in 21.1s (compile: 20.6s, render: 435ms)
+ GET /api/crops-v2/all 200 in 24.5s (compile: 21.7s, render: 2.8s)
+ GET /api/crops-v2/stats 200 in 24.5s (compile: 21.8s, render: 2.7s)
+ POST /api/crops-v2/recommend 422 in 15.6s (compile: 12.8s, render: 2.7s)
+ GET /api/auth/session 200 in 88ms (compile: 65ms, render: 23ms)
+ GET /images/icon-192.png 404 in 27.8s (compile: 25.4s, render: 2.4s)
+ GET /crops 200 in 2.7s (compile: 2.5s, render: 194ms)
+○ Compiling /predict ...
+⚠ Fast Refresh had to perform a full reload. Read more: https://nextjs.org/docs/messages/fast-refresh-reload
+ GET /predict 200 in 22.5s (compile: 18.5s, proxy.ts: 229ms, render: 3.7s)
+ GET /api/auth/session 200 in 1780ms (compile: 894ms, render: 886ms)
+ GET /images/icon-192.png 404 in 3.8s (compile: 540ms, render: 3.3s)
+ GET /api/auth/session 200 in 210ms (compile: 67ms, render: 143ms)
+○ Compiling /strata ...
+ GET /strata 200 in 25.7s (compile: 25.5s, render: 208ms)
+⚠ Fast Refresh had to perform a full reload. Read more: https://nextjs.org/docs/messages/fast-refresh-reload
+○ Compiling /farm ...
+ GET /api/auth/session 200 in 23.9s (compile: 23.4s, render: 494ms)
+ GET /farm 200 in 31.0s (compile: 30.3s, render: 698ms)
+○ Compiling /presets ...
+ GET /presets 200 in 24.2s (compile: 21.8s, render: 2.4s)
+○ Compiling /calc ...
+ GET /api/auth/session 200 in 23.3s (compile: 22.9s, render: 406ms)
+ GET /calc 200 in 26.2s (compile: 25.7s, render: 555ms)
+ GET /api/auth/session 200 in 778ms (compile: 574ms, render: 204ms)
+ GET /images/icon-192.png 404 in 2.7s (compile: 102ms, render: 2.6s)
+ GET /api/auth/session 200 in 245ms (compile: 132ms, render: 112ms)
+ GET /calc 200 in 505ms (compile: 70ms, render: 436ms)
+ GET /calc 200 in 50ms (compile: 8ms, render: 42ms)
+ GET /calc 200 in 376ms (compile: 28ms, render: 348ms)
+ GET /calc 200 in 64ms (compile: 8ms, render: 56ms)
+ GET /calc 200 in 363ms (compile: 24ms, render: 339ms)
+ GET /calc 200 in 67ms (compile: 10ms, render: 57ms)
+ GET /calc 200 in 8.0s (compile: 7.8s, render: 178ms)
+ GET /calc 200 in 109ms (compile: 27ms, render: 82ms)
+ GET /calc 200 in 275ms (compile: 179ms, render: 96ms)
+ GET /calc 200 in 362ms (compile: 26ms, render: 336ms)
+ GET /calc 200 in 55ms (compile: 9ms, render: 46ms)
+ GET /calc 200 in 381ms (compile: 262ms, render: 119ms)
+ GET /calc 200 in 313ms (compile: 18ms, render: 295ms)
+ GET /calc 200 in 63ms (compile: 7ms, render: 56ms)
+ GET /crops 200 in 351ms (compile: 29ms, render: 321ms)
+○ Compiling /api/crops-v2/stats ...
+ GET /api/auth/session 200 in 12.8s (compile: 12.6s, render: 213ms)
+ GET /api/crops-v2/all 200 in 14.2s (compile: 12.3s, render: 1854ms)
+ GET /api/crops-v2/stats 200 in 14.2s (compile: 12.3s, render: 1881ms)
+ GET /api/auth/session 200 in 87ms (compile: 46ms, render: 41ms)
+ GET /images/icon-192.png 404 in 15.2s (compile: 13.4s, render: 1780ms)
+ GET /crops 200 in 2.0s (compile: 1738ms, render: 274ms)
+○ Compiling /api/crops-v2/recommend ...
+ POST /api/crops-v2/recommend 422 in 17.3s (compile: 16.9s, render: 367ms)
+ GET /crops 200 in 992ms (compile: 649ms, render: 344ms)
+ GET /designer 200 in 3.0s (compile: 146ms, proxy.ts: 243ms, render: 2.6s)
+○ Compiling /api/auth/[...nextauth] ...
+ GET /api/auth/session 200 in 7.1s (compile: 7.0s, render: 128ms)
+ GET /images/icon-192.png 404 in 9.9s (compile: 7.7s, render: 2.2s)
+ GET /designer 200 in 2.3s (compile: 180ms, proxy.ts: 1175ms, render: 974ms)
+ GET /api/auth/session 200 in 386ms (compile: 190ms, render: 197ms)
+ GET /designer 200 in 859ms (compile: 42ms, proxy.ts: 80ms, render: 737ms)
+ GET /designer 200 in 133ms (compile: 10ms, proxy.ts: 41ms, render: 82ms)
+ GET /designer 200 in 103ms (compile: 9ms, proxy.ts: 38ms, render: 55ms)
+ GET /crops%E6%97%8B 404 in 326ms (compile: 19ms, render: 307ms)
+ GET /api/auth/session 200 in 95ms (compile: 40ms, render: 55ms)
+ GET /images/icon-192.png 404 in 644ms (compile: 27ms, render: 617ms)
+ GET /api/auth/session 200 in 33ms (compile: 7ms, render: 26ms)
+ GET /crops 200 in 1725ms (compile: 172ms, render: 1553ms)
+ GET /api/auth/session 200 in 233ms (compile: 125ms, render: 108ms)
+ GET /images/icon-192.png 404 in 1370ms (compile: 57ms, render: 1313ms)
+○ Compiling /api/crops-v2/stats ...
+ GET /api/auth/session 200 in 54s (compile: 53s, render: 850ms)
+ GET /api/crops-v2/all 200 in 54s (compile: 53s, render: 1122ms)
+ GET /api/crops-v2/stats 200 in 54s (compile: 53s, render: 1205ms)
+ POST /api/crops-v2/recommend 422 in 46s (compile: 45s, render: 1270ms)
+ GET /designer 200 in 235ms (compile: 116ms, proxy.ts: 39ms, render: 81ms)
+⨯ SyntaxError: Unexpected end of JSON input
+    at JSON.parse (<anonymous>) {
+  page: '/designer'
+}
+○ Compiling /_error ...
+ GET /designer 500 in 10.4s (compile: 9.1s, proxy.ts: 518ms, render: 769ms)
+ GET /designer 200 in 2.6s (compile: 606ms, proxy.ts: 740ms, render: 1244ms)
+⚠ Fast Refresh had to perform a full reload. Read more: https://nextjs.org/docs/messages/fast-refresh-reload
+ GET /designer 200 in 1616ms (compile: 71ms, proxy.ts: 1112ms, render: 433ms)
+ GET /designer 200 in 2.5s (compile: 134ms, proxy.ts: 806ms, render: 1537ms)
+ GET /images/icon-192.png 404 in 77ms (compile: 16ms, render: 61ms)
+ GET /designer 200 in 228ms (compile: 120ms, proxy.ts: 33ms, render: 74ms)
+ GET /designer 200 in 131ms (compile: 52ms, proxy.ts: 22ms, render: 58ms)
+⚠ Fast Refresh had to perform a full reload due to a runtime error.
+ GET /designer 200 in 856ms (compile: 21ms, proxy.ts: 272ms, render: 563ms)
+ GET /images/icon-192.png 404 in 65ms (compile: 21ms, render: 44ms)
+⨯ ./app/crops/page.tsx
+Error:   x 'import', and 'export' cannot be used outside of module code
+     ,-[D:\Git Projects\multi_tier_crop_system\app\crops\page.tsx:291:1]
+ 288 |     </div>
+ 289 |   )
+ 290 | 
+ 291 | import { MarketPriceTicker } from '@/components/market/MarketPriceTicker'
+     : ^^^^^^
+ 292 | 
+ 293 |   return (
+ 293 |     <>
+     `----
+
+Caused by:
+    Syntax Error
+
+Import trace for requested module:
+./app/crops/page.tsx
+⨯ ./app/crops/page.tsx
+Error:   x Unexpected token. Did you mean `{'}'}` or `&rbrace;`?
+     ,-[D:\Git Projects\multi_tier_crop_system\app\crops\page.tsx:558:1]
+ 555 |       </div>
+ 556 |     </PageLayout>
+ 557 |   )
+ 558 | }
+     : ^
+ 559 | 
+     `----
+  x Expected '</', got '<eof>'
+     ,-[D:\Git Projects\multi_tier_crop_system\app\crops\page.tsx:559:3]
+ 557 |   )
+ 558 | }
+ 559 | 
+     `----
+
+Caused by:
+    Syntax Error
+
+Import trace for requested module:
+./app/crops/page.tsx
+⨯ ./app/crops/page.tsx
+Error:   x Unexpected token. Did you mean `{'}'}` or `&rbrace;`?
+     ,-[D:\Git Projects\multi_tier_crop_system\app\crops\page.tsx:558:1]
+ 555 |       </div>
+ 556 |     </PageLayout>
+ 557 |   )
+ 558 | }
+     : ^
+ 559 | 
+     `----
+  x Expected '</', got '<eof>'
+     ,-[D:\Git Projects\multi_tier_crop_system\app\crops\page.tsx:559:3]
+ 557 |   )
+ 558 | }
+ 559 | 
+     `----
+
+Caused by:
+    Syntax Error
+
+Import trace for requested module:
+./app/crops/page.tsx
+ GET /designer 500 in 7.5s (compile: 7.4s, proxy.ts: 102ms, render: 52ms)
+○ Compiling /_error ...
+⚠ Fast Refresh had to perform a full reload due to a runtime error.
+⚠ Fast Refresh had to perform a full reload due to a runtime error.
+⚠ Fast Refresh had to perform a full reload due to a runtime error.
+⨯ ./app/crops/page.tsx
+Error:   x Unexpected token. Did you mean `{'}'}` or `&rbrace;`?
+     ,-[D:\Git Projects\multi_tier_crop_system\app\crops\page.tsx:559:1]
+ 556 |       </div>
+ 557 |     </PageLayout>
+ 558 |   )
+ 559 | }
+     : ^
+ 560 | 
+     `----
+  x Expected '</', got '<eof>'
+     ,-[D:\Git Projects\multi_tier_crop_system\app\crops\page.tsx:560:3]
+ 558 |   )
+ 559 | }
+ 560 | 
+     `----
+
+Caused by:
+    Syntax Error
+
+Import trace for requested module:
+./app/crops/page.tsx
+ GET /designer 500 in 597ms (proxy.ts: 129ms)
+⚠ Fast Refresh had to perform a full reload due to a runtime error.
+ GET /designer 500 in 359ms (proxy.ts: 224ms)
+⚠ Fast Refresh had to perform a full reload due to a runtime error.
+⚠ Fast Refresh had to perform a full reload due to a runtime error.
+⚠ Fast Refresh had to perform a full reload due to a runtime error.
+⚠ Fast Refresh had to perform a full reload due to a runtime error.
+⨯ ./app/crops/page.tsx
+Error:   x Unexpected token. Did you mean `{'}'}` or `&rbrace;`?
+     ,-[D:\Git Projects\multi_tier_crop_system\app\crops\page.tsx:559:1]
+ 556 |       </div>
+ 557 |     </PageLayout>
+ 558 |   )
+ 559 | }
+     : ^
+ 560 | 
+     `----
+  x Expected '</', got '<eof>'
+     ,-[D:\Git Projects\multi_tier_crop_system\app\crops\page.tsx:560:3]
+ 558 |   )
+ 559 | }
+ 560 | 
+     `----
+
+Caused by:
+    Syntax Error
+
+Import trace for requested module:
+./app/crops/page.tsx
+ GET /designer 500 in 301ms (proxy.ts: 163ms)
+⚠ Fast Refresh had to perform a full reload due to a runtime error.
+⚠ Fast Refresh had to perform a full reload due to a runtime error.
+ GET /designer 500 in 369ms (proxy.ts: 113ms)
+⚠ Fast Refresh had to perform a full reload due to a runtime error.
+ GET /designer 500 in 493ms (proxy.ts: 221ms)
+⚠ Fast Refresh had to perform a full reload due to a runtime error.
+ GET /designer 500 in 420ms (proxy.ts: 181ms)
+⚠ Fast Refresh had to perform a full reload due to a runtime error.
+⨯ ./app/crops/page.tsx
+Error:   x Unexpected token. Did you mean `{'}'}` or `&rbrace;`?
+     ,-[D:\Git Projects\multi_tier_crop_system\app\crops\page.tsx:559:1]
+ 556 |       </div>
+ 557 |     </PageLayout>
+ 558 |   )
+ 559 | }
+     : ^
+ 560 | 
+     `----
+  x Expected '</', got '<eof>'
+     ,-[D:\Git Projects\multi_tier_crop_system\app\crops\page.tsx:560:3]
+ 558 |   )
+ 559 | }
+ 560 | 
+     `----
+
+Caused by:
+    Syntax Error
+
+Import trace for requested module:
+./app/crops/page.tsx
+ GET /designer 500 in 1225ms (proxy.ts: 218ms)
+ GET /designer 500 in 41ms (compile: 7ms, proxy.ts: 22ms, render: 12ms)
+⚠ Fast Refresh had to perform a full reload due to a runtime error.
+⚠ Fast Refresh had to perform a full reload due to a runtime error.
+ GET /designer 200 in 1399ms (compile: 837ms, proxy.ts: 180ms, render: 382ms)
+⚠ Fast Refresh had to perform a full reload due to a runtime error.
+⨯ SyntaxError: Unexpected end of JSON input
+    at JSON.parse (<anonymous>) {
+  page: '/designer'
+}
+⚠ Fast Refresh had to perform a full reload due to a runtime error.
+ GET /designer 500 in 699ms (compile: 96ms, proxy.ts: 251ms, render: 351ms)
+⚠ Fast Refresh had to perform a full reload due to a runtime error.
+⚠ Fast Refresh had to perform a full reload due to a runtime error.
+ GET /designer 200 in 1080ms (compile: 366ms, proxy.ts: 249ms, render: 465ms)
+⚠ Fast Refresh had to perform a full reload due to a runtime error.
+ GET /designer 200 in 112ms (compile: 5ms, proxy.ts: 27ms, render: 80ms)
+ GET /images/icon-192.png 404 in 81ms (compile: 23ms, render: 58ms)
+○ Compiling /api/auth/[...nextauth] ...
+ GET /api/auth/session 200 in 3.9s (compile: 3.8s, render: 48ms)
+ GET /api/auth/session 200 in 35ms (compile: 17ms, render: 19ms)
+ GET /designer 200 in 805ms (compile: 155ms, proxy.ts: 114ms, render: 535ms)
+ GET /designer 200 in 349ms (compile: 57ms, proxy.ts: 231ms, render: 61ms)
+ GET /designer 200 in 429ms (compile: 96ms, proxy.ts: 220ms, render: 114ms)
+ GET /designer 200 in 728ms (compile: 19ms, proxy.ts: 381ms, render: 327ms)
+ GET /designer 200 in 388ms (compile: 80ms, proxy.ts: 209ms, render: 99ms)
+ GET /designer 200 in 567ms (compile: 39ms, proxy.ts: 283ms, render: 245ms)
+ GET /designer 200 in 1006ms (compile: 116ms, proxy.ts: 265ms, render: 625ms)
+ GET /designer 200 in 947ms (compile: 39ms, proxy.ts: 574ms, render: 334ms)
+ GET /designer 200 in 420ms (compile: 34ms, proxy.ts: 252ms, render: 134ms)
+ GET /designer 200 in 428ms (compile: 81ms, proxy.ts: 237ms, render: 111ms)
+ GET /designer 200 in 655ms (compile: 30ms, proxy.ts: 321ms, render: 304ms)
+ GET /designer 200 in 342ms (compile: 45ms, proxy.ts: 216ms, render: 81ms)
+ GET /designer 200 in 621ms (compile: 44ms, proxy.ts: 311ms, render: 266ms)
+ GET /designer 200 in 1361ms (compile: 38ms, proxy.ts: 310ms, render: 1013ms)
+ GET /designer 200 in 897ms (compile: 37ms, proxy.ts: 458ms, render: 402ms)
+ GET /designer 200 in 325ms (compile: 85ms, proxy.ts: 213ms, render: 27ms)
+ GET /designer 200 in 70ms (compile: 6ms, proxy.ts: 32ms, render: 32ms)
+ GET /designer 200 in 355ms (compile: 190ms, proxy.ts: 36ms, render: 128ms)
+ GET /designer 200 in 179ms (compile: 88ms, proxy.ts: 29ms, render: 62ms)
+ GET /designer 200 in 513ms (compile: 123ms, proxy.ts: 267ms, render: 122ms)
+ GET /designer 200 in 65ms (compile: 7ms, proxy.ts: 19ms, render: 39ms)
+ GET /designer 200 in 608ms (compile: 134ms, proxy.ts: 389ms, render: 85ms)
+ GET /designer 200 in 124ms (compile: 10ms, proxy.ts: 34ms, render: 79ms)
+ GET /designer 200 in 634ms (compile: 459ms, proxy.ts: 33ms, render: 142ms)
+⨯ SyntaxError: Unexpected end of JSON input
+    at JSON.parse (<anonymous>) {
+  page: '/designer'
+}
+ GET /designer 500 in 2.4s (compile: 1869ms, proxy.ts: 470ms, render: 58ms)
+ GET /designer 200 in 312ms (compile: 184ms, proxy.ts: 36ms, render: 92ms)
+ GET /designer 200 in 681ms (compile: 5ms, proxy.ts: 21ms, render: 654ms)
+ GET /images/icon-192.png 404 in 88ms (compile: 26ms, render: 62ms)
+ GET /api/auth/session 200 in 1476ms (compile: 1411ms, render: 65ms)
+ GET /api/auth/session 200 in 50ms (compile: 20ms, render: 30ms)
+ GET /designer 200 in 889ms (compile: 292ms, proxy.ts: 389ms, render: 208ms)
+ GET /designer 200 in 149ms (compile: 12ms, proxy.ts: 47ms, render: 90ms)
+ GET /designer 200 in 1055ms (compile: 31ms, proxy.ts: 593ms, render: 432ms)
+ GET /designer 200 in 98ms (compile: 9ms, proxy.ts: 27ms, render: 63ms)
+⨯ SyntaxError: Unexpected end of JSON input
+    at JSON.parse (<anonymous>) {
+  page: '/designer'
+}
+ GET /designer 500 in 2.7s (compile: 2.1s, proxy.ts: 603ms, render: 29ms)
+ GET /designer 200 in 267ms (compile: 119ms, proxy.ts: 26ms, render: 122ms)
+⨯ ReferenceError: CompatibilityWarningPanel is not defined
+    at FarmDesignerPage (app\designer\page.tsx:390:12)
+  388 |
+  389 |           {/* Warnings Panel */}
+> 390 |           <CompatibilityWarningPanel />
+      |            ^
+  391 |         </div>
+  392 |
+  393 |         {/* Apply & Predict button */} {
+  digest: '3255364783'
+}
+ GET /designer 200 in 482ms (compile: 11ms, proxy.ts: 27ms, render: 444ms)
+ GET /images/icon-192.png 404 in 199ms (compile: 40ms, render: 159ms)
+ GET /api/auth/session 200 in 203ms (compile: 154ms, render: 48ms)
+ GET /api/auth/session 200 in 19ms (compile: 5ms, render: 14ms)
+ GET /designer 200 in 211ms (compile: 103ms, proxy.ts: 26ms, render: 82ms)
+ GET /designer 200 in 725ms (compile: 89ms, proxy.ts: 306ms, render: 330ms)
+ GET /designer 200 in 121ms (compile: 14ms, proxy.ts: 38ms, render: 69ms)
+ GET /designer 200 in 625ms (compile: 25ms, proxy.ts: 305ms, render: 295ms)
+ GET /designer 200 in 111ms (compile: 9ms, proxy.ts: 21ms, render: 81ms)
+ GET /designer 200 in 509ms (compile: 43ms, proxy.ts: 286ms, render: 180ms)
+ GET /designer 200 in 726ms (compile: 234ms, proxy.ts: 257ms, render: 235ms)
+ GET /designer 200 in 235ms (compile: 15ms, proxy.ts: 46ms, render: 175ms)
+ GET /designer 200 in 655ms (compile: 41ms, proxy.ts: 414ms, render: 200ms)
+ GET /designer 200 in 120ms (compile: 25ms, proxy.ts: 36ms, render: 59ms)
+ GET /designer 200 in 253ms (compile: 149ms, proxy.ts: 27ms, render: 77ms)
+ GET /designer 200 in 137ms (compile: 65ms, proxy.ts: 24ms, render: 48ms)
+ GET /api/auth/session 200 in 1071ms (compile: 1033ms, render: 39ms)
+ GET /api/auth/session 200 in 19ms (compile: 4ms, render: 15ms)
+ GET /api/auth/session 200 in 31ms (compile: 12ms, render: 19ms)
+ GET /api/auth/session 200 in 13ms (compile: 4ms, render: 10ms)
+⚠ Found a change in next.config.js. Restarting the server to apply the changes...
+▲ Next.js 16.1.6 (webpack)
+- Local:         http://localhost:3001
+- Network:       http://192.168.1.6:3001
+- Environments: .env.local
+- Experiments (use with caution):
+  · optimizePackageImports
+
+✓ Starting...
+⚠ The "middleware" file convention is deprecated. Please use "proxy" instead. Learn more: https://nextjs.org/docs/messages/middleware-to-proxy
+✓ Ready in 4.1s
+○ Compiling /designer ...
+ GET /designer 200 in 31.1s (compile: 29.9s, proxy.ts: 373ms, render: 821ms)
+ GET /images/icon-192.png 404 in 2.8s (compile: 2.5s, render: 323ms)
+ GET /api/auth/session 200 in 3.9s (compile: 3.8s, render: 79ms)
+ GET /designer 200 in 509ms (compile: 345ms, proxy.ts: 47ms, render: 118ms)
+ GET /designer 200 in 77ms (compile: 7ms, proxy.ts: 20ms, render: 49ms)
+ GET /designer 200 in 89ms (compile: 7ms, proxy.ts: 22ms, render: 60ms)
+ GET /api/auth/session 200 in 177ms (compile: 123ms, render: 54ms)
+ GET /designer 200 in 421ms (compile: 130ms, proxy.ts: 193ms, render: 99ms)
+ GET /designer 200 in 71ms (compile: 6ms, proxy.ts: 25ms, render: 41ms)
+○ Compiling / ...
+ GET / 200 in 6.8s (compile: 6.3s, render: 411ms)
+○ Compiling /api/auth/[...nextauth] ...
+ GET /api/auth/session 200 in 18.2s (compile: 14.6s, render: 3.6s)
+ GET /designer 200 in 28.7s (compile: 12.3s, proxy.ts: 1003ms, render: 15.5s)
+ GET / 200 in 11.7s (compile: 10.1s, render: 1601ms)
+ GET /images/icon-192.png 404 in 30.4s (compile: 24.8s, render: 5.6s)
+ GET /api/auth/session 200 in 984ms (compile: 520ms, render: 464ms)
+○ Compiling /dashboard ...
+ GET /api/auth/session 200 in 22.9s (compile: 19.9s, render: 3.0s)
+ GET /dashboard 200 in 37.6s (compile: 31.0s, proxy.ts: 3.3s, render: 3.2s)
+ GET / 200 in 20.3s (compile: 16.9s, render: 3.4s)
+ GET /images/icon-192.png 404 in 26.2s (compile: 25.1s, render: 1147ms)
+ GET /dashboard 200 in 1874ms (compile: 54ms, proxy.ts: 1143ms, render: 677ms)
+ GET /images/icon-192.png 404 in 198ms (compile: 7ms, render: 190ms)
+ GET /api/auth/session 200 in 213ms (compile: 52ms, render: 161ms)
+(node:12380) [DEP0060] DeprecationWarning: The `util._extend` API is deprecated. Please use Object.assign() instead.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+○ Compiling /api/market-prices ...
+ GET /api/market-prices 200 in 10.6s (compile: 10.2s, render: 399ms)
+ GET /api/auth/session 200 in 12.4s (compile: 8.6s, render: 3.8s)
+ GET /api/auth/session 200 in 553ms (compile: 252ms, render: 301ms)
+ GET /api/auth/session 200 in 71ms (compile: 22ms, render: 49ms)
+ GET /api/auth/session 200 in 2.2s (compile: 2.0s, render: 184ms)
+ GET /designer 200 in 3.9s (compile: 446ms, proxy.ts: 645ms, render: 2.8s)
+ GET /designer 200 in 302ms (compile: 41ms, proxy.ts: 99ms, render: 162ms)
+ GET /designer 200 in 1106ms (compile: 136ms, proxy.ts: 346ms, render: 625ms)
+ GET /images/icon-192.png 404 in 124ms (compile: 39ms, render: 86ms)
+ GET /api/auth/session 200 in 40ms (compile: 17ms, render: 23ms)
+ GET /api/auth/session 200 in 19ms (compile: 4ms, render: 15ms)
+ GET /api/auth/session 200 in 95ms (compile: 40ms, render: 55ms)
+ GET /images/icon-192.png 404 in 491ms (compile: 25ms, render: 466ms)
+ GET /api/auth/session 200 in 53ms (compile: 7ms, render: 46ms)
+ GET /api/auth/session 200 in 63ms (compile: 18ms, render: 45ms)
+○ Compiling /crops ...
+ GET /crops 200 in 14.7s (compile: 14.4s, render: 273ms)
+⨯ SyntaxError: Unexpected end of JSON input
+    at JSON.parse (<anonymous>) {
+  page: '/crops'
+}
+ GET /designer 200 in 3.4s (compile: 170ms, proxy.ts: 1068ms, render: 2.1s)
+○ Compiling /_error ...
+ GET /crops 500 in 28.8s (compile: 26.3s, render: 2.5s)
+ GET /crops 200 in 10.6s (compile: 10.1s, render: 507ms)
+ GET /designer 200 in 10.1s (compile: 8.8s, proxy.ts: 740ms, render: 513ms)
+ GET /designer 200 in 220ms (compile: 13ms, proxy.ts: 36ms, render: 172ms)
+ GET /designer 200 in 166ms (compile: 9ms, proxy.ts: 57ms, render: 101ms)
+ GET /crops 200 in 2.2s (compile: 54ms, render: 2.1s)
+ GET /crops 200 in 1950ms (compile: 19ms, render: 1932ms)
+ GET /crops 200 in 2.8s (compile: 25ms, render: 2.8s)
+ GET /designer 200 in 800ms (compile: 30ms, proxy.ts: 49ms, render: 721ms)
+○ Compiling /_not-found ...
+ GET /api/market-prices 200 in 69s (compile: 68s, render: 1045ms)
+ GET /api/auth/session 200 in 74s (compile: 70s, render: 4.2s)
+ GET /api/crops-v2/all 200 in 73s (compile: 68s, render: 5.0s)
+ GET /api/crops-v2/stats 200 in 74s (compile: 68s, render: 5.1s)
+ GET /api/market-prices 200 in 814ms (compile: 785ms, render: 29ms)
+⚠ Fast Refresh had to perform a full reload. Read more: https://nextjs.org/docs/messages/fast-refresh-reload
+ GET /images/icon-192.png 404 in 74s (compile: 72s, render: 1708ms)
+ GET / 200 in 49s (compile: 43s, render: 6.3s)
+ GET /crops 200 in 2.3s (compile: 1093ms, render: 1228ms)
+○ Compiling /api/auth/[...nextauth] ...
+⨯ Error: Event handlers cannot be passed to Client Component props.
+  <button onClick={function onClick} className=... children=...>
+                  ^^^^^^^^^^^^^^^^^^
+If you need interactivity, consider converting part of this to a Client Component.
+    at stringify (<anonymous>)
+    at stringify (<anonymous>) {
+  digest: '4227302217'
+}
+ GET /api/auth/session 200 in 42s (compile: 37.0s, render: 5.1s)
+ GET /api/auth/session 200 in 43s (compile: 37.4s, render: 5.2s)
+ GET /designer 200 in 43s (compile: 36.7s, proxy.ts: 589ms, render: 5.9s)
+ GET /offline 200 in 44s (compile: 38.5s, render: 6.0s)
+○ Compiling /sensors ...
+ GET /images/icon-192.png 404 in 58s (compile: 56s, render: 2.5s)
+ GET /sensors 200 in 15.9s (compile: 13.5s, render: 2.4s)
+ GET /sensors 200 in 15.8s (compile: 13.4s, render: 2.4s)
+ GET /api/auth/session 200 in 233ms (compile: 138ms, render: 95ms)
+ GET /sensors 200 in 274ms (compile: 184ms, render: 90ms)
+ GET /images/icon-192.png 404 in 60s (compile: 57s, render: 2.9s)
+ GET /sensors 200 in 16.8s (compile: 14.2s, render: 2.6s)
+ GET /api/auth/session 200 in 327ms (compile: 138ms, render: 188ms)
+ GET /images/icon-192.png 404 in 2.3s (compile: 38ms, render: 2.3s)
+○ Compiling /api/sensors/readings ...
+ GET /api/sensors/readings?farm_id=default-farm 200 in 38.3s (compile: 37.9s, render: 396ms)
+ GET /api/sensors/readings?farm_id=default-farm 200 in 17.0s (compile: 16.6s, render: 396ms)
+ GET /api/sensors/readings?farm_id=default-farm 200 in 17.0s (compile: 16.6s, render: 395ms)
+ GET /api/auth/session 200 in 17.2s (compile: 16.2s, render: 1052ms)
+ GET /api/auth/session 200 in 37.8s (compile: 36.7s, render: 1064ms)
+ GET /api/sensors/readings?farm_id=default-farm 200 in 162ms (compile: 99ms, render: 64ms)
+ GET /api/sensors/readings?farm_id=default-farm 200 in 159ms (compile: 95ms, render: 64ms)
+ GET /api/sensors/readings?farm_id=default-farm 200 in 82ms (compile: 18ms, render: 63ms)
+ GET /api/sensors/readings?farm_id=default-farm 200 in 80ms (compile: 17ms, render: 63ms)
+ GET /api/sensors/readings?farm_id=default-farm 200 in 60ms (compile: 45ms, render: 15ms)
+ GET /api/sensors/readings?farm_id=default-farm 200 in 89ms (compile: 75ms, render: 14ms)
+ GET /sensors 200 in 38.8s (compile: 37.3s, render: 1500ms)
+ GET /api/sensors/readings?farm_id=default-farm 200 in 36ms (compile: 18ms, render: 19ms)
+ GET /api/sensors/readings?farm_id=default-farm 200 in 27ms (compile: 10ms, render: 17ms)
+ GET /sensors 200 in 234ms (compile: 13ms, render: 221ms)
+ GET /images/icon-192.png 404 in 223ms (compile: 35ms, render: 188ms)
+ GET /api/auth/session 200 in 47ms (compile: 25ms, render: 22ms)
+ GET /api/sensors/readings?farm_id=default-farm 200 in 21ms (compile: 9ms, render: 12ms)
+ GET /api/auth/session 200 in 37ms (compile: 9ms, render: 28ms)
+ GET /api/sensors/readings?farm_id=default-farm 200 in 41ms (compile: 24ms, render: 17ms)
+ GET /api/auth/session 200 in 84ms (compile: 52ms, render: 32ms)
+ GET /images/icon-192.png 404 in 339ms (compile: 10ms, render: 329ms)
+ GET /api/auth/session 200 in 40ms (compile: 12ms, render: 28ms)
+ GET /api/auth/session 200 in 42ms (compile: 12ms, render: 30ms)
+ GET /api/sensors/readings?farm_id=default-farm 200 in 13ms (compile: 3ms, render: 10ms)
+ GET /api/sensors/readings?farm_id=default-farm 200 in 12ms (compile: 4ms, render: 8ms)
+ GET /api/sensors/readings?farm_id=default-farm 200 in 10ms (compile: 3ms, render: 6ms)
+ GET /api/sensors/readings?farm_id=default-farm 200 in 9ms (compile: 3ms, render: 6ms)
+ GET /api/sensors/readings?farm_id=default-farm 200 in 5.0s (compile: 4.9s, render: 34ms)
+ GET /api/sensors/readings?farm_id=default-farm 200 in 25ms (compile: 13ms, render: 12ms)
+ GET /api/sensors/readings?farm_id=default-farm 200 in 36ms (compile: 22ms, render: 14ms)
+ GET /sensors 200 in 384ms (compile: 150ms, render: 234ms)
+ GET /sensors 200 in 132ms (compile: 48ms, render: 84ms)
+ GET /api/sensors/readings?farm_id=default-farm 200 in 12ms (compile: 3ms, render: 9ms)
+ GET /api/sensors/readings?farm_id=default-farm 200 in 66ms (compile: 42ms, render: 23ms)
+ GET /api/sensors/readings?farm_id=default-farm 200 in 46ms (compile: 30ms, render: 16ms)
+ GET /sensors 200 in 433ms (compile: 113ms, render: 320ms)
+ GET /sensors 200 in 206ms (compile: 65ms, render: 141ms)
+ GET /api/sensors/readings?farm_id=default-farm 200 in 10ms (compile: 3ms, render: 7ms)
+ GET /api/sensors/readings?farm_id=default-farm 200 in 8ms (compile: 2ms, render: 5ms)
+ GET /api/sensors/readings?farm_id=default-farm 200 in 13ms (compile: 5ms, render: 9ms)
+ GET /api/sensors/readings?farm_id=default-farm 200 in 12ms (compile: 4ms, render: 7ms)
+ GET /api/sensors/readings?farm_id=default-farm 200 in 8ms (compile: 3ms, render: 5ms)
+ GET /api/sensors/readings?farm_id=default-farm 200 in 10ms (compile: 3ms, render: 7ms)
+ GET /api/sensors/readings?farm_id=default-farm 200 in 8ms (compile: 3ms, render: 5ms)
+[?25h

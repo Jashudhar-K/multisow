@@ -44,7 +44,7 @@ export interface FieldBoundary extends GeoPolygon {
 // CROP & SPECIES TYPES
 // ============================================================================
 
-export type StrataLayerId = 'canopy' | 'middle' | 'understory' | 'root'
+export type StrataLayerId = 'canopy' | 'middle' | 'midstory' | 'understory' | 'root' | 'groundcover'
 
 export interface Species {
   id: string

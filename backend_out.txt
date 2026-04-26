@@ -1,0 +1,4 @@
+[INFO] Starting granian (main PID: 15996)
+[INFO] Listening at: http://0.0.0.0:8001
+[INFO] Spawning worker-1 with PID: 4352
+[INFO] Started worker-1

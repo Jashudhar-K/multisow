@@ -66,8 +66,13 @@ function DashboardEmptyState() {
   )
 }
 
+import { MarketPriceTicker } from '@/components/market/MarketPriceTicker'
+
+import { useLanguage } from '@/context/LanguageContext'
+
 export default function DashboardPage() {
   const { currentFarm, selectedModel, predictions } = useAIFarm()
+  const { t } = useLanguage()
 
   const latestPred = predictions[0] ?? null
 
@@ -106,8 +111,10 @@ export default function DashboardPage() {
   }, [latestPred])
 
   return (
-    <PageLayout title="Farmer Dashboard">
-      <div className="space-y-6">
+    <>
+      <MarketPriceTicker />
+      <PageLayout title={t('dashboard.title')}>
+        <div className="space-y-6">
 
         {/* Farm context banner */}
         {currentFarm ? (
@@ -294,7 +301,8 @@ export default function DashboardPage() {
         </>
         )}
       </div>
-    </PageLayout>
+      </PageLayout>
+    </>
   )
 }
 

@@ -101,10 +101,8 @@ export function useAIAdvisor(): UseAIAdvisorReturn {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({
-            message: text,
-            farm_context: buildFarmContext(),
-            history,
-            language: 'en',
+            messages: [...history, { role: 'user', content: text }],
+            farm_context: { description: buildFarmContext() },
           }),
           signal: AbortSignal.timeout(20_000),
         })

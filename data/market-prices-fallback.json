@@ -1,0 +1,21 @@
+{
+  "updated_at": "2026-04-26T00:00:00Z",
+  "source": "Agmarknet Fallback",
+  "prices": {
+    "coconut": { "price": 32, "min": 25, "max": 40, "unit": "kg", "trend": 1.2 },
+    "banana": { "price": 35, "min": 30, "max": 45, "unit": "kg", "trend": -0.5 },
+    "ginger": { "price": 120, "min": 90, "max": 150, "unit": "kg", "trend": 5.0 },
+    "turmeric": { "price": 145, "min": 130, "max": 180, "unit": "kg", "trend": 2.1 },
+    "coffee": { "price": 320, "min": 280, "max": 350, "unit": "kg", "trend": 8.5 },
+    "cocoa": { "price": 450, "min": 400, "max": 500, "unit": "kg", "trend": 12.0 },
+    "black pepper": { "price": 550, "min": 500, "max": 620, "unit": "kg", "trend": -2.0 },
+    "cardamom": { "price": 2100, "min": 1800, "max": 2500, "unit": "kg", "trend": -15.0 },
+    "vanilla": { "price": 4500, "min": 4000, "max": 5200, "unit": "kg", "trend": 0.0 },
+    "mango": { "price": 80, "min": 60, "max": 120, "unit": "kg", "trend": 15.0 },
+    "papaya": { "price": 25, "min": 20, "max": 35, "unit": "kg", "trend": 1.0 },
+    "pineapple": { "price": 40, "min": 30, "max": 55, "unit": "kg", "trend": -1.5 },
+    "jackfruit": { "price": 20, "min": 15, "max": 30, "unit": "kg", "trend": 0.5 },
+    "teak": { "price": 2500, "min": 2000, "max": 3000, "unit": "cft", "trend": 2.0 },
+    "silver oak": { "price": 800, "min": 600, "max": 1000, "unit": "cft", "trend": 1.0 }
+  }
+}

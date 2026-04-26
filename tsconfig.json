@@ -42,6 +42,7 @@
   "exclude": [
     "node_modules",
     "multisow",
-    "backend"
+    "backend",
+    "tests"
   ]
 }
