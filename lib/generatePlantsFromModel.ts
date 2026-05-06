@@ -65,6 +65,7 @@ const MAX_PLANTS: Record<string, number> = {
  */
 export function generatePlantsFromModel(model: CropModelConfig): PlantInstance[] {
   const plants: PlantInstance[] = [];
+  const existingPoints: {x: number, y: number, size: number}[] = [];
 
   const acresInSqM = model.acres * 4046.86;
   const fieldSize = Math.sqrt(acresInSqM); // metres per side (square field)
@@ -75,17 +76,21 @@ export function generatePlantsFromModel(model: CropModelConfig): PlantInstance[]
     const speciesId = cropToSpeciesId[crop.name] || 'coconut';
     const rng = seededRandom(cropIndex * 9973 + crop.name.length);
 
-    const sp = Math.max(0.2, crop.spacingM);
-    const rsp = sp; // using square spacing
+    const originalSpacing = Math.max(0.2, crop.spacingM);
+    // The margin is half the spacing from boundary
+    const margin = originalSpacing * 0.5;
+
+    // Use a layered grid approach for intercropping offset
+    const layerOffsetIndex = ['canopy','midstory','understory','groundcover'].indexOf(crop.layer);
+    const offsetX = (layerOffsetIndex >= 0 ? layerOffsetIndex * 0.3 * originalSpacing : 0);
+    const offsetY = (layerOffsetIndex >= 0 ? (layerOffsetIndex % 2) * 0.5 * originalSpacing : 0);
+
     const maxPlants = MAX_PLANTS[crop.layer] || 200;
 
-    // Inset half-spacing so plants don't sit on the boundary
-    const margin = Math.max(sp, rsp) * 0.5;
+    let renderSpacingX = originalSpacing;
+    let renderSpacingY = originalSpacing;
 
-    let renderSpacingX = sp;
-    let renderSpacingY = rsp;
-
-    const totalIdealPlants = Math.ceil((fieldSize - 2 * margin) / sp) * Math.ceil((fieldSize - 2 * margin) / rsp);
+    const totalIdealPlants = Math.ceil((fieldSize - 2 * margin) / renderSpacingX) * Math.ceil((fieldSize - 2 * margin) / renderSpacingY);
     if (totalIdealPlants > maxPlants) {
         const scale = Math.sqrt(totalIdealPlants / maxPlants);
         renderSpacingX *= scale;
@@ -98,20 +103,34 @@ export function generatePlantsFromModel(model: CropModelConfig): PlantInstance[]
     let count = 0;
     for (let row = 0; row < numRows && count < maxPlants; row++) {
       for (let col = 0; col < numCols && count < maxPlants; col++) {
-        // Grid position with small jitter (±10% of spacing)
+        // Grid position with offset + small jitter (±10% of spacing)
         const jitterX = (rng() - 0.5) * renderSpacingX * 0.2;
         const jitterY = (rng() - 0.5) * renderSpacingY * 0.2;
 
-        const x = margin + col * renderSpacingX + jitterX;
-        const y = margin + row * renderSpacingY + jitterY;
+        const x = margin + col * renderSpacingX + offsetX + jitterX;
+        const y = margin + row * renderSpacingY + offsetY + jitterY;
 
         // Clamp inside field
         const cx = Math.max(0, Math.min(fieldSize, x));
         const cy = Math.max(0, Math.min(fieldSize, y));
 
+        // Avoid overlap
+        let overlap = false;
+        for (const pt of existingPoints) {
+          const dx = pt.x - cx;
+          const dy = pt.y - cy;
+          if (dx * dx + dy * dy < 0.25) { // 0.5m radius check to prevent direct overlap
+             overlap = true;
+             break;
+          }
+        }
+        if (overlap) continue;
+
         // Probabilistic thinning for dense layers to look natural
         if (crop.layer === 'understory' && rng() > 0.7) continue;
         if (crop.layer === 'groundcover' && rng() > 0.6) continue;
+
+        existingPoints.push({ x: cx, y: cy, size: originalSpacing });
 
         plants.push({
           id: `plant-${plantId++}`,
@@ -119,7 +138,7 @@ export function generatePlantsFromModel(model: CropModelConfig): PlantInstance[]
           layer: crop.layer as StrataLayerId,
           position: { x: cx, y: cy },
           plantedDate: new Date(),
-          currentHeight: sp * (0.6 + rng() * 0.4),
+          currentHeight: originalSpacing * (0.6 + rng() * 0.4),
         });
 
         count++;

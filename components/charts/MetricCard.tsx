@@ -39,11 +39,9 @@ function useAnimatedNumber(
   enabled: boolean = true
 ): number {
   const [current, setCurrent] = useState(0);
-  const ref = useRef<HTMLDivElement>(null);
-  const isInView = useInView(ref, { once: true });
 
   useEffect(() => {
-    if (!isInView || !enabled) return;
+    if (!enabled) return;
 
     let startTime: number;
     let animationFrame: number;
@@ -61,7 +59,7 @@ function useAnimatedNumber(
 
     animationFrame = requestAnimationFrame(animate);
     return () => cancelAnimationFrame(animationFrame);
-  }, [target, duration, decimals, isInView, enabled]);
+  }, [target, duration, decimals, enabled]);
 
   return current;
 }
@@ -147,7 +145,7 @@ export function MetricCard({
 }: MetricCardProps) {
   const ref = useRef<HTMLDivElement>(null);
   const isInView = useInView(ref, { once: true });
-  const animatedValue = useAnimatedNumber(value, 1200, decimals, !loading);
+  const animatedValue = useAnimatedNumber(value, 1200, decimals, !loading && isInView);
   
   const colors = colorVariants[color];
   const sizes = sizeVariants[size];

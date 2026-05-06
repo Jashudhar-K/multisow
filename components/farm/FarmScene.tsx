@@ -282,22 +282,24 @@ function CentGrid({ fieldSize, center }: { fieldSize: number; center: [number, n
     const step = CENT_SIDE_M
     const pts: { start: [number, number, number]; end: [number, number, number]; major: boolean }[] = []
 
-    // How many subdivisions in each direction
-    const count = Math.ceil(halfSize / step)
+    const startX = cx - halfSize
+    const startZ = cz - halfSize
 
-    for (let i = -count; i <= count; i++) {
-      const offset = i * step
-      // Lines parallel to Z (varying X)
+    for (let xOffset = 0; xOffset <= fieldSize; xOffset += step) {
+      const idx = Math.round(xOffset / step)
       pts.push({
-        start: [cx + offset, 0.02, cz - halfSize],
-        end: [cx + offset, 0.02, cz + halfSize],
-        major: i % 10 === 0,
+        start: [startX + xOffset, 0.02, startZ],
+        end: [startX + xOffset, 0.02, startZ + fieldSize],
+        major: idx % 10 === 0,
       })
-      // Lines parallel to X (varying Z)
+    }
+    
+    for (let zOffset = 0; zOffset <= fieldSize; zOffset += step) {
+      const idx = Math.round(zOffset / step)
       pts.push({
-        start: [cx - halfSize, 0.02, cz + offset],
-        end: [cx + halfSize, 0.02, cz + offset],
-        major: i % 10 === 0,
+        start: [startX, 0.02, startZ + zOffset],
+        end: [startX + fieldSize, 0.02, startZ + zOffset],
+        major: idx % 10 === 0,
       })
     }
     return pts
@@ -309,24 +311,33 @@ function CentGrid({ fieldSize, center }: { fieldSize: number; center: [number, n
     const cx = center[0]
     const cz = center[2]
     const step = CENT_SIDE_M
-    const count = Math.ceil(halfSize / step)
     const result: { pos: [number, number, number]; text: string }[] = []
 
-    for (let i = -count; i <= count; i += 10) {
-      if (i === 0) continue
-      const offset = i * step
-      const centVal = Math.abs(i)
-      result.push({
-        pos: [cx + offset, 0.1, cz - halfSize + 2],
-        text: `${centVal}¢`,
-      })
-      result.push({
-        pos: [cx - halfSize + 2, 0.1, cz + offset],
-        text: `${centVal}¢`,
-      })
+    const min_x = Math.floor((cx - halfSize) / step) * step
+    const max_x = Math.ceil((cx + halfSize) / step) * step
+    const min_z = Math.floor((cz - halfSize) / step) * step
+    const max_z = Math.ceil((cz + halfSize) / step) * step
+
+    for (let x = min_x; x <= max_x; x += step) {
+      const idx = Math.round(x / step)
+      if (idx !== 0 && idx % 10 === 0) {
+        result.push({
+          pos: [x, 0.1, cz - halfSize + 2],
+          text: `${Math.abs(idx * 10)}¢`,
+        })
+      }
+    }
+    for (let z = min_z; z <= max_z; z += step) {
+      const idx = Math.round(z / step)
+      if (idx !== 0 && idx % 10 === 0) {
+        result.push({
+          pos: [cx - halfSize + 2, 0.1, z],
+          text: `${Math.abs(idx * 10)}¢`,
+        })
+      }
     }
     // Origin label
-    result.push({ pos: [cx - halfSize + 2, 0.1, cz - halfSize + 2], text: '0' })
+    result.push({ pos: [0, 0.1, 0], text: '0' })
     return result
   }, [fieldSize, center])
 
@@ -714,7 +725,10 @@ function FarmSceneContent({
         const y = plant?.position?.y
         return Number.isFinite(x) && Number.isFinite(y)
       }).map((plant) => {
-        const { x, y } = plant.position
+        let { x, y } = plant.position
+        // add farmBounds offset if the positions don't already have it
+        x += farmBounds.x
+        y += farmBounds.y
         const species = getSpeciesByIdOrName(plant.speciesId, plant.layer)
         return (
           <Tree
@@ -736,16 +750,22 @@ function FarmSceneContent({
         const [sx, sy] = row.start
         const [ex, ey] = row.end
         return Number.isFinite(sx) && Number.isFinite(sy) && Number.isFinite(ex) && Number.isFinite(ey) && row.spacing > 0
-      }).map((row) => (
-        <PlantingRowViz
-          key={row.id}
-          start={row.start}
-          end={row.end}
-          spacing={row.spacing}
-          speciesId={row.speciesId}
-          layer={row.layer}
-        />
-      ))}
+      }).map((row) => {
+        const sx = row.start[0] + farmBounds.x
+        const sy = row.start[1] + farmBounds.y
+        const ex = row.end[0] + farmBounds.x
+        const ey = row.end[1] + farmBounds.y
+        return (
+          <PlantingRowViz
+            key={row.id}
+            start={[sx, sy]}
+            end={[ex, ey]}
+            spacing={row.spacing}
+            speciesId={row.speciesId}
+            layer={row.layer}
+          />
+        )
+      })}
       
       {/* Stats overlay */}
       {showStats && (

@@ -134,14 +134,119 @@ function loadFromStorage(): Partial<AIFarmState> {
 // Provider
 // ---------------------------------------------------------------------------
 
+// Default farm for demo/testing
+const DEFAULT_FARM: FarmConfig = {
+  name: 'Sunrise Farm',
+  location: 'Western Ghats, Karnataka',
+  region: 'Karnataka',
+  acres: 2.5,
+  soilType: 'laterite',
+  goal: 'maximize_profit',
+  experienceLevel: 'intermediate',
+  budget_inr: 150000,
+}
+
+// Default prediction with realistic yield data
+const DEFAULT_PREDICTION: PredictionResult = {
+  prediction_id: 'default_pred_001',
+  farm_id: 'sunrise_farm',
+  timestamp: new Date().toISOString(),
+  layers: {
+    canopy: {
+      predicted_yield_t_ha: 2.8,
+      ci_80_low: 2.4,
+      ci_80_high: 3.2,
+      top_shap_features: [
+        { feature: 'soil_nitrogen', contribution: 0.35 },
+        { feature: 'rainfall', contribution: 0.28 },
+      ],
+      fis_stress_scores: { water: 0.2, nutrient: 0.15 },
+    },
+    midstory: {
+      predicted_yield_t_ha: 1.9,
+      ci_80_low: 1.5,
+      ci_80_high: 2.3,
+      top_shap_features: [
+        { feature: 'spacing', contribution: 0.32 },
+        { feature: 'rainfall', contribution: 0.25 },
+      ],
+      fis_stress_scores: { water: 0.25, nutrient: 0.18 },
+    },
+    understory: {
+      predicted_yield_t_ha: 1.2,
+      ci_80_low: 0.9,
+      ci_80_high: 1.5,
+      top_shap_features: [
+        { feature: 'canopy_cover', contribution: 0.4 },
+        { feature: 'soil_ph', contribution: 0.22 },
+      ],
+      fis_stress_scores: { water: 0.35, nutrient: 0.2 },
+    },
+    groundcover: {
+      predicted_yield_t_ha: 0.8,
+      ci_80_low: 0.6,
+      ci_80_high: 1.1,
+      top_shap_features: [
+        { feature: 'mulch_depth', contribution: 0.38 },
+        { feature: 'soil_moisture', contribution: 0.3 },
+      ],
+      fis_stress_scores: { water: 0.28, nutrient: 0.15 },
+    },
+  },
+  system_LER: 2.15,
+  optimal_geometry_recommendation:
+    'Current spacing allows excellent light penetration. Consider increasing groundcover density to 15-20 plants/m² for optimal yield.',
+  model_version: 'v2.3-multimodel',
+}
+
+// Default model selection
+const DEFAULT_MODEL: SelectedModel = {
+  id: 'model_agroforestry_001',
+  name: 'Coconut-Mango-Cacao-Pepper System',
+  crops: [
+    {
+      id: 'crop_coconut',
+      name: 'Coconut',
+      layer: 'canopy',
+      spacingM: 7.5,
+      plantCount: 53,
+    },
+    {
+      id: 'crop_mango',
+      name: 'Mango',
+      layer: 'midstory',
+      spacingM: 10,
+      plantCount: 25,
+    },
+    {
+      id: 'crop_cacao',
+      name: 'Cacao',
+      layer: 'understory',
+      spacingM: 3,
+      plantCount: 111,
+    },
+    {
+      id: 'crop_pepper',
+      name: 'Black Pepper',
+      layer: 'groundcover',
+      spacingM: 2,
+      plantCount: 250,
+    },
+  ],
+  estimatedLER: '2.15',
+  estimatedRevenue: '₹2,40,000',
+  estimatedYield: '6.7 tonnes',
+  soilType: 'laterite',
+}
+
 export function AIFarmProvider({ children }: { children: ReactNode }) {
   const [state, setState] = useState<AIFarmState>({
-    currentFarm: null,
-    selectedModel: null,
-    predictions: [],
+    currentFarm: DEFAULT_FARM,
+    selectedModel: DEFAULT_MODEL,
+    predictions: [DEFAULT_PREDICTION],
     advisoryMessages: [],
     isAIProcessing: false,
-    lastPredictionAt: null,
+    lastPredictionAt: DEFAULT_PREDICTION.timestamp,
   })
 
   // Hydrate from localStorage after mount to avoid SSR/client mismatch

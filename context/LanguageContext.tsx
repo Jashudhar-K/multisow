@@ -43,7 +43,7 @@ export function LanguageProvider({ children }: { children: ReactNode }) {
     if (translations['en'][key]) {
       return translations['en'][key];
     }
-    return key;
+    return ''; // Return empty string so that || 'Default' works in components
   };
 
   // Prevent hydration mismatch by not rendering until client-side

@@ -20,7 +20,7 @@ const DataHealthWidget = dynamic(() => import('@/components/ml/DataHealthWidget'
 function kv(v: number, digits = 1) { return v.toFixed(digits) }
 
 // Build yield-by-layer bar data from the latest prediction
-function buildLayerYieldData(layers: Record<string, { predicted_yield_t_ha?: number }> | null | undefined) {
+function buildLayerYieldData(layers: Record<string, { predicted_yield_t_ha?: number, yield_t_ha?: number }> | null | undefined) {
   if (!layers || typeof layers !== 'object') return []
   const COLORS: Record<string, 'primary' | 'success' | 'warning' | 'accent'> = {
     canopy: 'primary', middle: 'success', midstory: 'success',
@@ -28,7 +28,7 @@ function buildLayerYieldData(layers: Record<string, { predicted_yield_t_ha?: num
   }
   return Object.entries(layers).map(([key, val]) => ({
     label: key.charAt(0).toUpperCase() + key.slice(1),
-    value: val.predicted_yield_t_ha ?? 0,
+    value: val.predicted_yield_t_ha ?? val.yield_t_ha ?? 0,
     color: (COLORS[key] ?? 'primary') as 'primary' | 'success' | 'warning' | 'accent',
   }))
 }
@@ -79,16 +79,18 @@ export default function DashboardPage() {
   // KPI derivation
   const kpis = useMemo(() => {
     const acres = currentFarm?.acres ?? 2.5
-    const ler = latestPred?.system_LER ?? 1.65
-    const totalYieldTha = latestPred?.layers
-      ? Object.values(latestPred.layers).reduce((s, l) => s + ((l as any).predicted_yield_t_ha ?? 0), 0)
-      : 3.8
+    const ler = latestPred?.system_LER || 1.65
+    let totalYieldTha = 3.8
+    if (latestPred?.layers) {
+      const sum = Object.values(latestPred.layers).reduce((s, l) => s + ((l as any).predicted_yield_t_ha ?? (l as any).yield_t_ha ?? 0), 0)
+      if (sum > 0) totalYieldTha = sum
+    }
     const totalTonnes = thaToTotalTonnes(totalYieldTha, acres)
     // Revenue estimate: avg ₹80/kg for mixed spice-fruit system
     const revenueINR = totalTonnes * 1000 * 80
     const waterSaved = 62 + (ler - 1) * 10   // heuristic based on LER
 
-    return { acres, ler, totalTonnes, revenueINR, waterSaved }
+    return { acres, ler, totalTonnes, revenueINR, waterSaved, totalYieldTha }
   }, [currentFarm, latestPred])
 
   // Time-series sparkline data (simulated from LER if no real data)
@@ -101,7 +103,10 @@ export default function DashboardPage() {
   }, [kpis.totalTonnes])
 
   const layerYieldData = useMemo(() => {
-    if (latestPred) return buildLayerYieldData(latestPred.layers as any)
+    if (latestPred && latestPred.layers && Object.keys(latestPred.layers).length > 0) {
+      const data = buildLayerYieldData(latestPred.layers as any)
+      if (data.length > 0 && data.some(d => d.value > 0)) return data
+    }
     return [
       { label: 'Canopy', value: 1.8, color: 'primary' as const },
       { label: 'Midstory', value: 1.2, color: 'success' as const },
@@ -150,7 +155,7 @@ export default function DashboardPage() {
         <motion.div initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.05 }}>
           <MetricCardGrid columns={4}>
             <MetricCard
-              label="Farm Area"
+              label={t('dashboard.farm_area')}
               value={kpis.acres}
               unit="acres"
               icon={<Icon name="map" size={20} />}
@@ -159,7 +164,7 @@ export default function DashboardPage() {
               description="Total cultivated area"
             />
             <MetricCard
-              label="System LER"
+              label={t('dashboard.system_ler')}
               value={kpis.ler}
               icon={<Icon name="layers" size={20} />}
               color="success"
@@ -169,7 +174,7 @@ export default function DashboardPage() {
               description="Land Equivalent Ratio — higher = better intercropping"
             />
             <MetricCard
-              label="Predicted Yield"
+              label={t('dashboard.predicted_yield')}
               value={kpis.totalTonnes}
               unit="tonnes"
               icon={<Icon name="trending_up" size={20} />}
@@ -180,14 +185,14 @@ export default function DashboardPage() {
               description="Total system yield across all layers"
             />
             <MetricCard
-              label="Est. Revenue"
-              value={Math.round(kpis.revenueINR / 100000)}
+              label={t('dashboard.est_revenue')}
+              value={Math.max(kpis.revenueINR / 100000, 0.01)}
               prefix="₹"
               unit="L"
               icon={<Icon name="currency_rupee" size={20} />}
               color="warning"
-              decimals={0}
-              sparklineData={[80, 95, 110, 125, Math.round(kpis.revenueINR / 100000)]}
+              decimals={2}
+              sparklineData={[80, 95, 110, 125, kpis.revenueINR / 100000]}
               trend={15}
               description="Estimated annual farm revenue"
             />
@@ -202,7 +207,7 @@ export default function DashboardPage() {
             <GlassCard className="h-full">
               <GlassCardHeader>
                 <h3 className="font-semibold text-white flex items-center gap-2">
-                  <Icon name="show_chart" size={16} className="text-green-400" /> Yield Trend
+                  <Icon name="show_chart" size={16} className="text-green-400" /> {t('dashboard.yield_trend')}
                 </h3>
               </GlassCardHeader>
               <GlassCardContent>
@@ -216,24 +221,24 @@ export default function DashboardPage() {
             <GlassCard className="h-full">
               <GlassCardHeader>
                 <h3 className="font-semibold text-white flex items-center gap-2">
-                  <Icon name="memory" size={16} className="text-green-400" /> AI/ML Tools
+                  <Icon name="memory" size={16} className="text-green-400" /> {t('dashboard.ai_ml_tools')}
                 </h3>
               </GlassCardHeader>
               <GlassCardContent className="space-y-3">
                 <Link href="/predict" className="interactive-link flex items-center gap-3 w-full px-4 py-3 rounded-xl bg-white/5 border border-white/10 text-white/70 font-medium hover:bg-white/10 hover:text-white text-sm">
-                  <Icon name="trending_up" size={16} className="text-green-400" /> Yield Prediction
+                  <Icon name="trending_up" size={16} className="text-green-400" /> {t('dashboard.yield_prediction')}
                 </Link>
                 <Link href="/optimize" className="interactive-link flex items-center gap-3 w-full px-4 py-3 rounded-xl bg-white/5 border border-white/10 text-white/70 font-medium hover:bg-white/10 hover:text-white text-sm">
-                  <Icon name="bolt" size={16} className="text-amber-400" /> Strata Optimizer
+                  <Icon name="bolt" size={16} className="text-amber-400" /> {t('dashboard.strata_optimizer')}
                 </Link>
                 <Link href="/designer" className="interactive-link flex items-center gap-3 w-full px-4 py-3 rounded-xl bg-white/5 border border-white/10 text-white/70 font-medium hover:bg-white/10 hover:text-white text-sm">
-                  <Icon name="layers" size={16} className="text-blue-400" /> Farm Designer
+                  <Icon name="layers" size={16} className="text-blue-400" /> {t('dashboard.farm_designer')}
                 </Link>
                 <Link href="/crops" className="interactive-link flex items-center gap-3 w-full px-4 py-3 rounded-xl bg-white/5 border border-white/10 text-white/70 font-medium hover:bg-white/10 hover:text-white text-sm">
-                  <Icon name="database" size={16} className="text-purple-400" /> Crops Database
+                  <Icon name="database" size={16} className="text-purple-400" /> {t('dashboard.crops_database')}
                 </Link>
                 <Link href="/calc" className="interactive-link flex items-center gap-3 w-full px-4 py-3 rounded-xl bg-white/5 border border-white/10 text-white/70 font-medium hover:bg-white/10 hover:text-white text-sm">
-                  <Icon name="calculate" size={16} className="text-cyan-400" /> Calculator
+                  <Icon name="calculate" size={16} className="text-cyan-400" /> {t('dashboard.calculator')}
                 </Link>
               </GlassCardContent>
             </GlassCard>
@@ -246,7 +251,7 @@ export default function DashboardPage() {
             <GlassCard className="h-full">
               <GlassCardHeader>
                 <h3 className="font-semibold text-white flex items-center gap-2">
-                  <Icon name="bar_chart" size={16} className="text-green-400" /> Yield by Layer
+                  <Icon name="bar_chart" size={16} className="text-green-400" /> {t('dashboard.yield_by_layer')}
                 </h3>
               </GlassCardHeader>
               <GlassCardContent>
@@ -270,20 +275,21 @@ export default function DashboardPage() {
             <GlassCard>
               <GlassCardHeader>
                 <h3 className="font-semibold text-white flex items-center gap-2">
-                  <Icon name="bolt" size={16} className="text-amber-400" /> Latest Prediction Summary
+                  <Icon name="bolt" size={16} className="text-amber-400" /> {t('dashboard.latest_prediction')}
                 </h3>
                 <span className="text-xs text-white/30 ml-auto">
-                  {new Date(latestPred.timestamp).toLocaleString()}
+                  {new Date(latestPred.timestamp).toISOString().replace('T', ' ').slice(0, 16)} UTC
                 </span>
               </GlassCardHeader>
               <GlassCardContent>
                 <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
                   {Object.entries(latestPred.layers ?? {}).map(([layer, pred]) => {
                     const p = pred as any
+                    const yieldVal = p.predicted_yield_t_ha ?? p.yield_t_ha ?? 0;
                     return (
                       <div key={layer} className="rounded-xl bg-white/5 border border-white/10 px-4 py-3 text-center">
                         <div className="text-xs text-white/40 capitalize mb-1">{layer}</div>
-                        <div className="text-xl font-bold text-green-400">{(p.predicted_yield_t_ha ?? 0).toFixed(2)}</div>
+                        <div className="text-xl font-bold text-green-400">{(yieldVal > 0 ? (yieldVal * 0.404686) : 0).toFixed(2)}</div>
                         <div className="text-xs text-white/30">tonnes/acre</div>
                       </div>
                     )

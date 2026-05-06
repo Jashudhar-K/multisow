@@ -2,7 +2,8 @@
 
 import { useState } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
-import { Icon } from '@/components/ui/Icon';// ============================================================================
+import { Icon } from '@/components/ui/Icon';
+import { useLanguage } from '@/context/LanguageContext';
 // TYPES
 // ============================================================================
 
@@ -176,6 +177,7 @@ function RecCard({ rec, expanded, onToggle }: { rec: StrataRec; expanded: boolea
 // ============================================================================
 
 export default function OptimizerPanel() {
+  const { t } = useLanguage();
   const [mode, setMode] = useState<'strata' | 'quick'>('strata')
 
   // Strata form
@@ -271,10 +273,10 @@ export default function OptimizerPanel() {
       <div>
         <h2 className="text-xl font-bold text-white flex items-center gap-2">
           <Icon name="memory" className="w-5 h-5 text-purple-400" />
-          Strata Optimizer
+          {t('opt.title')}
         </h2>
         <p className="text-sm text-neutral-400 mt-1">
-          NSGA-II genetic algorithm to find Pareto-optimal multi-tier crop configurations maximising yield, LER, and profit.
+          {t('opt.subtitle')}
         </p>
       </div>
 
@@ -289,9 +291,9 @@ export default function OptimizerPanel() {
             }`}
           >
             {m === 'strata' ? (
-              <span className="flex items-center gap-1.5"><Icon name="layers" className="w-4 h-4" /> Full Strata</span>
+              <span className="flex items-center gap-1.5"><Icon name="layers" className="w-4 h-4" /> {t('opt.mode_full')}</span>
             ) : (
-              <span className="flex items-center gap-1.5"><Icon name="bolt" className="w-4 h-4" /> Quick</span>
+              <span className="flex items-center gap-1.5"><Icon name="bolt" className="w-4 h-4" /> {t('opt.mode_quick')}</span>
             )}
           </button>
         ))}
@@ -302,15 +304,15 @@ export default function OptimizerPanel() {
         <div className="glass rounded-xl p-5 space-y-4">
           <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
             <div>
-              <label className="text-xs text-neutral-400 block mb-1">Farm ID</label>
+              <label className="text-xs text-neutral-400 block mb-1">{t('opt.farm_id')}</label>
               <input value={farmId} onChange={(e) => setFarmId(e.target.value)} className="w-full px-3 py-2 bg-white/5 border border-white/10 rounded-lg text-sm text-white focus:border-purple-500/50 focus:outline-none" />
             </div>
             <div>
-              <label className="text-xs text-neutral-400 block mb-1">Acres</label>
+              <label className="text-xs text-neutral-400 block mb-1">{t('opt.acres')}</label>
               <input type="number" value={acres} onChange={(e) => setAcres(Number(e.target.value))} min={0.1} max={1000} step={0.5} className="w-full px-3 py-2 bg-white/5 border border-white/10 rounded-lg text-sm text-white focus:border-purple-500/50 focus:outline-none" />
             </div>
             <div>
-              <label className="text-xs text-neutral-400 block mb-1">Soil Type</label>
+              <label className="text-xs text-neutral-400 block mb-1">{t('opt.soil_type')}</label>
               <select value={soilType} onChange={(e) => setSoilType(e.target.value)} className="w-full px-3 py-2 bg-white/5 border border-white/10 rounded-lg text-sm text-white focus:border-purple-500/50 focus:outline-none">
                 <option value="laterite">Laterite</option>
                 <option value="alluvial">Alluvial</option>
@@ -319,7 +321,7 @@ export default function OptimizerPanel() {
               </select>
             </div>
             <div>
-              <label className="text-xs text-neutral-400 block mb-1">Goal</label>
+              <label className="text-xs text-neutral-400 block mb-1">{t('opt.goal')}</label>
               <select value={goal} onChange={(e) => setGoal(e.target.value)} className="w-full px-3 py-2 bg-white/5 border border-white/10 rounded-lg text-sm text-white focus:border-purple-500/50 focus:outline-none">
                 <option value="balanced">Balanced</option>
                 <option value="maximize_yield">Maximize Yield</option>
@@ -330,23 +332,23 @@ export default function OptimizerPanel() {
           </div>
           <div className="grid grid-cols-2 md:grid-cols-5 gap-3">
             <div>
-              <label className="text-xs text-neutral-400 block mb-1">Population Size</label>
+              <label className="text-xs text-neutral-400 block mb-1">{t('opt.pop_size')}</label>
               <input type="number" value={popSize} onChange={(e) => setPopSize(Number(e.target.value))} min={20} max={500} className="w-full px-3 py-2 bg-white/5 border border-white/10 rounded-lg text-sm text-white focus:border-purple-500/50 focus:outline-none" />
             </div>
             <div>
-              <label className="text-xs text-neutral-400 block mb-1">Generations</label>
+              <label className="text-xs text-neutral-400 block mb-1">{t('opt.generations')}</label>
               <input type="number" value={gens} onChange={(e) => setGens(Number(e.target.value))} min={10} max={200} className="w-full px-3 py-2 bg-white/5 border border-white/10 rounded-lg text-sm text-white focus:border-purple-500/50 focus:outline-none" />
             </div>
             <div>
-              <label className="text-xs text-neutral-400 block mb-1"># Recs</label>
+              <label className="text-xs text-neutral-400 block mb-1">{t('opt.n_recs')}</label>
               <input type="number" value={nRecs} onChange={(e) => setNRecs(Number(e.target.value))} min={1} max={20} className="w-full px-3 py-2 bg-white/5 border border-white/10 rounded-lg text-sm text-white focus:border-purple-500/50 focus:outline-none" />
             </div>
             <div>
-              <label className="text-xs text-neutral-400 block mb-1">Min LER</label>
+              <label className="text-xs text-neutral-400 block mb-1">{t('opt.min_ler')}</label>
               <input type="number" value={minLer} onChange={(e) => setMinLer(Number(e.target.value))} min={0} max={3} step={0.1} className="w-full px-3 py-2 bg-white/5 border border-white/10 rounded-lg text-sm text-white focus:border-purple-500/50 focus:outline-none" />
             </div>
             <div>
-              <label className="text-xs text-neutral-400 block mb-1">Budget Limit (₹)</label>
+              <label className="text-xs text-neutral-400 block mb-1">{t('opt.budget')}</label>
               <input type="number" value={budgetLimit} onChange={(e) => setBudgetLimit(e.target.value ? Number(e.target.value) : '')} min={0} placeholder="No limit" className="w-full px-3 py-2 bg-white/5 border border-white/10 rounded-lg text-sm text-white focus:border-purple-500/50 focus:outline-none" />
             </div>
           </div>
@@ -356,14 +358,14 @@ export default function OptimizerPanel() {
             className="px-6 py-2.5 bg-purple-500 text-white font-semibold rounded-xl hover:bg-purple-400 disabled:opacity-50 disabled:cursor-not-allowed transition flex items-center gap-2"
           >
             {loading ? <Icon name="progress_activity" className="w-4 h-4 animate-spin" /> : <Icon name="memory" className="w-4 h-4" />}
-            {loading ? 'Optimizing…' : 'Run Optimization'}
+            {loading ? t('opt.btn_optimizing') : t('opt.btn_run')}
           </button>
         </div>
       ) : (
         <div className="glass rounded-xl p-5 space-y-4">
           <div className="grid grid-cols-2 md:grid-cols-5 gap-3">
             <div>
-              <label className="text-xs text-neutral-400 block mb-1">Soil Type</label>
+              <label className="text-xs text-neutral-400 block mb-1">{t('opt.soil_type')}</label>
               <select value={qSoil} onChange={(e) => setQSoil(e.target.value)} className="w-full px-3 py-2 bg-white/5 border border-white/10 rounded-lg text-sm text-white focus:border-purple-500/50 focus:outline-none">
                 <option value="laterite">Laterite</option>
                 <option value="alluvial">Alluvial</option>
@@ -372,19 +374,19 @@ export default function OptimizerPanel() {
               </select>
             </div>
             <div>
-              <label className="text-xs text-neutral-400 block mb-1">Acres</label>
+              <label className="text-xs text-neutral-400 block mb-1">{t('opt.acres')}</label>
               <input type="number" value={qAcres} onChange={(e) => setQAcres(Number(e.target.value))} min={0.1} max={100} step={0.5} className="w-full px-3 py-2 bg-white/5 border border-white/10 rounded-lg text-sm text-white focus:border-purple-500/50 focus:outline-none" />
             </div>
             <div>
-              <label className="text-xs text-neutral-400 block mb-1">Budget (₹)</label>
+              <label className="text-xs text-neutral-400 block mb-1">{t('opt.budget')}</label>
               <input type="number" value={qBudget} onChange={(e) => setQBudget(e.target.value ? Number(e.target.value) : '')} min={0} placeholder="Optional" className="w-full px-3 py-2 bg-white/5 border border-white/10 rounded-lg text-sm text-white focus:border-purple-500/50 focus:outline-none" />
             </div>
             <div>
-              <label className="text-xs text-neutral-400 block mb-1">Canopy Crop</label>
+              <label className="text-xs text-neutral-400 block mb-1">{t('opt.canopy_crop')}</label>
               <input type="text" value={qCanopy} onChange={(e) => setQCanopy(e.target.value)} placeholder="e.g. coconut" className="w-full px-3 py-2 bg-white/5 border border-white/10 rounded-lg text-sm text-white focus:border-purple-500/50 focus:outline-none" />
             </div>
             <div>
-              <label className="text-xs text-neutral-400 block mb-1"># Recs</label>
+              <label className="text-xs text-neutral-400 block mb-1">{t('opt.n_recs')}</label>
               <input type="number" value={qNRecs} onChange={(e) => setQNRecs(Number(e.target.value))} min={1} max={10} className="w-full px-3 py-2 bg-white/5 border border-white/10 rounded-lg text-sm text-white focus:border-purple-500/50 focus:outline-none" />
             </div>
           </div>
@@ -394,7 +396,7 @@ export default function OptimizerPanel() {
             className="px-6 py-2.5 bg-purple-500 text-white font-semibold rounded-xl hover:bg-purple-400 disabled:opacity-50 disabled:cursor-not-allowed transition flex items-center gap-2"
           >
             {loading ? <Icon name="progress_activity" className="w-4 h-4 animate-spin" /> : <Icon name="bolt" className="w-4 h-4" />}
-            {loading ? 'Optimizing…' : 'Quick Optimize'}
+            {loading ? t('opt.btn_optimizing') : t('opt.btn_quick')}
           </button>
         </div>
       )}
@@ -459,10 +461,43 @@ export default function OptimizerPanel() {
                 <h3 className="text-sm font-semibold text-purple-400">Quick Results</h3>
                 <span className="text-xs text-neutral-400">{quickResult.execution_time_ms.toFixed(0)}ms</span>
               </div>
-              <div className="space-y-2">
+              <div className="space-y-3">
                 {quickResult.recommendations.map((r: any, i: number) => (
-                  <div key={i} className="bg-white/5 rounded-lg p-3 text-sm">
-                    <pre className="text-xs text-neutral-200 overflow-x-auto whitespace-pre-wrap">{JSON.stringify(r, null, 2)}</pre>
+                  <div key={i} className="bg-white/5 rounded-xl border border-white/10 p-4">
+                    <div className="flex items-center gap-3 mb-3">
+                      <span className="w-6 h-6 flex items-center justify-center bg-purple-500/20 text-purple-400 rounded-full text-xs font-bold">#{i + 1}</span>
+                      <div className="flex gap-2">
+                        {r.canopy_crop && <span className="text-xs px-2 py-1 rounded-md bg-green-500/20 text-green-400 border border-green-500/10">{r.canopy_crop}</span>}
+                        {r.middle_crop && <span className="text-xs px-2 py-1 rounded-md bg-yellow-500/20 text-yellow-400 border border-yellow-500/10">{r.middle_crop}</span>}
+                        {r.understory_crop && <span className="text-xs px-2 py-1 rounded-md bg-orange-500/20 text-orange-400 border border-orange-500/10">{r.understory_crop}</span>}
+                      </div>
+                    </div>
+                    
+                    <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 mb-3">
+                      <div className="bg-black/20 p-2 rounded-lg text-center">
+                        <div className="text-sm font-bold text-white">{r.metrics?.total_yield_t_ha ?? 'N/A'}</div>
+                        <div className="text-[10px] text-neutral-400">Yield (t/ha)</div>
+                      </div>
+                      <div className="bg-black/20 p-2 rounded-lg text-center">
+                        <div className="text-sm font-bold text-green-400">{r.metrics?.ler?.toFixed(2) ?? 'N/A'}</div>
+                        <div className="text-[10px] text-neutral-400">LER</div>
+                      </div>
+                      <div className="bg-black/20 p-2 rounded-lg text-center">
+                        <div className="text-sm font-bold text-white">₹{r.metrics?.net_profit_inr_ha ? (r.metrics.net_profit_inr_ha / 1000).toFixed(0) + 'k' : 'N/A'}</div>
+                        <div className="text-[10px] text-neutral-400">Profit/ha</div>
+                      </div>
+                      <div className="bg-black/20 p-2 rounded-lg text-center">
+                        <div className="text-sm font-bold text-white">₹{r.metrics?.establishment_cost_inr_ha ? (r.metrics.establishment_cost_inr_ha / 1000).toFixed(0) + 'k' : 'N/A'}</div>
+                        <div className="text-[10px] text-neutral-400">Setup Cost</div>
+                      </div>
+                    </div>
+                    
+                    {r.synergy_notes && r.synergy_notes.length > 0 && (
+                      <div className="text-xs text-green-400 flex items-start gap-1.5 mt-2">
+                        <Icon name="eco" className="w-3 h-3 mt-0.5 shrink-0" />
+                        <span>{r.synergy_notes[0]}</span>
+                      </div>
+                    )}
                   </div>
                 ))}
               </div>

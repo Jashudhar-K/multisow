@@ -21,41 +21,31 @@ if ! command -v python3 &> /dev/null; then
     exit 1
 fi
 
-# Install Python dependencies
-echo "[1/3] Installing Python dependencies..."
-python3 -m pip install -r requirements.txt --quiet
-
-if [ $? -ne 0 ]; then
-    echo "[ERROR] Failed to install Python dependencies"
+# Check Docker for full-stack launch
+if ! command -v docker &> /dev/null; then
+    echo "[ERROR] Docker is not installed or not available."
+    echo "This launcher now starts the full project through Docker Compose."
+    echo "Please install and start Docker, then run this launcher again."
     exit 1
 fi
 
-echo "[2/3] Starting application..."
+echo "[1/2] Starting full stack with Docker Compose..."
 echo ""
-echo "  Application: http://localhost:3001"
-  echo "  API Docs:    http://localhost:8001/docs"
+echo "  Frontend:    http://localhost:3001"
+echo "  Backend API: http://localhost:8001"
+echo "  API Docs:    http://localhost:8001/docs"
 echo ""
-echo "  Browser will open automatically when ready."
-echo "  Press CTRL+C to stop the server."
+echo "  The database and supporting services will start automatically."
+echo "  Press CTRL+C in the Docker Compose terminal to stop all services."
 echo "============================================================"
 echo ""
 
-# Start backend in background
-python3 -m uvicorn backend.main:app --host 0.0.0.0 --port 8001 --reload &
-BACKEND_PID=$!
+docker compose up --build &
+COMPOSE_PID=$!
 
-# Start Next.js in background
-npm run dev &
-NEXT_PID=$!
-
-# Wait for server to be ready
-echo "[3/3] Waiting for services to start..."
+echo "[2/2] Waiting for backend API..."
 while ! curl -s http://localhost:8001/health > /dev/null 2>&1; do
-    sleep 1
-done
-
-while ! curl -s http://localhost:3001 > /dev/null 2>&1; do
-    sleep 1
+    sleep 2
 done
 
 echo "Server ready! Opening browser..."
@@ -69,6 +59,5 @@ elif [[ "$OSTYPE" == "linux-gnu"* ]]; then
     fi
 fi
 
-# Wait for background processes
-wait $BACKEND_PID
-wait $NEXT_PID
+# Wait for Docker Compose to keep the script alive
+wait $COMPOSE_PID
