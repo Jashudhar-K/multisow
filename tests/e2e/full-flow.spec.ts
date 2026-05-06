@@ -17,24 +17,30 @@ test('complete farm flow keeps dashboard KPIs non-zero', async ({ page }) => {
   await page.getByRole('button', { name: 'Create Account' }).click();
   await expect(page).toHaveURL(/\/onboarding/, { timeout: 15_000 });
 
-  // Wait for the onboarding form to be fully visible before interacting
-  await page.getByPlaceholder("e.g. Krishnan's Homestead").waitFor({ state: 'visible', timeout: 15_000 });
+  // Wait for step 0 form to be visible (farm basics)
+  await expect(page.getByRole('heading', { name: /Tell us about your farm/i })).toBeVisible({ timeout: 15_000 });
   
   await page.getByPlaceholder("e.g. Krishnan's Homestead").fill('Wayanad Hills');
   await page.getByPlaceholder('e.g. Wayanad, Kerala').fill('Wayanad, Kerala');
   
-  // Wait for and select region
-  await page.locator('select').first().waitFor({ state: 'visible', timeout: 10_000 });
-  await page.locator('select').first().selectOption('Kerala');
+  // Select region from dropdown
+  const regionSelect = page.locator('select').filter({ hasText: 'Region' }).or(page.locator('select').first());
+  await regionSelect.selectOption('Kerala');
+  
   await page.getByLabel('Farm Area (acres)').fill('2.5');
-  await page.getByRole('button', { name: /Laterite/i }).waitFor({ state: 'visible', timeout: 5_000 });
   await page.getByRole('button', { name: /Laterite/i }).click();
   await page.getByLabel('Budget (INR)').fill('250000');
   await page.getByRole('button', { name: 'Next' }).click();
 
+  // Wait for step 1 (goal selection) to be visible
+  await expect(page.getByRole('heading', { name: /What's your primary goal/i })).toBeVisible({ timeout: 10_000 });
+  
   await page.getByRole('button', { name: /Maximise Profit/i }).click();
   await page.getByRole('button', { name: 'Next' }).click();
 
+  // Wait for step 2 (experience) to be visible
+  await expect(page.getByRole('heading', { name: /Your experience level/i })).toBeVisible({ timeout: 10_000 });
+  
   await page.getByRole('button', { name: /Beginner/i }).click();
   await page.getByRole('button', { name: 'Generate AI Plan' }).click();
   await expect(page).toHaveURL(/\/designer/, { timeout: 20_000 });
