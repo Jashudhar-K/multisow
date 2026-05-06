@@ -11,11 +11,11 @@ test('complete farm flow keeps dashboard KPIs non-zero', async ({ page }) => {
   const email = `e2e-farm-${randomUUID()}@example.com`;
 
   await page.goto('/signup');
-  await page.getByLabel('Name').fill('E2E Farm Tester');
-  await page.getByLabel('Email').fill(email);
-  await page.getByLabel('Password').fill('TestPass123!');
-  await page.getByRole('button', { name: 'Create Account' }).click();
-  await expect(page).toHaveURL(/\/onboarding/, { timeout: 15_000 });
+  await page.fill('input[id="name"]', 'E2E Farm Tester');
+  await page.fill('input[id="email"]', email);
+  await page.fill('input[id="password"]', 'TestPass123!');
+  await page.click('button[type="submit"]');
+  await expect(page).toHaveURL(/onboarding/, { timeout: 15_000 });
 
   // Wait for step 0 form to be visible (farm basics)
   await expect(page.getByRole('heading', { name: /Tell us about your farm/i })).toBeVisible({ timeout: 15_000 });
