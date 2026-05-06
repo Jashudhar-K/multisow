@@ -1,9 +1,6 @@
 {
   "version": 2,
   "regions": ["bom1"],
-  "builds": [
-    { "src": "next.config.js", "use": "@vercel/next" }
-  ],
   "functions": {
     "app/api/ai/**": { "maxDuration": 60 },
     "app/api/crop-recommender/**": { "maxDuration": 30 }
