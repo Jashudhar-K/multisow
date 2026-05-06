@@ -18,6 +18,7 @@ export interface MetricCardProps {
   unit?: string;
   prefix?: string;
   suffix?: string;
+  testId?: string;
   icon?: React.ReactNode;
   trend?: number;
   trendLabel?: string;
@@ -131,6 +132,7 @@ export function MetricCard({
   unit,
   prefix = '',
   suffix = '',
+  testId,
   icon,
   trend,
   trendLabel,
@@ -146,6 +148,7 @@ export function MetricCard({
   const ref = useRef<HTMLDivElement>(null);
   const isInView = useInView(ref, { once: true });
   const animatedValue = useAnimatedNumber(value, 1200, decimals, !loading && isInView);
+  const resolvedTestId = testId ?? `metric-card-${label.toLowerCase().replace(/[^a-z0-9]+/g, '-')}`;
   
   const colors = colorVariants[color];
   const sizes = sizeVariants[size];
@@ -187,6 +190,7 @@ export function MetricCard({
       initial={{ opacity: 0, y: 20 }}
       animate={isInView ? { opacity: 1, y: 0 } : {}}
       transition={{ duration: 0.4 }}
+      data-testid={resolvedTestId}
       className={cn(
         'group relative rounded-2xl bg-surface border border-border-subtle overflow-hidden transition-all duration-300',
         colors.glow,
@@ -229,7 +233,7 @@ export function MetricCard({
 
       {/* Value */}
       <div className="flex items-baseline gap-1.5 mb-1">
-        <span className={cn('font-bold text-text-primary tracking-tight', sizes.value)}>
+        <span data-testid={`${resolvedTestId}-value`} className={cn('font-bold text-text-primary tracking-tight', sizes.value)}>
           {prefix}{decimals > 0 ? animatedValue.toFixed(decimals) : formatNumber(animatedValue)}{suffix}
         </span>
         {unit && (
