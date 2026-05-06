@@ -269,17 +269,18 @@ function Tree({ position, species, maturityStage = 1, isSelected, onClick }: Tre
 }
 
 // ============================================================================
-// CENT GRID — gridlines labeled in cents (1 cent ≈ 40.47 m²)
+// METRIC GRID — Standard metric grid (1m spacing, 10m major lines)
 // ============================================================================
 
-const CENT_SIDE_M = Math.sqrt(40.4686) // ≈ 6.36 m per cent side
+const MINOR_GRID_STEP = 1;
+const MAJOR_GRID_STEP = 10;
 
-function CentGrid({ fieldSize, center }: { fieldSize: number; center: [number, number, number] }) {
+function MetricGrid({ fieldSize, center }: { fieldSize: number; center: [number, number, number] }) {
   const lines = useMemo(() => {
     const halfSize = fieldSize / 2
     const cx = center[0]
     const cz = center[2]
-    const step = CENT_SIDE_M
+    const step = MINOR_GRID_STEP
     const pts: { start: [number, number, number]; end: [number, number, number]; major: boolean }[] = []
 
     const startX = cx - halfSize
@@ -290,7 +291,7 @@ function CentGrid({ fieldSize, center }: { fieldSize: number; center: [number, n
       pts.push({
         start: [startX + xOffset, 0.02, startZ],
         end: [startX + xOffset, 0.02, startZ + fieldSize],
-        major: idx % 10 === 0,
+        major: idx % MAJOR_GRID_STEP === 0,
       })
     }
     
@@ -299,18 +300,18 @@ function CentGrid({ fieldSize, center }: { fieldSize: number; center: [number, n
       pts.push({
         start: [startX, 0.02, startZ + zOffset],
         end: [startX + fieldSize, 0.02, startZ + zOffset],
-        major: idx % 10 === 0,
+        major: idx % MAJOR_GRID_STEP === 0,
       })
     }
     return pts
   }, [fieldSize, center])
 
-  // Labels at every 10-cent boundary
+  // Labels at every major boundary
   const labels = useMemo(() => {
     const halfSize = fieldSize / 2
     const cx = center[0]
     const cz = center[2]
-    const step = CENT_SIDE_M
+    const step = MAJOR_GRID_STEP
     const result: { pos: [number, number, number]; text: string }[] = []
 
     const min_x = Math.floor((cx - halfSize) / step) * step
@@ -320,24 +321,24 @@ function CentGrid({ fieldSize, center }: { fieldSize: number; center: [number, n
 
     for (let x = min_x; x <= max_x; x += step) {
       const idx = Math.round(x / step)
-      if (idx !== 0 && idx % 10 === 0) {
+      if (idx !== 0) {
         result.push({
           pos: [x, 0.1, cz - halfSize + 2],
-          text: `${Math.abs(idx * 10)}¢`,
+          text: `${Math.abs(idx * step)}m`,
         })
       }
     }
     for (let z = min_z; z <= max_z; z += step) {
       const idx = Math.round(z / step)
-      if (idx !== 0 && idx % 10 === 0) {
+      if (idx !== 0) {
         result.push({
           pos: [cx - halfSize + 2, 0.1, z],
-          text: `${Math.abs(idx * 10)}¢`,
+          text: `${Math.abs(idx * step)}m`,
         })
       }
     }
     // Origin label
-    result.push({ pos: [0, 0.1, 0], text: '0' })
+    result.push({ pos: [cx - halfSize + 2, 0.1, cz - halfSize + 2], text: '0m' })
     return result
   }, [fieldSize, center])
 
@@ -706,9 +707,9 @@ function FarmSceneContent({
       {/* Ground */}
       <Ground size={fieldSize} position={farmCenter} />
       
-      {/* Grid overlay — cent-labeled */}
+      {/* Grid overlay — metric-labeled */}
       {showGrid && (
-        <CentGrid fieldSize={fieldSize} center={farmCenter} />
+        <MetricGrid fieldSize={fieldSize} center={farmCenter} />
       )}
       
       {/* Nutrient heatmap */}

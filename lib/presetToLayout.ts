@@ -29,6 +29,13 @@ export interface RegionalPreset {
 }
 
 /**
+ * Helper to check if a position is too close to an existing plant
+ */
+function isOccupied(layout: PlantLayout[], x: number, y: number, minDistance = 0.5): boolean {
+  return layout.some(p => Math.hypot(p.x - x, p.y - y) < minDistance);
+}
+
+/**
  * Convert a preset model to a plant layout
  */
 export function presetToLayout(preset: RegionalPreset, targetAcres?: number): PlantLayout[] {
@@ -158,8 +165,8 @@ function generateKarnatakaLayout(
   const papayaSpacing = 2.5;
   
   // Silver Oak shade trees (12m × 12m grid)
-  for (let y = 5; y < sideLength; y += oakSpacing) {
-    for (let x = 5; x < sideLength; x += oakSpacing) {
+  for (let y = 0; y < sideLength; y += oakSpacing) {
+    for (let x = 0; x < sideLength; x += oakSpacing) {
       layout.push({
         id: genId(),
         x, y,
@@ -205,7 +212,7 @@ function generateKarnatakaLayout(
   // Cardamom understory (sparse representation)
   for (let y = 1; y < sideLength; y += 1.5) {
     for (let x = 1; x < sideLength; x += 1.5) {
-      if (Math.random() > 0.6) {
+      if (!isOccupied(layout, x, y, 1.0) && Math.random() > 0.6) {
         layout.push({
           id: genId(),
           x, y,
@@ -232,8 +239,8 @@ function generateTamilNaduLayout(
   const guavaSpacing = 4;
   
   // Mango trees (9m × 9m)
-  for (let y = 4; y < sideLength; y += mangoSpacing) {
-    for (let x = 4; x < sideLength; x += mangoSpacing) {
+  for (let y = 0; y < sideLength; y += mangoSpacing) {
+    for (let x = 0; x < sideLength; x += mangoSpacing) {
       layout.push({
         id: genId(),
         x, y,
@@ -279,7 +286,7 @@ function generateTamilNaduLayout(
   // Ginger understory
   for (let y = 1; y < sideLength; y += 1.2) {
     for (let x = 1; x < sideLength; x += 1.2) {
-      if (Math.random() > 0.65) {
+      if (!isOccupied(layout, x, y, 0.8) && Math.random() > 0.65) {
         layout.push({
           id: genId(),
           x, y,
@@ -306,8 +313,8 @@ function generateAndhraLayout(
   const jackfruitSpacing = 3.5;
   
   // Areca nut palms
-  for (let y = 3.5; y < sideLength; y += arecaSpacing) {
-    for (let x = 3.5; x < sideLength; x += arecaSpacing) {
+  for (let y = 0; y < sideLength; y += arecaSpacing) {
+    for (let x = 0; x < sideLength; x += arecaSpacing) {
       layout.push({
         id: genId(),
         x, y,
@@ -353,7 +360,7 @@ function generateAndhraLayout(
   // Pineapple understory
   for (let y = 1; y < sideLength; y += 1) {
     for (let x = 1; x < sideLength; x += 1) {
-      if (Math.random() > 0.7) {
+      if (!isOccupied(layout, x, y, 0.8) && Math.random() > 0.7) {
         layout.push({
           id: genId(),
           x, y,
@@ -410,7 +417,7 @@ function generateMaharashtraLayout(
   // Turmeric understory
   for (let y = 2; y < sideLength; y += 1) {
     for (let x = 2; x < sideLength; x += 1) {
-      if (Math.random() > 0.7) {
+      if (!isOccupied(layout, x, y, 0.8) && Math.random() > 0.7) {
         layout.push({
           id: genId(),
           x, y,
@@ -485,7 +492,7 @@ function generateCocoaPremiumLayout(
   // Cardamom understory
   for (let y = 1.5; y < sideLength; y += 1.5) {
     for (let x = 1.5; x < sideLength; x += 1.5) {
-      if (Math.random() > 0.65) {
+      if (!isOccupied(layout, x, y, 0.8) && Math.random() > 0.65) {
         layout.push({
           id: genId(),
           x, y,
@@ -566,7 +573,7 @@ function generateGenericLayout(
   if (schedule.understory) {
     for (let y = 1; y < sideLength; y += 1.5) {
       for (let x = 1; x < sideLength; x += 1.5) {
-        if (Math.random() > 0.7) {
+        if (!isOccupied(layout, x, y, 0.8) && Math.random() > 0.7) {
           layout.push({
             id: genId(),
             x, y,

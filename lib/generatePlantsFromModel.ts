@@ -77,13 +77,13 @@ export function generatePlantsFromModel(model: CropModelConfig): PlantInstance[]
     const rng = seededRandom(cropIndex * 9973 + crop.name.length);
 
     const originalSpacing = Math.max(0.2, crop.spacingM);
-    // The margin is half the spacing from boundary
-    const margin = originalSpacing * 0.5;
+    // Remove margin to align cleanly with metric grid
+    const margin = 0;
 
     // Use a layered grid approach for intercropping offset
     const layerOffsetIndex = ['canopy','midstory','understory','groundcover'].indexOf(crop.layer);
-    const offsetX = (layerOffsetIndex >= 0 ? layerOffsetIndex * 0.3 * originalSpacing : 0);
-    const offsetY = (layerOffsetIndex >= 0 ? (layerOffsetIndex % 2) * 0.5 * originalSpacing : 0);
+    const offsetX = (layerOffsetIndex >= 0 ? (layerOffsetIndex % 2) * 0.5 * originalSpacing : 0);
+    const offsetY = (layerOffsetIndex >= 0 ? Math.floor(layerOffsetIndex / 2) * 0.5 * originalSpacing : 0);
 
     const maxPlants = MAX_PLANTS[crop.layer] || 200;
 
@@ -103,12 +103,9 @@ export function generatePlantsFromModel(model: CropModelConfig): PlantInstance[]
     let count = 0;
     for (let row = 0; row < numRows && count < maxPlants; row++) {
       for (let col = 0; col < numCols && count < maxPlants; col++) {
-        // Grid position with offset + small jitter (±10% of spacing)
-        const jitterX = (rng() - 0.5) * renderSpacingX * 0.2;
-        const jitterY = (rng() - 0.5) * renderSpacingY * 0.2;
-
-        const x = margin + col * renderSpacingX + offsetX + jitterX;
-        const y = margin + row * renderSpacingY + offsetY + jitterY;
+        // Strict grid position (removed jitter)
+        const x = margin + col * renderSpacingX + offsetX;
+        const y = margin + row * renderSpacingY + offsetY;
 
         // Clamp inside field
         const cx = Math.max(0, Math.min(fieldSize, x));
@@ -119,7 +116,7 @@ export function generatePlantsFromModel(model: CropModelConfig): PlantInstance[]
         for (const pt of existingPoints) {
           const dx = pt.x - cx;
           const dy = pt.y - cy;
-          if (dx * dx + dy * dy < 0.25) { // 0.5m radius check to prevent direct overlap
+          if (dx * dx + dy * dy < 0.04) { // 0.2m radius check to prevent direct overlap on the exact same coordinate
              overlap = true;
              break;
           }

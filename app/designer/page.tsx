@@ -18,6 +18,7 @@ import { DesignerSkeleton, ChartSkeleton } from '@/components/skeletons'
 import { PlantingGuidePanel } from '@/components/designer/PlantingGuidePanel'
 import { CompatibilityWarningPanel } from '@/components/designer/CompatibilityWarningPanel'
 import { generatePlantsFromModel } from '@/lib/generatePlantsFromModel'
+import { presetToLayout, RegionalPreset } from '@/lib/presetToLayout'
 import { formatArea, formatMoney, formatLER, acresToCents, centsToAcres, acresToFarmDimensions, thaToTotalTonnes } from '@/lib/units'
 
 // ---------------------------------------------------------------------------
@@ -76,12 +77,12 @@ const CROP_CATALOGUE: Record<LayerKey, { id: string; name: string; spacingM: num
 }
 
 const PRESETS = [
-  { id: 'wayanad',     name: 'Wayanad Classic',         layers: { canopy: [{id:'coconut',name:'Coconut',spacingM:7.5},{id:'teak',name:'Teak',spacingM:5}],     midstory: [{id:'banana',name:'Banana',spacingM:3},{id:'coffee',name:'Coffee',spacingM:2}],           understory: [{id:'ginger',name:'Ginger',spacingM:0.5}],                        groundcover: [{id:'blackpepper',name:'Black Pepper',spacingM:0.3}] }, ler: 1.6, yield: '4.2 t/acre', revenue: '₹3.8L – ₹5.2L/yr' },
-  { id: 'karnataka',   name: 'Karnataka Spice Garden',  layers: { canopy: [{id:'silveroak',name:'Silver Oak',spacingM:6}],                                      midstory: [{id:'coffee',name:'Coffee',spacingM:2.5},{id:'cocoa',name:'Cocoa',spacingM:3}],        understory: [{id:'cardamom',name:'Cardamom',spacingM:1.5},{id:'turmeric',name:'Turmeric',spacingM:0.5}], groundcover: [{id:'blackpepper',name:'Black Pepper',spacingM:0.3}] }, ler: 1.5, yield: '3.8 t/acre', revenue: '₹4.5L – ₹6.0L/yr' },
-  { id: 'maharashtra', name: 'Maharashtra Coconut-Mango',layers: { canopy: [{id:'coconut',name:'Coconut',spacingM:7.5},{id:'mango',name:'Mango',spacingM:10}], midstory: [{id:'banana',name:'Banana',spacingM:3}],                                               understory: [{id:'turmeric',name:'Turmeric',spacingM:0.5},{id:'ginger',name:'Ginger',spacingM:0.5}], groundcover: [] },                                                   ler: 1.4, yield: '3.5 t/acre', revenue: '₹2.5L – ₹3.8L/yr' },
-  { id: 'tamilnadu',   name: 'Tamil Nadu Tropical',     layers: { canopy: [{id:'coconut',name:'Coconut',spacingM:7.5}],                                         midstory: [{id:'banana',name:'Banana',spacingM:3},{id:'papaya',name:'Papaya',spacingM:2.5}],     understory: [{id:'turmeric',name:'Turmeric',spacingM:0.5},{id:'pineapple',name:'Pineapple',spacingM:0.6}], groundcover: [{id:'vanilla',name:'Vanilla',spacingM:0.4}] }, ler: 1.45, yield: '3.6 t/acre', revenue: '₹3.0L – ₹4.2L/yr' },
-  { id: 'andhra',      name: 'Andhra Commercial',       layers: { canopy: [{id:'coconut',name:'Coconut',spacingM:7.5}],                                         midstory: [{id:'cocoa',name:'Cocoa',spacingM:3},{id:'banana',name:'Banana',spacingM:3}],         understory: [{id:'ginger',name:'Ginger',spacingM:0.5}],                        groundcover: [{id:'blackpepper',name:'Black Pepper',spacingM:0.3}] }, ler: 1.5, yield: '4.0 t/acre', revenue: '₹3.5L – ₹4.8L/yr' },
-  { id: 'cocoa',       name: 'Cocoa Premium Research',  layers: { canopy: [{id:'jackfruit',name:'Jackfruit',spacingM:8}],                                       midstory: [{id:'cocoa',name:'Cocoa',spacingM:3}],                                                understory: [{id:'cardamom',name:'Cardamom',spacingM:1.5},{id:'ginger',name:'Ginger',spacingM:0.5}], groundcover: [{id:'vanilla',name:'Vanilla',spacingM:0.4}] }, ler: 1.7, yield: '4.8 t/acre', revenue: '₹5.0L – ₹7.5L/yr' },
+  { id: 'wayanad',     name: 'Wayanad Classic',         layers: { canopy: [{id:'coconut',name:'Coconut',spacingM:8}], midstory: [{id:'banana',name:'Banana',spacingM:3}], understory: [{id:'turmeric',name:'Turmeric',spacingM:1}], groundcover: [{id:'blackpepper',name:'Black Pepper',spacingM:0.3}] }, ler: 1.6, yield: '4.2 t/acre', revenue: '₹3.8L – ₹5.2L/yr' },
+  { id: 'karnataka',   name: 'Karnataka Spice Garden',  layers: { canopy: [{id:'silveroak',name:'Silver Oak',spacingM:10}], midstory: [{id:'papaya',name:'Papaya',spacingM:2.5}], understory: [{id:'cardamom',name:'Cardamom',spacingM:1.5}], groundcover: [{id:'vanilla',name:'Vanilla',spacingM:0.4}] }, ler: 1.5, yield: '3.8 t/acre', revenue: '₹4.5L – ₹6.0L/yr' },
+  { id: 'maharashtra', name: 'Maharashtra Coconut-Mango',layers: { canopy: [{id:'coconut',name:'Coconut',spacingM:8},{id:'mango',name:'Mango',spacingM:8}], midstory: [], understory: [{id:'turmeric',name:'Turmeric',spacingM:1}], groundcover: [{id:'blackpepper',name:'Black Pepper',spacingM:0.3}] }, ler: 1.4, yield: '3.5 t/acre', revenue: '₹2.5L – ₹3.8L/yr' },
+  { id: 'tamilnadu',   name: 'Tamil Nadu Tropical',     layers: { canopy: [{id:'mango',name:'Mango',spacingM:9}], midstory: [{id:'guava',name:'Guava',spacingM:4}], understory: [{id:'ginger',name:'Ginger',spacingM:1.2}], groundcover: [{id:'betelleaf',name:'Betel Leaf',spacingM:0.5}] }, ler: 1.45, yield: '3.6 t/acre', revenue: '₹3.0L – ₹4.2L/yr' },
+  { id: 'andhra',      name: 'Andhra Commercial',       layers: { canopy: [{id:'arecanut',name:'Areca Nut',spacingM:7}], midstory: [{id:'jackfruit',name:'Jackfruit',spacingM:3.5}], understory: [{id:'pineapple',name:'Pineapple',spacingM:1}], groundcover: [{id:'passionfruit',name:'Passion Fruit',spacingM:1.5}] }, ler: 1.5, yield: '4.0 t/acre', revenue: '₹3.5L – ₹4.8L/yr' },
+  { id: 'cocoa',       name: 'Cocoa Premium Research',  layers: { canopy: [{id:'coconut',name:'Coconut',spacingM:8}], midstory: [{id:'cocoa',name:'Cocoa',spacingM:3}], understory: [{id:'cardamom',name:'Cardamom',spacingM:1.5}], groundcover: [{id:'blackpepper',name:'Black Pepper',spacingM:0.3},{id:'vanilla',name:'Vanilla',spacingM:0.3}] }, ler: 1.7, yield: '4.8 t/acre', revenue: '₹5.0L – ₹7.5L/yr' },
 ]
 
 const CENTER_TABS = [
@@ -117,8 +118,38 @@ export default function FarmDesignerPage() {
     }
   }, [ds.state?.layers])
 
-  // Generate 3D plant instances from the current layer crops
+  // Generate 3D plant instances from the current layer crops or preset layout
   const generatedPlants = useMemo(() => {
+    if (ds.state?.selectedPresetId) {
+      // Use the highly specific preset layout algorithm if a preset is active
+      const presetIdMap: Record<string, string> = {
+        'wayanad': 'wayanad-classic',
+        'karnataka': 'karnataka-spice',
+        'maharashtra': 'maharashtra-balanced',
+        'tamilnadu': 'tamil-nadu-tropical',
+        'andhra': 'andhra-commercial',
+        'cocoa': 'coconut-cocoa-premium',
+      };
+      const layoutId = presetIdMap[ds.state.selectedPresetId] || ds.state.selectedPresetId;
+      const layout = presetToLayout({ id: layoutId, name: ds.state.selectedPresetId } as RegionalPreset, ds.state?.acres ?? 1);
+      
+      const layerMap: Record<string, LayerKey> = {
+        'overstory': 'canopy',
+        'middle': 'midstory',
+        'understory': 'understory',
+        'vertical': 'groundcover',
+      };
+
+      return layout.map(p => ({
+        id: p.id,
+        speciesId: p.species,
+        layer: layerMap[p.layer] || 'canopy',
+        position: { x: p.x, y: p.y },
+        plantedDate: new Date(),
+        currentHeight: p.height || (p.growthStage * 5),
+      }));
+    }
+
     const cropObjects = (Object.entries(safeLayers) as [LayerKey, LayerCropEntry[]][]).flatMap(([layerKey, layerCrops]) =>
       layerCrops.map(c => ({ id: c.id, name: c.name, spacingM: c.spacingM, layer: layerKey }))
     )
@@ -129,7 +160,7 @@ export default function FarmDesignerPage() {
       crops: cropObjects,
       acres: ds.state?.acres ?? 1,
     })
-  }, [safeLayers, ds.state?.acres, ds.state?.farmName])
+  }, [safeLayers, ds.state?.acres, ds.state?.farmName, ds.state?.selectedPresetId])
 
   const [activeTab, setActiveTab] = useState<string>('3d')
   const [rightPanelOpen, setRightPanelOpen] = useState(true)
@@ -578,7 +609,7 @@ export default function FarmDesignerPage() {
 
             {[
               { label: 'LER Score',    value: latestPrediction ? formatLER(latestPrediction.system_LER) : '—', sub: 'Land Equivalent Ratio', cls: lerColor },
-              { label: 'Total Plants', value: String(ds.totalPlants), sub: `across ${Object.values(ds.layerCounts).filter(Boolean).length} layers`, cls: 'text-white' },
+              { label: 'Total Plants', value: String(generatedPlants.length), sub: `across ${Object.values(ds.layerCounts).filter(Boolean).length} layers`, cls: 'text-white' },
               { label: 'Farm Area',    value: formatArea(ds.state.acres), sub: `${acresToCents(ds.state.acres)} cents`, cls: 'text-white' },
             ].map(m => (
               <div key={m.label} className="rounded-xl bg-white/5 border border-white/10 p-3">

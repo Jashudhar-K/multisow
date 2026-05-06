@@ -233,7 +233,7 @@ const DEFAULT_MODEL: SelectedModel = {
       plantCount: 250,
     },
   ],
-  estimatedLER: '2.15',
+  estimatedLER: 2.15,
   estimatedRevenue: '₹2,40,000',
   estimatedYield: '6.7 tonnes',
   soilType: 'laterite',
