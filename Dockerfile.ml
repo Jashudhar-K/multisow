@@ -41,10 +41,11 @@ ENV MULTISOW_ENVIRONMENT=production \
     MULTISOW_FEATURE_STORE_PATH=/app/data/feature_store \
     MULTISOW_FOHEM_BOOTSTRAP_ON_STARTUP=true
 
-EXPOSE 8001
+ENV PORT=8001
+EXPOSE $PORT
 
 # Health check
 HEALTHCHECK --interval=30s --timeout=10s --retries=3 \
-    CMD python -c "import urllib.request; urllib.request.urlopen('http://localhost:8001/health')" || exit 1
+    CMD python -c "import urllib.request; import os; urllib.request.urlopen(f'http://localhost:{os.environ.get(\"PORT\", 8001)}/health')" || exit 1
 
-CMD ["granian", "--interface", "asgi", "backend.main:app", "--host", "0.0.0.0", "--port", "8001"]
+CMD sh -c "granian --interface asgi backend.main:app --host 0.0.0.0 --port $PORT"
