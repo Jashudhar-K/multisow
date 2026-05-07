@@ -1,0 +1,25 @@
+services:
+  - type: web
+    name: multisow-backend
+    env: docker
+    dockerfilePath: ./Dockerfile.ml
+    plan: starter # ML packages need more memory than the free tier allows
+    healthCheckPath: /health
+    disk:
+      name: multisow-data
+      mountPath: /app/data
+      sizeGB: 1
+    envVars:
+      - key: MULTISOW_DATABASE_URL
+        value: sqlite:////app/data/sql_app.db
+      - key: MULTISOW_ML_MODEL_PATH
+        value: /app/data/models
+      - key: MULTISOW_FEATURE_STORE_PATH
+        value: /app/data/feature_store
+      - key: MULTISOW_FOHEM_BOOTSTRAP_ON_STARTUP
+        value: "true"
+      # CORS_ORIGINS is very important so your Vercel frontend can connect
+      - key: CORS_ORIGINS
+        value: "https://your-vercel-frontend-url.vercel.app,http://localhost:3001,http://localhost:3000"
+      - key: ANTHROPIC_API_KEY
+        sync: false # Requires manual entry in the Render Dashboard
