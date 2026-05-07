@@ -3,8 +3,8 @@
     "version": "1.0.0",
     "description": "Multi-Tier Crop Management System - Integrated Development Environment",
     "scripts": {
-        "dev": "next dev --webpack -p 3001",
-        "build": "next build --webpack",
+        "dev": "next dev -p 3001",
+        "build": "next build",
         "build:analyze": "ANALYZE=true next build",
         "start": "next start -p 3001",
         "backend": ".venv\\Scripts\\python.exe -m granian --interface asgi backend.main:app --host 0.0.0.0 --port 8001 --reload",
