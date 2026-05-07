@@ -28,6 +28,7 @@ RUN pip install --no-cache-dir -r requirements.txt && \
 # Copy application code
 COPY backend/ /app/backend/
 COPY multisow/ /app/multisow/
+COPY ml/ /app/ml/
 COPY main.py /app/main.py
 
 # Create directories for data persistence
